@@ -44,6 +44,15 @@ h2 { font-size: 1.35rem; line-height: 1.3; margin-top: 0; }
 .day-title { font-weight: 600; }
 .day-status { color: var(--muted); font-size: .9rem; }
 
+/* 首页：模块进度环形图 */
+.mod-row { display: flex; align-items: center; gap: 12px; padding: 10px 2px; border-bottom: 1px dashed var(--line); }
+.mod-row:last-child { border-bottom: 0; }
+.mod-ring { width: 40px; height: 40px; flex: none; }
+.ring-bg { fill: none; stroke: var(--line); stroke-width: 5; }
+.ring-fg { fill: none; stroke: var(--brand); stroke-width: 5; stroke-linecap: round; transition: stroke-dasharray .4s ease; }
+.mod-name { font-weight: 600; flex: 1; }
+.mod-count { color: var(--muted); font-size: .9rem; }
+
 /* 实验安全徽章 */
 .badge { display: inline-block; font-size: .8rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; vertical-align: middle; }
 .badge-safety { background: #fdecd9; color: #a4560b; }
@@ -53,4 +62,40 @@ h2 { font-size: 1.35rem; line-height: 1.3; margin-top: 0; }
 .checkpoint-item summary { cursor: pointer; font-weight: 600; }
 .checkpoint-item p { margin: 10px 0 0; color: var(--muted); }
 
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+/* 内容配图（内建 SVG 渲染） */
+.chem-fig { margin: 18px auto 6px; text-align: center; max-width: 520px; }
+.chem-svg { width: 100%; height: auto; display: block; margin: 0 auto; }
+.fig-cap { margin-top: 10px; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+
+/* 量筒读数交互控件 */
+.fig-cyl { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.fig-ctrl { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.fig-pill { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; min-height: 44px; font-weight: 600; color: var(--ink); }
+.fig-pill.is-active, .fig-pill:active { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+.fig-cyl .cyl-note { font-weight: 600; }
+
+/* 量筒读数：眼睛、视线、读数标记 */
+.cyl-eye-body { transform-origin: center; transition: all .3s ease; }
+.cyl-pupil { transform-origin: center; transition: cx .3s ease, cy .3s ease; }
+.cyl-sight line { stroke-linecap: round; }
+.cyl-read { r: 5; transition: cx .3s ease, cy .3s ease; }
+.cyl-read.is-wrong { fill: #e67b32; animation: pulse-wrong .8s ease; transform-box: fill-box; transform-origin: center; }
+@keyframes pulse-wrong { 0% { transform: scale(1); } 50% { transform: scale(1.5); } 100% { transform: scale(1); } }
+
+/* 气密性：手、导管、漏气状态 */
+.air-hand { transform-origin: 50% 50%; animation: handPress 2s ease-in-out infinite; }
+@keyframes handPress { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+.air-pipe { transition: opacity .3s ease; }
+.air-bubbles.is-leak .bub { animation: leakBubbles 3s linear infinite; }
+.air-water.is-leak { opacity: .35; }
+@keyframes leakBubbles {
+  0% { opacity: 0; transform: translate(0, 14px) scale(.5); }
+  10% { opacity: .3; }
+  100% { opacity: 0; transform: translate(0, -18px) scale(1); }
+}
+
+/* 气密性交互控件 */
+.fig-air { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.fig-air .fig-pill { min-width: 110px; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
