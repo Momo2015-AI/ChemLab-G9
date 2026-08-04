@@ -21,7 +21,7 @@ window.ChemLabManifest = (function () {
   };
 
   // 已完成内容开发、可以学习的天数。
-  const readyDays = ["01"];
+  const readyDays = ["01", "02"];
 
   function pad(n) {
     return String(n).padStart(2, "0");
