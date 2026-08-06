@@ -158,6 +158,16 @@ Object.keys(expected11to18).forEach((key) => {
   assert(page.includes("情境自测"), "Day" + key + " 渲染情境自测");
 });
 
+console.log("\n[Day19-30 学习页]");
+const expected19to30 = { "19": 8, "20": 8, "21": 8, "22": 8, "23": 8, "24": 8, "25": 8, "26": 8, "27": 8, "28": 8, "29": 8, "30": 8 };
+Object.keys(expected19to30).forEach((key) => {
+  setSearch("?day=" + key);
+  runApp();
+  page = appEl.innerHTML;
+  assert(questionCount(page) === expected19to30[key], "Day" + key + " 渲染 " + expected19to30[key] + " 道题");
+  assert(page.includes("情境自测"), "Day" + key + " 渲染情境自测");
+});
+
 console.log("\n[错题复习空状态]");
 setSearch("?view=review");
 runApp();
