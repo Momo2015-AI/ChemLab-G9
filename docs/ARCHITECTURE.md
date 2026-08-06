@@ -1,4 +1,4 @@
-# ChemLab-G9 V3.1 架构规范
+# ChemLab-G9 V3.2 架构规范
 
 ## 技术原则
 
@@ -42,8 +42,20 @@
 | --- | --- |
 | `chemlab-g9:v3:day-XX` | 该天的尝试历史 `{ attempts: [{score, total, answers, completedAt}], best }`，重做追加而非覆盖；旧版单快照记录读取时自动迁移 |
 | `chemlab-g9:v3:review` | 跨天错题复习队列：`{day, questionIndex, prompt, answeredAt}`，可据此重新作答指定题并维护"答对移除、答错保留" |
+| `chemlab-g9:v3:stats` | 激励层附加统计：`{ bestCombo, unlocked }` 等，与连击、成就解锁等本地判定相关 |
 
 不保存姓名、账号等个人身份信息。
+
+## 激励层（游戏化）
+
+全部基于 `localStorage` 本地可判定，不依赖账号或网络：
+
+- **连续学习天数** `getStreak()`：按作答日期逐日回溯，最多连续几天作答即连续几天。
+- **薄弱知识点** `getWeakTopics()`：从错题复习队列按题目 `topic` 聚合，取出现次数最多的前 5 个。
+- **成就徽章** `ACHIEVEMENTS` 与 `evaluateAchievements()`：8 枚徽章（首次完成、累计 5 天、满分、含挑战满分、连对 5、连续 3 天、连续 7 天、错题清零），解锁状态存于 `stats.unlocked`。
+- **迷你折线** `miniChart()`：学习日卡片上的成长趋势图，由该天尝试历史绘制。
+
+首页 hero 区含进度条、统计条（连续天数 / 最高连对 / 待复习）与薄弱点标签；成就墙在导航下方；模块进度用可展开 `<details>` 列表展示环形图与每天状态。学习日卡片按 `mod-N` 配色，完成态显示对勾、迷你折线与“最佳 X/N · 尝试 N 次”。
 
 ## 配图与 SVG 图元库
 
@@ -52,12 +64,17 @@
 - `cylinder-reading`：量筒读数视角对比（平视/俯视/仰视可切换）
 - `airtight-test`：检查装置气密性（气泡动画，不漏气/漏气可切换）
 - `graduated-cylinder`：量筒静态示意
+- `air-composition`：空气成分环形图 + 图例（Day04 使用）
 
 可复用的 SVG 图元（渐变、玻璃器皿描边、烧杯、气泡等）收在 `svgParts`，新配图按需组装，避免每个图重写整段 SVG。量筒读数的几何与文案是单一事实源 `CYLINDER_STATES`，渲染与交互共用同一份数据。
 
+## 内容段落约定
+
+正文 `sections[].body[]` 的每项可以是字符串，或对象 `{ text, kind? }`，`kind` 取 `takeaway`（“一句话带走”强调块）或 `note`（贴心提示块）。`section` 可选字段：`safety: "supervised"`（实验需成人陪同，标题旁显示徽章）、`figure: { type, caption? }`（由配图渲染器绘制）。
+
 ## 题目数据约定
 
-`quiz/day-XX.js` 中每题字段：`prompt`、`options`（≥2 项）、`answer`（正确选项下标字符串，须在选项范围内）、`explanation`、可选 `difficulty`（基础 / 提升 / 挑战）。发布前用 `scripts/validate-content.mjs` 校验。
+`quiz/day-XX.js` 中每题字段：`prompt`、`options`（≥2 项）、`answer`（正确选项下标字符串，须在选项范围内）、`explanation`、可选 `difficulty`（基础 / 提升 / 挑战）、`topic`（知识点标签，用于薄弱点聚合）。发布前用 `scripts/validate-content.mjs` 校验。
 
 ## iPad 设计基线
 

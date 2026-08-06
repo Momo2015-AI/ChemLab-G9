@@ -10,67 +10,204 @@
   color-scheme: light;
   --ink: #173033;
   --muted: #587073;
-  --paper: #f6fbfa;
+  --paper: #f2f8f7;
   --surface: #ffffff;
   --line: #d9e8e5;
   --brand: #146c6e;
+  --brand-strong: #0d5f61;
   --brand-soft: #e2f4f1;
   --accent: #e67b32;
+  --ok: #2e9e63;
+  --ko: #d0544e;
+  --shadow-sm: 0 1px 2px rgba(23, 48, 51, .06);
+  --shadow-md: 0 6px 18px rgba(23, 48, 51, .1);
+  --grad-hero: linear-gradient(135deg, #0d5f61 0%, #2f9aa8 58%, #52b6a4 100%);
+  --radius: 20px;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-size: 17px; line-height: 1.75; }
 button { min-height: 44px; font: inherit; cursor: pointer; }
-.page { width: min(920px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 56px; }
-.hero, .section, .quiz { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: clamp(20px, 4vw, 36px); margin-top: 18px; }
-.eyebrow { color: var(--brand); font-weight: 800; letter-spacing: .08em; margin: 0; }
+a { color: var(--brand); }
+
+.page { width: min(920px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0 56px; }
+
+/* ---------- 首页 Hero：品牌渐变 + 白字 ---------- */
+.hero {
+  background: var(--grad-hero);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: clamp(24px, 5vw, 44px);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+}
+.hero .eyebrow { color: rgba(255, 255, 255, .75); font-weight: 800; letter-spacing: .12em; margin: 0; }
+.hero h1 { font-size: clamp(1.6rem, 5vw, 2.6rem); line-height: 1.2; margin: 10px 0 6px; }
+.hero .meta { color: rgba(255, 255, 255, .85); margin: 0; }
+.hero .hint { color: rgba(255, 255, 255, .92); }
+.hero a { color: #fff; font-weight: 700; }
+
+.section, .quiz { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(20px, 4vw, 34px); margin-top: 18px; box-shadow: var(--shadow-sm); }
 h1 { font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.15; margin: 8px 0; }
-h2 { font-size: 1.35rem; line-height: 1.3; margin-top: 0; }
+h2 { font-size: 1.3rem; line-height: 1.35; margin-top: 0; }
+h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding: 2px 10px; border-radius: 999px; }
 .meta, .hint { color: var(--muted); }
+.loading { color: var(--muted); }
+
+/* ---------- 结论 / 提示高亮块 ---------- */
+.takeaway {
+  background: var(--brand-soft);
+  border-left: 4px solid var(--brand);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  font-weight: 600;
+}
+.note-block {
+  background: #fff8ef;
+  border-left: 4px solid var(--accent);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+
+/* ---------- 练习 ---------- */
 .question { border-top: 1px solid var(--line); padding-top: 20px; margin-top: 20px; }
-.option { display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; margin: 10px 0; }
+.question legend { padding: 0 4px; }
+.option { display: flex; align-items: flex-start; gap: 10px; padding: 13px 15px; border: 1.5px solid var(--line); border-radius: 12px; margin: 10px 0; transition: border-color .15s ease, background .15s ease, transform .12s ease; }
+.option input { margin-top: 6px; flex: none; width: 20px; height: 20px; accent-color: var(--brand); }
+.option:active { transform: scale(.995); }
 .option:has(input:checked), .option.selected { border-color: var(--brand); background: var(--brand-soft); }
-.primary { background: var(--brand); color: white; border: 0; border-radius: 12px; padding: 8px 18px; margin-top: 10px; }
+.option.is-correct { border-color: var(--ok); background: #e6f6ee; }
+.option.is-wrong { border-color: var(--ko); background: #fdeeed; }
+.option.is-marked { border-color: var(--ok); background: #e6f6ee; }
+.primary { background: var(--brand); color: #fff; border: 0; border-radius: 12px; padding: 12px 22px; margin-top: 12px; font-weight: 700; box-shadow: var(--shadow-sm); }
+.primary:hover, .primary:active { background: var(--brand-strong); }
+.primary:disabled { opacity: .55; cursor: not-allowed; }
 .result { font-weight: 700; margin: 16px 0 0; outline: none; }
 .warning { color: var(--accent); font-weight: 700; }
 .breadcrumb { margin: 0; }
 .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 700; }
 
-/* 首页：进度条 */
-.progress-bar { height: 10px; border-radius: 999px; background: var(--brand-soft); overflow: hidden; margin-top: 12px; }
-.progress-bar-fill { height: 100%; background: var(--brand); border-radius: 999px; transition: width .3s ease; }
+/* 练习区：题号进度条 */
+.quiz-progress { display: flex; align-items: center; gap: 12px; margin: 10px 0 4px; }
+.quiz-progress .qp-bar { flex: 1; height: 8px; border-radius: 999px; background: var(--brand-soft); overflow: hidden; }
+.quiz-progress .qp-fill { height: 100%; background: var(--brand); border-radius: 999px; transition: width .25s ease; }
+.quiz-progress .qp-text { font-size: .85rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
 
-/* 首页：学习日网格 */
-.day-grid { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-.day-card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-.day-card-link { display: flex; flex-direction: column; gap: 4px; padding: 14px; min-height: 44px; text-decoration: none; color: inherit; }
-.day-card.is-done { border-color: var(--brand); background: var(--brand-soft); }
-.day-card.is-locked { opacity: .55; }
+/* 题目标签：难度 + 知识点 */
+.q-tags { display: inline-flex; gap: 6px; margin-right: 8px; vertical-align: middle; }
+.q-diff, .q-topic { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 9px; border-radius: 999px; }
+.q-diff[data-diff="基础"] { background: var(--brand-soft); color: var(--brand); }
+.q-diff[data-diff="提升"] { background: #fdecd9; color: #a4560b; }
+.q-diff[data-diff="挑战"] { background: #f6d9d0; color: #b0400f; }
+.q-topic { background: #eef1f4; color: #5a6a72; }
+
+/* 反馈动效 */
+.feedback { margin-top: 10px; font-weight: 700; }
+.feedback.fb-ok { color: var(--ok); animation: pulse-ok .7s ease; }
+.feedback.fb-ko { color: var(--ko); animation: shake .45s ease; }
+@keyframes pulse-ok { 0% { transform: scale(1); } 40% { transform: scale(1.04); } 100% { transform: scale(1); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 55% { transform: translateX(4px); } 80% { transform: translateX(-2px); } }
+
+/* ---------- 首页：进度条 ---------- */
+.progress-bar { height: 12px; border-radius: 999px; background: rgba(255, 255, 255, .22); overflow: hidden; margin-top: 14px; }
+.progress-bar-fill { height: 100%; background: #fff; border-radius: 999px; transition: width .4s ease; }
+
+/* ---------- 首页：激励区（连续天数 / 今日战绩） ---------- */
+.stats-strip { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.stat-chip { display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .28); border-radius: 999px; padding: 6px 14px; font-weight: 700; font-size: .9rem; }
+.stat-chip b { font-size: 1.05rem; }
+
+/* ---------- 首页：学习日网格（按模块着色） ---------- */
+.day-grid { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.day-card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow-sm); transition: transform .12s ease, box-shadow .12s ease; position: relative; }
+.day-card::before { content: ""; display: block; height: 5px; background: var(--mod); }
+.day-check { position: absolute; top: 10px; right: 10px; width: 22px; height: 22px; border-radius: 50%; background: var(--ok); color: #fff; font-size: .8rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.day-card:active { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.day-card-link { display: flex; flex-direction: column; gap: 4px; padding: 14px; min-height: 60px; text-decoration: none; color: inherit; }
+.day-card.is-done { border-color: var(--mod); background: var(--brand-soft); }
+.day-card.is-locked { opacity: .55; border-style: dashed; }
 .day-card-link.is-disabled { cursor: not-allowed; }
-.day-num { font-weight: 800; color: var(--brand); letter-spacing: .05em; }
-.day-title { font-weight: 600; }
-.day-status { color: var(--muted); font-size: .9rem; }
+.day-num { font-weight: 800; color: var(--mod); letter-spacing: .05em; font-size: .85rem; }
+.day-title { font-weight: 600; line-height: 1.4; }
+.day-status { color: var(--muted); font-size: .85rem; }
 
-/* 首页：模块进度环形图 */
-.mod-row { display: flex; align-items: center; gap: 12px; padding: 10px 2px; border-bottom: 1px dashed var(--line); }
-.mod-row:last-child { border-bottom: 0; }
+/* 模块色 */
+.mod-0 { --mod: #146c6e; }
+.mod-1 { --mod: #2a7ab5; }
+.mod-2 { --mod: #6b5ba8; }
+.mod-3 { --mod: #2f9aa8; }
+.mod-4 { --mod: #d9762b; }
+.mod-5 { --mod: #8a6a4b; }
+.mod-6 { --mod: #c2534f; }
+.mod-7 { --mod: #b08a2e; }
+
+/* ---------- 首页：模块进度（可展开） ---------- */
+.mod-section { margin-top: 18px; }
+.mod-block { border-bottom: 1px dashed var(--line); }
+.mod-block:last-child { border-bottom: 0; }
+.mod-block summary { list-style: none; display: flex; align-items: center; gap: 12px; padding: 12px 2px; cursor: pointer; }
+.mod-block summary::-webkit-details-marker { display: none; }
+.mod-block summary::after { content: "▾"; color: var(--muted); font-size: .8rem; transition: transform .15s ease; }
+.mod-block[open] summary::after { transform: rotate(180deg); }
+.mod-row { display: flex; align-items: center; gap: 12px; }
 .mod-ring { width: 40px; height: 40px; flex: none; }
 .ring-bg { fill: none; stroke: var(--line); stroke-width: 5; }
-.ring-fg { fill: none; stroke: var(--brand); stroke-width: 5; stroke-linecap: round; transition: stroke-dasharray .4s ease; }
-.mod-name { font-weight: 600; flex: 1; }
+.ring-fg { fill: none; stroke: var(--mod); stroke-width: 5; stroke-linecap: round; transition: stroke-dasharray .4s ease; }
+.mod-name { font-weight: 600; flex: 1; color: var(--mod); }
 .mod-count { color: var(--muted); font-size: .9rem; }
+.mod-days { list-style: none; margin: 0 0 8px 52px; padding: 0; }
+.mod-days li { font-size: .92rem; padding: 3px 0; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+.mod-days li b { color: var(--ink); }
 
-/* 实验安全徽章 */
+/* 卡片内成长小折线 */
+.mini-chart { width: 100%; height: 20px; margin-top: 6px; }
+.mini-chart polyline { fill: none; stroke: var(--mod); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- 成就徽章 ---------- */
+.badge-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 12px; }
+.badge-item { display: flex; flex-direction: column; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 14px; padding: 12px 8px; text-align: center; }
+.badge-item .b-ico { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 800; color: #fff; }
+.badge-item .b-name { font-size: .82rem; font-weight: 700; }
+.badge-item .b-desc { font-size: .74rem; color: var(--muted); line-height: 1.4; }
+.badge-item.is-locked { opacity: .5; filter: grayscale(1); }
+.b-ico.b-ico-0 { background: #146c6e; }
+.b-ico.b-ico-1 { background: #2a7ab5; }
+.b-ico.b-ico-2 { background: #6b5ba8; }
+.b-ico.b-ico-3 { background: #2f9aa8; }
+.b-ico.b-ico-4 { background: #d9762b; }
+.b-ico.b-ico-5 { background: #c2534f; }
+.b-ico.b-ico-6 { background: #b08a2e; }
+.b-ico.b-ico-7 { background: #3b7c5c; }
+
+/* ---------- 薄弱知识点 ---------- */
+.weak-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.weak-tag { display: inline-flex; align-items: center; gap: 6px; background: #fdeeed; color: #b0400f; border: 1px solid #f3c3bd; border-radius: 999px; padding: 3px 12px; font-size: .85rem; font-weight: 600; }
+.weak-tag b { font-size: .9rem; }
+
+/* ---------- 实验安全徽章 ---------- */
 .badge { display: inline-block; font-size: .8rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; vertical-align: middle; }
 .badge-safety { background: #fdecd9; color: #a4560b; }
 
-/* 情境自测（details/summary，原生可访问，无需额外脚本） */
+/* ---------- 情境自测 ---------- */
 .checkpoint-item { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 10px 0; }
 .checkpoint-item summary { cursor: pointer; font-weight: 600; }
 .checkpoint-item p { margin: 10px 0 0; color: var(--muted); }
 
-/* 内容配图（内建 SVG 渲染） */
+/* ---------- 内容配图 ---------- */
 .chem-fig { margin: 18px auto 6px; text-align: center; max-width: 520px; }
 .chem-svg { width: 100%; height: auto; display: block; margin: 0 auto; }
 .fig-cap { margin-top: 10px; color: var(--muted); font-size: .9rem; line-height: 1.6; }
@@ -106,18 +243,16 @@ h2 { font-size: 1.35rem; line-height: 1.3; margin-top: 0; }
 .fig-air { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .fig-air .fig-pill { min-width: 110px; }
 
-/* 题目难度标签 */
-.q-diff { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; vertical-align: middle; margin-right: 6px; }
-.q-diff[data-diff="基础"] { background: var(--brand-soft); color: var(--brand); }
-.q-diff[data-diff="提升"] { background: #fdecd9; color: #a4560b; }
-.q-diff[data-diff="挑战"] { background: #f6d9d0; color: #b0400f; }
-
-/* 反馈提示：复用 .hint，带 role=status 时读屏播报 */
-.feedback { margin-top: 10px; font-weight: 600; }
+/* 空气成分环形图 */
+.air-wrap { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; }
+.air-wrap .chem-svg { width: 180px; }
+.air-legend-box { display: flex; flex-direction: column; gap: 6px; text-align: left; font-size: .92rem; }
+.air-legend { display: flex; align-items: center; gap: 8px; }
+.air-legend .swatch { width: 14px; height: 14px; border-radius: 4px; flex: none; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
 
-/* 暗色模式：夜间学习不刺眼 */
+/* ---------- 暗色模式 ---------- */
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
@@ -129,12 +264,24 @@ h2 { font-size: 1.35rem; line-height: 1.3; margin-top: 0; }
     --brand: #5cc4bc;
     --brand-soft: #1d3f42;
     --accent: #f09a5b;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+    --shadow-md: 0 6px 18px rgba(0, 0, 0, .35);
   }
+  .takeaway { background: #1d3f42; border-left-color: #5cc4bc; }
+  .note-block { background: #3a2c18; border-left-color: #f09a5b; }
+  .option.is-correct { background: #1d3a2a; }
+  .option.is-wrong { background: #442627; }
+  .option.is-marked { background: #1d3a2a; }
+  .feedback.fb-ok { color: #6fd6a0; }
+  .feedback.fb-ko { color: #f0928c; }
+  .q-topic { background: #26373d; color: #9db4ba; }
+  .weak-tag { background: #442627; color: #f0928c; border-color: #6b3a3a; }
   .badge-safety { background: #4a3417; color: #f5b971; }
   .q-diff[data-diff="提升"] { background: #4a3417; color: #f5b971; }
   .q-diff[data-diff="挑战"] { background: #55281f; color: #f39c7e; }
   .air-tube line { stroke: #d9e9e7; }
   .cyl-scale { stroke: #8faaa7; }
+  .day-card.is-done { background: #1d3f42; }
 }
 
 </style>
@@ -165,11 +312,18 @@ h2 { font-size: 1.35rem; line-height: 1.3; margin-top: 0; }
   const knownTitles = {
     "01": "化学就在我们身边",
     "02": "化学实验室探秘",
-    "03": "科学探究方法"
+    "03": "科学探究方法",
+    "04": "空气",
+    "05": "氧气的性质",
+    "06": "氧气的制取",
+    "07": "单元复习：化学变化与空气",
+    "08": "分子和原子",
+    "09": "原子的结构",
+    "10": "元素"
   };
 
   // 已完成内容开发、可以学习的天数。
-  const readyDays = ["01", "02"];
+  const readyDays = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"];
 
   function pad(n) {
     return String(n).padStart(2, "0");
@@ -277,9 +431,9 @@ window.ChemLabContent["day-01"] = {
 <script>window.ChemLabQuiz = window.ChemLabQuiz || {};
 window.ChemLabQuiz["day-01"] = {
   questions: [
-    { prompt: "下列过程属于化学变化的是？", options: ["冰块融化", "蜡烛燃烧", "玻璃破碎", "水沸腾"], answer: "1", difficulty: "基础", explanation: "蜡烛燃烧会生成新物质；其余主要没有生成新物质。" },
-    { prompt: "判断化学变化最根本的依据是？", options: ["是否发光", "是否冒泡", "是否生成新物质", "是否温度升高"], answer: "2", difficulty: "基础", explanation: "发光、冒泡和温度变化都可能只是现象，生成新物质才是根本依据。" },
-    { prompt: "水加热沸腾时有气泡产生，因此一定发生化学变化。这个说法？", options: ["正确，因为有气泡", "错误，因为水沸腾主要是状态变化", "正确，因为温度升高", "无法判断"], answer: "1", difficulty: "提升", explanation: "沸腾时形成的是水蒸气，仍是水，没有生成新物质。" }
+    { prompt: "下列过程属于化学变化的是？", options: ["冰块融化", "蜡烛燃烧", "玻璃破碎", "水沸腾"], answer: "1", difficulty: "基础", topic: "化学变化判断", explanation: "蜡烛燃烧会生成新物质；其余主要没有生成新物质。" },
+    { prompt: "判断化学变化最根本的依据是？", options: ["是否发光", "是否冒泡", "是否生成新物质", "是否温度升高"], answer: "2", difficulty: "基础", topic: "化学变化判断", explanation: "发光、冒泡和温度变化都可能只是现象，生成新物质才是根本依据。" },
+    { prompt: "水加热沸腾时有气泡产生，因此一定发生化学变化。这个说法？", options: ["正确，因为有气泡", "错误，因为水沸腾主要是状态变化", "正确，因为温度升高", "无法判断"], answer: "1", difficulty: "提升", topic: "事实与结论", explanation: "沸腾时形成的是水蒸气，仍是水，没有生成新物质。" }
   ]
 };
 </script>
@@ -406,6 +560,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["烧杯", "量筒", "试管", "集气瓶"],
       answer: "1",
       difficulty: "基础",
+      topic: "仪器识别",
       explanation: "量筒用来量取一定体积的液体；烧杯用于盛放和加热较多量液体，试管用于少量试剂。"
     },
     {
@@ -413,6 +568,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["5 mL", "1--2 mL", "填满容器", "越多越好"],
       answer: "1",
       difficulty: "基础",
+      topic: "药品取用",
       explanation: "按最少量取用，液体一般取 1--2 mL，固体只需铺满试管底部。"
     },
     {
@@ -420,6 +576,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["用手直接接触化学试剂", "把鼻孔凑到容器口闻气体气味", "穿实验服、戴护目镜做实验", "在实验室里吃零食"],
       answer: "2",
       difficulty: "基础",
+      topic: "实验室安全",
       explanation: "做实验应穿实验服、戴护目镜；不能用手接触试剂、把鼻孔凑到容器口闻气味，也不能在实验室吃东西。"
     },
     {
@@ -427,6 +584,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["用嘴吹灭酒精灯", "向燃着的酒精灯里添加酒精", "用灯帽盖灭酒精灯", "用酒精灯去引燃另一盏酒精灯"],
       answer: "2",
       difficulty: "基础",
+      topic: "加热操作",
       explanation: "熄灭酒精灯必须用灯帽盖灭，不可用嘴吹灭，也绝不可向燃着的灯里加酒精或用它引燃另一盏灯。"
     },
     {
@@ -434,6 +592,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["大于 8 mL", "小于 8 mL", "等于 8 mL", "无法确定"],
       answer: "0",
       difficulty: "提升",
+      topic: "量筒读数",
       explanation: "仰视读数偏小，会使实际量取的液体体积偏大，即大于 8 mL。"
     },
     {
@@ -441,6 +600,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["外侧", "手心", "上方", "任意方向都可以"],
       answer: "1",
       difficulty: "基础",
+      topic: "药品取用",
       explanation: "标签朝向手心，防止流出的液体沿瓶壁流下腐蚀标签。"
     },
     {
@@ -448,6 +608,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["先用手紧握容器外壁，再把导管伸入水中", "先把导管一端伸入水中，再用手紧握容器外壁，观察是否有气泡冒出", "直接加热容器观察", "往容器里倒水观察是否漏水"],
       answer: "1",
       difficulty: "基础",
+      topic: "装置气密性",
       explanation: "标准做法：先把导管伸入水中，再用手紧握容器外壁，若导管口有气泡冒出且松手后水柱不回落，则装置不漏气。"
     },
     {
@@ -455,6 +616,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["试管", "蒸发皿", "燃烧匙", "量筒"],
       answer: "3",
       difficulty: "基础",
+      topic: "仪器识别",
       explanation: "量筒只能量取液体，不能加热；试管、蒸发皿、燃烧匙可直接加热。"
     },
     {
@@ -462,6 +624,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["可以对着自己", "可以对着旁边的人", "不要对着自己或他人", "朝向无所谓"],
       answer: "2",
       difficulty: "基础",
+      topic: "加热操作",
       explanation: "加热液体时试管口不能对着自己或他人，以免液体沸腾喷出伤人。"
     },
     {
@@ -469,6 +632,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["聚成水滴", "成股流下", "既不聚成水滴，也不成股流下", "完全蒸发干"],
       answer: "2",
       difficulty: "基础",
+      topic: "仪器洗涤",
       explanation: "洗干净的标准是内壁附着的水既不聚成水滴，也不成股流下。"
     },
     {
@@ -476,6 +640,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["爆炸品", "腐蚀品", "易燃气体", "放射性物品"],
       answer: "1",
       difficulty: "提升",
+      topic: "危险品标志",
       explanation: "浓氨水具有腐蚀性，对应的危险化学品标志是腐蚀品。"
     },
     {
@@ -483,6 +648,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["直接把导管用力塞进去", "先把导管口用水润湿，再稍稍用力转动插入", "用酒精灯把导管加热变软后再插入", "把乳胶管剪短一点再套上"],
       answer: "1",
       difficulty: "基础",
+      topic: "仪器连接",
       explanation: "先用水润湿导管口，再稍稍用力转动插入，可以减小摩擦、防止玻璃管破裂。"
     },
     {
@@ -490,6 +656,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["立即用冷水冲洗", "用试管刷用力刷洗", "待冷却后再洗涤", "随手扔进垃圾桶"],
       answer: "2",
       difficulty: "基础",
+      topic: "仪器洗涤",
       explanation: "刚加热过的试管不能立即用冷水冲洗，骤冷骤热容易使玻璃炸裂，应待其冷却后再洗涤。"
     },
     {
@@ -497,6 +664,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["向上", "略向下倾斜", "水平", "朝向自己"],
       answer: "1",
       difficulty: "提升",
+      topic: "加热操作",
       explanation: "加热固体时试管口略向下倾斜，防止固体受热时生成的水回流到试管底部使试管炸裂。"
     },
     {
@@ -504,6 +672,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["用药匙把粉末直接倒进直立试管", "用镊子夹取", "把试管横放，用药匙或纸槽将粉末送到试管底部，再慢慢竖起试管", "用手把粉末塞进试管"],
       answer: "2",
       difficulty: "提升",
+      topic: "药品取用",
       explanation: "取用粉末状固体要「一横二送三直立」：试管横放，用药匙或纸槽把粉末送到试管底部，再慢慢竖起来。"
     },
     {
@@ -511,7 +680,1302 @@ window.ChemLabQuiz["day-02"] = {
       options: ["给试管加热时，先均匀预热，后固定加热", "量取液体时，先倾倒到接近所需体积，后用胶头滴管滴加", "连接导管与乳胶管时，先把导管口润湿，后用力插入", "使用胶头滴管吸液时，先把滴管伸入液体中，后挤压橡胶帽"],
       answer: "3",
       difficulty: "挑战",
+      topic: "操作顺序",
       explanation: "使用胶头滴管时应先挤压橡胶帽排出空气，再伸入液体中松手吸取，不能先伸入液体再挤压。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-03"] = {
+  dayNumber: "03",
+  title: "科学探究方法",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "科学探究是在“猜答案”，还是在“找证据”？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "科学家不是靠聪明猜出答案的，而是靠一套可重复的方法：提出问题、设计方案、收集证据、得出结论。今天我们把这套方法拆开看，学会自己设计一个“像样的实验”。",
+        { text: "科学探究的核心是让结论由证据支撑，而不是由感觉支撑。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "科学探究的六个环节",
+      body: [
+        "一套完整的探究通常按顺序经过：提出问题 → 猜想与假设 → 制定计划（设计实验）→ 进行实验 → 收集证据 → 得出结论并反思。",
+        "第一步是提出问题，好问题通常具体、可检验。比如“糖在水中溶解的快慢与什么有关？”就比“糖怎么不见了？”更容易设计实验。",
+        "第二步是猜想与假设，它是一句可以验证的预测，而不是随口的猜测：想猜“温度越高溶解越快”，就要设计实验去检验它。"
+      ]
+    },
+    {
+      title: "控制变量：一次只改变一个因素",
+      body: [
+        "对比实验的灵魂是控制变量：比较两组实验时，只让要研究的那一个条件不同，其他条件全部相同。这样结果的差异才可能归因于那个被改变的变量。",
+        "比如研究“搅拌是否加快溶解”，就要保证水的体积、温度、糖的量、容器都相同，只有一组搅拌、一组不搅拌。如果同时改了温度和搅拌，就算结果不同，你也不知道是谁造成的。",
+        { text: "控制变量口诀：想研究谁，就只改谁，其余一律不动。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "观察与记录：把事实和猜测分开",
+      body: [
+        "观察要如实，记录要分清两件事：我看到了什么（事实），我推测是什么原因（解释）。把它们分开写，才不会被自己的想法带偏。",
+        "例如：事实是“烧杯内壁出现水雾”；解释是“蜡烛燃烧生成了水”。事实记录错了，后面的结论就全错了。",
+        "观察还要全面：颜色、状态、气味、温度、是否有气体放出，都要记录，而不是只盯住最显眼的那一个现象。"
+      ]
+    },
+    {
+      title: "结论要能被证据支持",
+      body: [
+        "从证据到结论，中间的距离要看得见。一个现象往往有好几种可能的解释，只有证据不足以排除其他解释时，就不能下结论。",
+        "判断方法：试着问自己“还有没有别的可能？”如果回答“有”，就说明证据还不够，需要设计新实验继续验证。",
+        { text: "现象是线索，不是答案；结论是证据支撑的判断，不是猜测。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "教师提醒",
+      body: [
+        "常见的探究错误有几种：第一，不做记录只凭记忆；第二，同时改变多个条件导致无法归因；第三，把现象当结论，看到气泡就说是化学变化。",
+        "遇到陌生的探究题，先画出六个环节的流程，再填空：问题是什么、变量是什么、哪些要控制、需要记录什么现象、能推出什么结论。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考两种题型：一是“判断实验设计是否合理”，考的就是控制变量；二是“对实验记录的评价”，考事实与结论是否混淆。",
+        "解题时先找“要研究的变量”，再逐项检查题目给出的实验组和对照组除了这个变量外是否还有其他不同。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "科学探究六环节：提出问题、猜想与假设、设计实验、进行实验、收集证据、得出结论与反思。控制变量：一次只改变一个因素。观察记录：事实与解释分开。结论：必须由证据支持。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "科学探究应该先确定结论，再去做实验证明它。",
+        verdict: "错",
+        explanation: "先有结论再做实验会变成“为结果找证据”，探究应在实验前先提出可检验的猜想与假设，而不是预先定死结论。"
+      },
+      {
+        statement: "对比实验中，一次只改变一个条件，其他条件保持一致。",
+        verdict: "对",
+        explanation: "控制变量要求只让研究的那一个变量不同，否则结果无法归因。"
+      },
+      {
+        statement: "只要实验记录准确，解释可以随便写。",
+        verdict: "错",
+        explanation: "解释（推断）必须由记录的事实支撑，同一现象可能有多种可能原因，要排除其他可能才能下结论。"
+      },
+      {
+        statement: "记录实验时，最好把“看到的现象”和“推测的原因”分开写。",
+        verdict: "对",
+        explanation: "事实与解释分开，可以避免自己的推测污染观察记录，这是科学记录的基本要求。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-03"] = {
+  questions: [
+    {
+      prompt: "科学探究的第一步通常是（　）",
+      options: ["直接做实验", "提出问题", "得到结论", "查阅所有书籍"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "探究环节",
+      explanation: "科学探究通常从提出一个具体、可检验的问题开始，再围绕问题开展猜想、设计和实验。"
+    },
+    {
+      prompt: "小明想研究“温度高低是否影响糖在水中的溶解速度”。下列做法符合控制变量要求的是（　）",
+      options: ["一杯用热水、一杯用冷水，其他条件相同", "一杯用热水并搅拌，一杯用冷水不搅拌", "两杯都用热水，一杯多放糖", "两杯用不同大小的杯子装水"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "控制变量",
+      explanation: "要研究的变量是温度，所以只有温度不同、其他条件（水量、糖量、是否搅拌、容器）都要相同。"
+    },
+    {
+      prompt: "下列记录中，属于“事实”（观察到的现象）的是（　）",
+      options: ["蜡烛燃烧生成了水", "铁钉发生了化学变化", "烧杯内壁出现水雾", "温度升高说明发生了反应"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "事实与结论",
+      explanation: "“烧杯内壁出现水雾”是直接看到的现象，是事实；其余三项都是基于现象作出的判断，属于解释或结论。"
+    },
+    {
+      prompt: "对比实验的基本要求是（　）",
+      options: ["改变尽可能多的条件", "只改变一个条件，其他保持不变", "不用设置对照组", "条件越复杂越好"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "控制变量",
+      explanation: "对比实验一次只改变一个变量，其他条件保持一致，才能把结果差异归因于这个变量。"
+    },
+    {
+      prompt: "一个合格的“猜想与假设”应该（　）",
+      options: ["越离奇越好", "可以被实验检验", "一定是正确答案", "不需要理由"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "探究环节",
+      explanation: "假设必须具体、可检验，能通过实验证实或证伪，才能作为探究的起点。"
+    },
+    {
+      prompt: "小明看到铁钉表面出现红色物质，立即说“这一定发生了化学变化”。下列说法正确的是（　）",
+      options: ["完全正确，变色就是化学变化", "错误，必须确认是否生成新物质", "正确，因为看到了明显现象", "无法判断，因为铁的红色物质一定是铁锈"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "事实与结论",
+      explanation: "看到变色只是线索，判断化学变化的根本依据是是否生成新物质，需要进一步检验生成物来支撑结论。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-04"] = {
+  dayNumber: "04",
+  title: "空气",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "空气真的是“空”的吗？它到底由什么组成？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "空气看不见摸不着，但它不是“真空”。我们每天呼吸的气体，其实是多种气体的混合物。今天先弄清空气里到底有什么，再学会用实验证明它的成分。"
+      ]
+    },
+    {
+      title: "空气的成分：一张饼图讲清楚",
+      body: [
+        "按体积分数计算，空气主要是氮气和氧气：氮气约占 78%，氧气约占 21%，两者加起来超过 99%。",
+        "剩下的不到 1% 里，包含稀有气体（氦、氖、氩等，约 0.94%）、二氧化碳（约 0.03%）以及其他气体和杂质（约 0.03%）。",
+        { text: "空气是混合物：各成分保持各自的性质，按体积比例均匀混合。", kind: "takeaway" }
+      ],
+      figure: { type: "air-composition", caption: "空气成分（按体积分数）：氮气约 78%，氧气约 21%，其余不足 1%。" }
+    },
+    {
+      title: "怎样证明氧气约占空气的五分之一？",
+      body: [
+        "经典实验：在集气瓶内点燃足量红磷，红磷燃烧消耗瓶内氧气，生成五氧化二磷固体。冷却后打开止水夹，瓶内气压减小，水会从烧杯倒流入集气瓶，约占瓶内空气体积的五分之一。",
+        "关键要求：红磷必须足量，才能把氧气消耗完；装置必须不漏气；待冷却后再读数，否则气体膨胀会导致进入的水偏少。",
+        { text: "结论：氧气约占空气体积的 1/5，氮气约占 4/5（水难以进入剩余空间，说明氮气不燃烧、不溶于水）。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "氮气和稀有气体：安静但有用",
+      body: [
+        "氮气化学性质不活泼，所以用作保护气（食品充氮防腐、灯泡充氮防氧化），又是制硝酸和氮肥的重要原料。",
+        "稀有气体化学性质很不活泼，历史上叫“惰性气体”。氦气密度小、化学性质稳定，用于填充探空气球；氖气通电发出红光，用于霓虹灯。",
+        "氧气能支持燃烧和供给呼吸，但氧气本身不可燃，只是助燃——这是最常见的误区之一。"
+      ]
+    },
+    {
+      title: "空气污染与保护",
+      body: [
+        "空气污染物主要有：有害气体（二氧化硫、一氧化碳、二氧化氮等）和可吸入颗粒物（PM2.5 等）。它们来自化石燃料燃烧、工厂废气、汽车尾气。",
+        "保护空气的措施：使用清洁能源、植树造林、工业废气处理达标后排放、少开私家车多乘公共交通。",
+        { text: "雾霾天气减少户外活动，是对自己呼吸系统的保护。", kind: "note" }
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：空气成分比例、测定氧气含量的实验分析（为什么红磷不足会偏小、为什么不能用蜡烛代替红磷）、空气污染物的判断。",
+        "用蜡烛代替红磷测定氧气含量会失败，因为蜡烛燃烧生成二氧化碳气体，瓶内气压变化很小，水几乎不会进入。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "空气组成：氮气 78%、氧气 21%、稀有气体 0.94%、二氧化碳 0.03%、其他 0.03%。氧气助燃不燃、支持呼吸；氮气和稀有气体性质稳定，作保护气。测定氧气含量：足量红磷燃烧、冷却后读数，进入水约 1/5。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "空气是纯净物，因为它是“一种气体”。",
+        verdict: "错",
+        explanation: "空气由氮气、氧气等多种物质组成，是混合物；纯净物由一种物质组成。"
+      },
+      {
+        statement: "氧气约占空气体积的 21%，所以它能在空气中燃烧。",
+        verdict: "错",
+        explanation: "氧气只支持燃烧（助燃），本身不可燃。可燃的是蜡烛、木炭等物质。"
+      },
+      {
+        statement: "测定空气中氧气含量时，红磷要足量，且要冷却后再读数。",
+        verdict: "对",
+        explanation: "红磷足量才能耗尽氧气；冷却后读数才能避免热胀冷缩造成的误差。"
+      },
+      {
+        statement: "氮气化学性质不活泼，常用于食品包装中作保护气。",
+        verdict: "对",
+        explanation: "氮气性质稳定，不易与食品发生反应，能延缓食品变质。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-04"] = {
+  questions: [
+    {
+      prompt: "空气中体积分数约占 78% 的气体是（　）",
+      options: ["氧气", "氮气", "二氧化碳", "稀有气体"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "空气成分",
+      explanation: "氮气约占空气体积的 78%，氧气约占 21%。"
+    },
+    {
+      prompt: "下列关于空气的说法正确的是（　）",
+      options: ["空气是纯净物", "空气是混合物", "空气中只含氮气和氧气", "空气中各成分比例固定不变"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "空气成分",
+      explanation: "空气由氮气、氧气、稀有气体、二氧化碳等多种物质组成，是混合物。"
+    },
+    {
+      prompt: "测定空气中氧气含量的实验中，红磷燃烧后进入集气瓶的水约占瓶内空气体积的（　）",
+      options: ["五分之一", "四分之一", "二分之一", "几乎不进入"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "氧气含量测定",
+      explanation: "红磷燃烧耗尽氧气，瓶内气压减小，进入的水约占空气体积的 1/5，说明氧气约占 1/5。"
+    },
+    {
+      prompt: "该实验中，下列做法会导致测得氧气含量偏小的是（　）",
+      options: ["红磷足量", "装置不漏气", "红磷不足", "冷却后再读数"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "氧气含量测定",
+      explanation: "红磷不足时氧气消耗不完全，进入的水偏少，测得结果偏小。"
+    },
+    {
+      prompt: "用蜡烛代替红磷测定空气中氧气含量，水几乎不会进入集气瓶，原因是（　）",
+      options: ["蜡烛燃烧不消耗氧气", "蜡烛燃烧生成二氧化碳气体，气压变化很小", "蜡烛燃烧太快", "蜡烛燃烧放热过多"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "氧气含量测定",
+      explanation: "蜡烛燃烧消耗氧气但生成二氧化碳气体，瓶内气体总体积变化很小，水几乎不进入，故不能用蜡烛代替红磷。"
+    },
+    {
+      prompt: "下列物质中，属于空气污染物的是（　）",
+      options: ["氮气", "二氧化碳", "可吸入颗粒物（PM2.5）", "水蒸气"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "空气污染",
+      explanation: "可吸入颗粒物是常见空气污染物；氮气、水蒸气是空气正常成分，二氧化碳含量过高才造成影响，一般不计入常规污染物。"
+    },
+    {
+      prompt: "关于氮气用途的说法，正确的是（　）",
+      options: ["氮气能燃烧", "氮气可用作保护气防止食品变质", "氮气能供给呼吸", "氮气是最活泼的气体"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "氮气用途",
+      explanation: "氮气化学性质不活泼，可作保护气；氮气不支持燃烧、不能供给呼吸。"
+    },
+    {
+      prompt: "稀有气体化学性质很不活泼，可用来（　）",
+      options: ["作保护气、制造霓虹灯", "作燃料", "供给呼吸", "灭火剂的主要成分"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "稀有气体",
+      explanation: "稀有气体（如氦、氖）性质稳定，可用作保护气；氖气通电发光用于霓虹灯。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-05"] = {
+  dayNumber: "05",
+  title: "氧气的性质",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "氧气是“助燃”还是“可燃”？为什么铁丝能在氧气里烧，在空气里却只能发红？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "氧气我们天天呼吸，可它的“脾气”很多人没弄清。今天的核心：氧气的物理性质、化学性质，以及几种物质在氧气里燃烧时各不相同的现象。"
+      ]
+    },
+    {
+      title: "氧气的物理性质",
+      body: [
+        "通常情况下，氧气是无色、无味的气体，密度比空气略大，不易溶于水。加压降温可变成淡蓝色液体或淡蓝色固体（液氧、固态氧）。",
+        "因为不易溶于水、密度略大于空气，实验室收集氧气常用排水法或向上排空气法，这是后面制取氧气时要用的知识。"
+      ]
+    },
+    {
+      title: "氧气助燃不燃，支持呼吸",
+      body: [
+        "氧气能支持燃烧，是常用的助燃剂；还能供给呼吸，维持生命活动。",
+        "最容易错的一点：氧气本身不能燃烧。可燃物在氧气中燃烧，是“物质 + 氧气”发生的化学反应，氧气是反应物之一，但它不能“自己着火”。",
+        { text: "助燃 ≠ 可燃：氧气提供支持，可燃物负责燃烧。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "实验探究：三种物质在氧气中燃烧",
+      safety: "supervised",
+      body: [
+        "木炭在氧气中燃烧：发白光，放出热量，生成的气体能使澄清石灰水变浑浊（二氧化碳）。",
+        "硫在氧气中燃烧：发出明亮的蓝紫色火焰（在空气中是淡蓝色火焰），放出热量，生成有刺激性气味的气体（二氧化硫）。",
+        "铁丝在氧气中燃烧：剧烈燃烧，火星四射，生成黑色固体（四氧化三铁）。铁丝燃烧需要先在瓶底放少量水或细沙，防止高温熔融物溅落炸裂瓶底。",
+        "注意：以上实验都要在通风处、由成人陪同完成；硫燃烧生成的二氧化硫有刺激性气味，注意通风。"
+      ]
+    },
+    {
+      title: "燃烧现象怎么记？",
+      body: [
+        "记三个对比：火焰颜色（硫在氧气中蓝紫色、在空气中淡蓝色）、是否发光（木炭发白光）、产物状态（铁生成黑色固体，其余生成气体）。",
+        "注意区分“生成物”：木炭→二氧化碳（使石灰水变浑浊），硫→二氧化硫（有刺激性气味），铁→四氧化三铁（黑色固体）。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考“物质在氧气中燃烧的现象”，尤其爱考：硫的火焰颜色、铁丝燃烧的注意事项（瓶底放水、为什么铁丝要绕成螺旋状增大受热面积）。",
+        "解题要逐项看：火焰颜色、是否放热、生成物的颜色和状态、对气体的检验方法，不要只看其中一个特征。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "氧气物理性质：无色无味、密度略大于空气、不易溶于水。化学性质：助燃、支持呼吸，本身不可燃。木炭→白光+使石灰水变浑浊；硫→蓝紫色火焰+刺激性气味；铁→火星四射+黑色固体（瓶底放水）。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "氧气能燃烧，因为它能让木炭烧得更旺。",
+        verdict: "错",
+        explanation: "氧气只能支持燃烧（助燃），本身不能燃烧。木炭更旺是木炭在氧气中与氧气反应的结果。"
+      },
+      {
+        statement: "铁丝在氧气中剧烈燃烧、火星四射，生成黑色固体。",
+        verdict: "对",
+        explanation: "这是铁丝燃烧的典型现象，生成的四氧化三铁是黑色固体。"
+      },
+      {
+        statement: "硫在氧气和空气中燃烧，火焰颜色相同。",
+        verdict: "错",
+        explanation: "硫在氧气中燃烧是明亮的蓝紫色火焰，在空气中是淡蓝色火焰，二者不同。"
+      },
+      {
+        statement: "做铁丝燃烧实验时，应在集气瓶底放少量水或细沙。",
+        verdict: "对",
+        explanation: "防止高温熔融物溅落到瓶底，使集气瓶受热不均而炸裂。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-05"] = {
+  questions: [
+    {
+      prompt: "通常情况下，氧气的物理性质是（　）",
+      options: ["无色无味、密度比空气大、不易溶于水", "淡蓝色、有刺激性气味、易溶于水", "无色无味、密度比空气小", "白色固体"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "氧气的物理性质",
+      explanation: "氧气通常为无色无味气体，密度略大于空气，不易溶于水；加压可变为淡蓝色液体。"
+    },
+    {
+      prompt: "下列关于氧气性质的说法正确的是（　）",
+      options: ["氧气能燃烧", "氧气能支持燃烧", "氧气能使石灰水变浑浊", "氧气是可燃物"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "助燃与可燃",
+      explanation: "氧气能支持燃烧（助燃）、供给呼吸，但本身不能燃烧，不是可燃物。"
+    },
+    {
+      prompt: "硫在氧气中燃烧的现象是（　）",
+      options: ["发出淡蓝色火焰", "发出明亮的蓝紫色火焰，生成有刺激性气味的气体", "火星四射，生成黑色固体", "发白光，生成使石灰水变浑浊的气体"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "燃烧现象",
+      explanation: "硫在氧气中燃烧发出明亮的蓝紫色火焰，生成有刺激性气味的二氧化硫气体。"
+    },
+    {
+      prompt: "铁丝在氧气中燃烧，集气瓶底要放少量水或细沙，目的是（　）",
+      options: ["吸收有毒气体", "防止高温熔融物溅落炸裂瓶底", "使铁丝燃烧更快", "冷却氧气"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "燃烧现象",
+      explanation: "铁丝燃烧温度很高，生成的熔融物溅落可能使集气瓶受热不均而炸裂，放水或细沙可以保护瓶底。"
+    },
+    {
+      prompt: "检验某气体是否为二氧化碳，常用的方法是（　）",
+      options: ["闻气味", "通入澄清石灰水，看是否变浑浊", "用燃着的木条", "看颜色"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "燃烧产物检验",
+      explanation: "二氧化碳能使澄清石灰水变浑浊，这是检验二氧化碳的常用方法。"
+    },
+    {
+      prompt: "下列物质在氧气中燃烧，生成黑色固体的是（　）",
+      options: ["木炭", "硫", "铁丝", "蜡烛"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "燃烧产物",
+      explanation: "铁丝燃烧生成四氧化三铁，是黑色固体；木炭和蜡烛生成气体，硫生成有刺激性气味的气体。"
+    },
+    {
+      prompt: "木炭在氧气中燃烧时，能看到的明显现象是（　）",
+      options: ["发出白光", "发出蓝紫色火焰", "火星四射", "产生白烟"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "燃烧现象",
+      explanation: "木炭在氧气中燃烧发出白光，放出热量，生成的气体能使澄清石灰水变浑浊。"
+    },
+    {
+      prompt: "液氧通常呈（　）",
+      options: ["无色透明", "淡蓝色", "红色", "黑色"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "氧气的物理性质",
+      explanation: "氧气加压降温变成淡蓝色液体，即液氧；固态氧也是淡蓝色的。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-06"] = {
+  dayNumber: "06",
+  title: "氧气的制取",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "实验室里，怎样又快又安全地得到一瓶氧气？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "氧气这么有用，总不能靠呼吸来收集。今天学习实验室制取氧气的三种常用方法、催化剂是怎么回事，以及一套“查装定点收移熄”的操作流程。"
+      ]
+    },
+    {
+      title: "三种制取方法",
+      body: [
+        "第一种：加热高锰酸钾。高锰酸钾受热分解，生成锰酸钾、二氧化锰和氧气。",
+        "第二种：分解过氧化氢（俗称双氧水）。常温下加入二氧化锰，过氧化氢分解生成水和氧气，不用加热，最方便。",
+        "第三种：加热氯酸钾与二氧化锰的混合物。二氧化锰起催化作用，使氯酸钾在较低温度下就能分解放出氧气。",
+        { text: "记住三种方法的化学原理方向即可，不必死背产物细节：高锰酸钾加热、过氧化氢常温加催化剂、氯酸钾加热加催化剂。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "催化剂：自己不消耗，帮别人变快",
+      body: [
+        "催化剂是这样一种物质：能改变（通常是加快）其他物质的化学反应速率，而它本身的质量和化学性质在反应前后都不改变。",
+        "注意“两个不变、一个改变”：质量不变、化学性质不变、反应速率改变。催化剂不是“加入就消耗掉”的。",
+        "注意一个误区：催化剂只能改变反应速率，不能决定反应能否发生，也不能改变生成物的种类。"
+      ]
+    },
+    {
+      title: "收集与验满",
+      body: [
+        "因为氧气不易溶于水且密度比空气略大，收集常用两种方法：排水法（更纯净）和向上排空气法（更干燥）。",
+        "用向上排空气法收集时，如何验满？把带火星的木条伸到集气瓶口，如果木条复燃，说明氧气已满。",
+        "检验一瓶气体是不是氧气：把带火星的木条伸入瓶内，木条复燃即说明是氧气。验满和检验一个在瓶口、一个在瓶内，别混了。"
+      ]
+    },
+    {
+      title: "实验探究：高锰酸钾制取氧气",
+      safety: "supervised",
+      body: [
+        "操作顺序记成口诀“查装定点收移熄”：检查装置气密性 → 装药品（试管口放一小团棉花，防止高锰酸钾粉末进入导管）→ 固定试管（试管口略向下倾斜）→ 点燃酒精灯加热 → 收集气体 → 先将导管移出水面 → 再熄灭酒精灯。",
+        "最后两步顺序不能反：如果先熄灯再移导管，水会倒吸进试管，使试管炸裂。",
+        "收集方法：导管口刚冒出的气泡是装置里的空气，要等气泡连续均匀冒出后再收集；实验要在成人陪同下进行。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考最爱考：实验操作的先后顺序（尤其是“先移导管后熄灯”）、收集方法的选择依据、催化剂的概念判断、验满方法的表述。",
+        "解题时把装置图和各步骤对应起来：为什么试管口略向下倾斜（防止冷凝水回流炸裂）、为什么瓶口放棉花（防止粉末堵塞导管）。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "制氧三法：加热高锰酸钾、过氧化氢+二氧化锰（常温）、氯酸钾+二氧化锰（加热）。催化剂：改变速率，自身质量与化学性质不变。收集：排水法/向上排空气法。验满：带火星木条伸瓶口复燃。顺序：查装定点收移熄，先移导管再熄灯。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "催化剂在反应前后质量和化学性质都不变。",
+        verdict: "对",
+        explanation: "这是催化剂的核心特征：只改变反应速率，自身质量和化学性质不变。"
+      },
+      {
+        statement: "制取氧气实验结束时，应先熄灭酒精灯，再把导管移出水面。",
+        verdict: "错",
+        explanation: "顺序应相反：先移导管后熄灯，否则水会倒吸入试管，导致试管炸裂。"
+      },
+      {
+        statement: "检验氧气是否收集满，把带火星的木条伸入集气瓶内部即可。",
+        verdict: "错",
+        explanation: "验满应把带火星的木条放在集气瓶瓶口，复燃说明已满；伸入瓶内检验的是气体是不是氧气。"
+      },
+      {
+        statement: "加热高锰酸钾制氧气时，试管口要放一小团棉花。",
+        verdict: "对",
+        explanation: "防止高锰酸钾粉末随气流进入导管，堵塞导管或污染气体。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-06"] = {
+  questions: [
+    {
+      prompt: "实验室用高锰酸钾制取氧气，反应需要（　）",
+      options: ["常温即可", "加热", "加压", "通电"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "制取方法",
+      explanation: "高锰酸钾需要加热才能分解制得氧气，属于固-固加热型。"
+    },
+    {
+      prompt: "关于催化剂的说法，正确的是（　）",
+      options: ["催化剂在反应前后质量会减少", "催化剂能改变其他物质的化学反应速率，自身质量和化学性质不变", "催化剂能使所有反应都不需要加热", "催化剂会消耗在反应中"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "催化剂",
+      explanation: "催化剂改变反应速率，自身质量和化学性质在反应前后都不改变。"
+    },
+    {
+      prompt: "用向上排空气法收集氧气，验满的操作是（　）",
+      options: ["把带火星的木条伸入集气瓶内", "把带火星的木条放在集气瓶口，观察是否复燃", "闻一闻有无气味", "把燃着的木条伸入瓶内"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "验满与检验",
+      explanation: "验满在瓶口：带火星木条放在瓶口复燃即满；伸入瓶内检验的是气体是否为氧气。"
+    },
+    {
+      prompt: "高锰酸钾制取氧气实验结束时，正确的操作顺序是（　）",
+      options: ["先熄灭酒精灯，再移导管", "先移导管出水面，再熄灭酒精灯", "同时进行", "先移酒精灯再移导管"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "实验操作顺序",
+      explanation: "先移导管后熄灯，防止水倒吸入试管造成炸裂。"
+    },
+    {
+      prompt: "过氧化氢制取氧气的实验中，加入二氧化锰的作用是（　）",
+      options: ["增加氧气产量", "作催化剂加快反应速率", "与过氧化氢反应生成氧气", "防止爆炸"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "催化剂",
+      explanation: "二氧化锰是催化剂，加快过氧化氢分解速率，不改变氧气产量，自身质量与化学性质不变。"
+    },
+    {
+      prompt: "实验室收集较纯净的氧气，最好用（　）",
+      options: ["向上排空气法", "排水法", "向下排空气法", "直接倒灌法"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "收集方法",
+      explanation: "氧气不易溶于水，可用排水法收集到较纯净的氧气。"
+    },
+    {
+      prompt: "高锰酸钾制氧气时，试管口略向下倾斜的目的是（　）",
+      options: ["美观", "防止冷凝水回流到试管底部导致试管炸裂", "增大受热面积", "便于出气"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "实验操作要点",
+      explanation: "试管口略向下倾斜，让冷凝水沿试管壁流出，避免回流到受热部位使试管炸裂。"
+    },
+    {
+      prompt: "实验室制取氧气时，导管口刚有气泡冒出就开始收集，会导致（　）",
+      options: ["收集到的氧气不纯（混有空气）", "收集不到氧气", "试管炸裂", "无影响"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "收集方法",
+      explanation: "刚冒出的气泡是装置内原有的空气，应等气泡连续均匀冒出后再收集，否则氧气不纯。"
+    },
+    {
+      prompt: "下列物质在常温下就能反应制取氧气的是（　）",
+      options: ["加热高锰酸钾", "过氧化氢溶液加入二氧化锰", "加热氯酸钾", "加热水"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "制取方法",
+      explanation: "过氧化氢在二氧化锰催化下常温即可分解放出氧气，操作最简便。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-07"] = {
+  dayNumber: "07",
+  title: "单元复习：化学变化与空气",
+  duration: "60--75 分钟",
+  difficulty: "⭐⭐⭐",
+  coreQuestion: "前六天学的知识连起来，你能串成一张地图吗？",
+  sections: [
+    {
+      title: "今天的任务：串知识",
+      body: [
+        "复习不是把笔记再看一遍，而是把散落的知识连成网。今天我们把“化学变化、实验室操作、探究方法、空气、氧气”这几块连起来，找到它们之间的联系。",
+        "建议先合上书，自己试着回答每张知识卡片的问题，答不上来的再翻回去看。"
+      ]
+    },
+    {
+      title: "知识地图：从判断到操作",
+      body: [
+        "主线一：怎么判断一件事是不是化学变化 → 看是否生成新物质（Day01）。",
+        "主线二：怎么安全地做实验 → 仪器、取用、加热、气密性（Day02）。",
+        "主线三：怎么做一次探究 → 提出问题、控制变量、证据支持结论（Day03）。",
+        "主线四：空气和氧气 → 空气成分（Day04）、氧气性质（Day05）、氧气制取（Day06）。",
+        { text: "四根主线最后汇成一个目标：能解释现象、会设计实验、敢下结论、说得清原因。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "易错点集中营",
+      body: [
+        "第一类：把现象当结论。看到冒泡、变色、发光，不等于就是化学变化，要看有没有新物质。",
+        "第二类：把性质记串。氧气助燃不可燃；氮气性质稳定；催化剂质量与化学性质不变。",
+        "第三类：操作顺序搞反。先移导管后熄灯；先检查气密性再装药品；对比实验一次只改一个变量。",
+        "第四类：数字记错。空气：氮气 78%、氧气 21%；测定氧气含量进入水约 1/5。"
+      ]
+    },
+    {
+      title: "错题自检：把 Day01--06 的错题再做一遍",
+      body: [
+        "如果首页显示有“待复习”的错题，今天的任务就是进入错题复习页，把这些题全部重做一遍。",
+        "答对的题会自动移出队列，剩下的错题正是你明天还要攻克的薄弱点。",
+        { text: "做错的题不是你笨，是你的知识地图上还有缺口——补上它，下次就对了。", kind: "note" }
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "一张地图串起六天：新物质→化学变化；安全→实验室操作；证据→科学探究；成分→空气；性质与制取→氧气。易错四类：现象当结论、性质记串、顺序搞反、数字记错。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：快速判断，检验知识地图",
+    items: [
+      {
+        statement: "蜡烛燃烧时既发生了物理变化，也发生了化学变化。",
+        verdict: "对",
+        explanation: "蜡烛熔化是状态改变的物理变化，燃烧生成新物质是化学变化，两者同时发生。"
+      },
+      {
+        statement: "测定空气中氧气含量时，红磷燃烧消耗的是氧气，剩下主要是氮气。",
+        verdict: "对",
+        explanation: "红磷燃烧耗尽氧气，剩余主要是氮气，水约占 1/5，说明氧气约占 1/5。"
+      },
+      {
+        statement: "氧气能使带火星的木条复燃，说明氧气本身是可燃物。",
+        verdict: "错",
+        explanation: "木条复燃说明氧气能支持燃烧（助燃），氧气本身不可燃。"
+      },
+      {
+        statement: "探究“影响溶解快慢的因素”时，可以同时改变温度和搅拌两个条件。",
+        verdict: "错",
+        explanation: "一次只改变一个变量，否则无法判断结果差异来自哪个因素。"
+      },
+      {
+        statement: "用排水法收集氧气时，等导管口气泡连续均匀冒出后再收集，氧气较纯净。",
+        verdict: "对",
+        explanation: "刚开始冒出的气泡是装置内的空气，连续均匀冒出后才主要是氧气。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-07"] = {
+  questions: [
+    {
+      prompt: "下列变化中，属于化学变化的是（　）",
+      options: ["冰雪融化", "木炭在氧气中燃烧", "水蒸发", "玻璃破碎"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学变化判断",
+      explanation: "木炭燃烧生成二氧化碳等新物质，是化学变化；其余为状态或形状改变的物理变化。"
+    },
+    {
+      prompt: "判断化学变化的根本依据是（　）",
+      options: ["是否发光放热", "是否生成新物质", "是否有气体产生", "颜色是否改变"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学变化判断",
+      explanation: "发光、放热、产气、变色都只是可能的伴随现象，生成新物质才是根本依据。"
+    },
+    {
+      prompt: "空气中含量最多、且化学性质较稳定的气体是（　）",
+      options: ["氧气", "氮气", "二氧化碳", "稀有气体"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "空气成分",
+      explanation: "氮气约占空气体积的 78%，含量最多，且化学性质不活泼。"
+    },
+    {
+      prompt: "某同学在空气中点燃硫，观察到火焰呈淡蓝色；若在纯氧中点燃硫，火焰呈（　）",
+      options: ["淡蓝色", "明亮的蓝紫色", "黄色", "红色"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "燃烧现象",
+      explanation: "硫在氧气中燃烧发出明亮的蓝紫色火焰，在空气中是淡蓝色火焰。"
+    },
+    {
+      prompt: "下列关于催化剂的说法正确的是（　）",
+      options: ["催化剂能增加生成物的质量", "催化剂在反应前后质量和化学性质不变", "催化剂只能加快反应", "所有反应都必须有催化剂"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "催化剂",
+      explanation: "催化剂改变（常为加快）反应速率，自身质量和化学性质不变，也不能改变生成物质量。"
+    },
+    {
+      prompt: "高锰酸钾制氧气时，下列操作正确的是（　）",
+      options: ["试管口向上倾斜", "先熄灭酒精灯再移导管", "试管口略向下倾斜，先移导管再熄灯", "用向下排空气法收集"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "实验操作",
+      explanation: "试管口略向下倾斜防冷凝水回流；先移导管后熄灯防倒吸；氧气密度比空气大，用向上排空气法。"
+    },
+    {
+      prompt: "检验集气瓶里是否收集满氧气，正确操作是（　）",
+      options: ["伸入带火星木条看是否复燃", "放在瓶口带火星木条看是否复燃", "倒入澄清石灰水", "闻气味"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "验满与检验",
+      explanation: "验满用带火星的木条放在瓶口，复燃即满；检验是否氧气则是伸入瓶内。"
+    },
+    {
+      prompt: "实验结束先熄灭酒精灯、再移导管，可能出现的后果是（　）",
+      options: ["氧气不纯", "水倒吸入试管，试管炸裂", "高锰酸钾进入导管", "无影响"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "实验操作",
+      explanation: "先熄灯后移导管，管内气压减小，水槽中的水会倒吸入热试管，导致试管炸裂。"
+    },
+    {
+      prompt: "用红磷测定空气中氧气含量，若红磷量不足，测得结果（　）",
+      options: ["偏大", "偏小", "不变", "无法判断"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "氧气含量测定",
+      explanation: "红磷不足则氧气未耗尽，进入的水偏少，测得氧气含量偏小。"
+    },
+    {
+      prompt: "科学探究中，对“小明看到铁钉变黑就说发生了化学变化”的评价正确的是（　）",
+      options: ["正确，现象明显", "错误，要用是否生成新物质判断", "正确，变色即化学变化", "无法评价"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "事实与结论",
+      explanation: "变色只是线索，必须结合是否生成新物质来判断，现象不能直接当作结论。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-08"] = {
+  dayNumber: "08",
+  title: "分子和原子",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "看不见摸不着的物质，凭什么相信它们是由微小粒子构成的？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "我们闻到的花香、扩散的墨水、热胀冷缩，都在悄悄告诉我们：物质不是一整块，而是由看不见的微粒构成的。今天认识这些微粒里的两位主角——分子和原子。"
+      ]
+    },
+    {
+      title: "物质由分子、原子等微粒构成",
+      body: [
+        "物质是由分子、原子等微观粒子构成的。例如水由水分子构成，氧气由氧分子构成；而金属（如铁）、稀有气体（如氦）等直接由原子构成。",
+        "分子和原子都很小：一滴水里的水分子，如果让全人类一刻不停地数，也要数很长时间。肉眼永远看不到单个分子。"
+      ]
+    },
+    {
+      title: "分子的三个性质",
+      body: [
+        "性质一：分子的质量和体积都很小。",
+        "性质二：分子总是在不断运动。所以花开了能闻到香味，红墨水放入清水中会慢慢扩散，温度越高运动越快。",
+        "性质三：分子之间有间隔。所以气体容易压缩、水结成冰体积变大、热胀冷缩。",
+        { text: "记三个关键词：小、动、隔——分子很小、总在动、之间有间隔。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "分子和原子：谁可分？",
+      body: [
+        "分子由原子构成。在化学变化中，分子可以再分成原子，原子重新组合成新的分子。",
+        "关键是：原子是化学变化中的最小粒子。化学变化中原子种类和数目都不变，只是重新组合。",
+        "水电解就是一个例子：水分子分成氢原子和氧原子，它们重新组合成氢分子和氧分子。水的化学性质就消失了，变成了氢气和氧气的性质。"
+      ]
+    },
+    {
+      title: "用分子观点解释生活现象",
+      body: [
+        "为什么能闻到花香？→ 分子在不断运动。",
+        "为什么气体易压缩、液体难压缩？→ 气态分子间隔大，液态分子间隔小。",
+        "为什么湿衣服晾干？→ 水分子运动到空气中去了。",
+        "为什么“尘土飞扬”不是分子运动？→ 尘土是肉眼可见的小颗粒，是宏观物体的运动，不是分子运动。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：用分子的性质解释生活现象、判断哪种现象是分子运动（注意区分“扩散”和“颗粒运动”）、化学变化中分子的变化。",
+        "解题要点：看到“气味”“扩散”“蒸发”想到分子运动；看到“压缩”“热胀冷缩”想到分子间隔；看到化学变化，想分子分成原子再重组。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "物质由分子、原子等微粒构成。分子的三个性质：很小、不断运动、之间有间隔。化学变化中分子可分、原子不可分（原子是化学变化中的最小粒子），原子种类和数目不变。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "水结成冰时体积变大，是因为水分子本身变大了。",
+        verdict: "错",
+        explanation: "是水分子之间的间隔变大，分子本身大小不变。"
+      },
+      {
+        statement: "闻到花香说明分子在不断地运动。",
+        verdict: "对",
+        explanation: "花香分子运动到空气中，被人闻到，是分子运动的体现。"
+      },
+      {
+        statement: "化学变化中，原子种类和数目都不变。",
+        verdict: "对",
+        explanation: "化学变化中分子分成原子，原子重新组合，原子本身不变，所以种类和数目都不变。"
+      },
+      {
+        statement: "扫地时尘土飞扬，说明分子在运动。",
+        verdict: "错",
+        explanation: "尘土是肉眼可见的固体小颗粒，是宏观运动，分子运动肉眼看不见。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-08"] = {
+  questions: [
+    {
+      prompt: "能说明分子在不断地运动的现象是（　）",
+      options: ["闻到了桂花香", "铁块受热膨胀", "湿衣服被风吹干", "冰融化成水"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "分子的性质",
+      explanation: "闻到花香是香味分子运动到空气中，是分子运动的体现。"
+    },
+    {
+      prompt: "气体容易被压缩，而液体、固体难以压缩，主要原因是（　）",
+      options: ["气体分子间间隔大", "气体分子质量小", "液体分子不运动", "固体分子间没有间隔"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "分子的性质",
+      explanation: "气态物质分子间隔很大，压缩时主要缩小间隔，所以容易压缩。"
+    },
+    {
+      prompt: "化学变化中最小的粒子是（　）",
+      options: ["分子", "原子", "电子", "离子"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "分子与原子",
+      explanation: "化学变化中原子不可再分，是化学变化中的最小粒子。"
+    },
+    {
+      prompt: "从分子角度看，化学变化的实质是（　）",
+      options: ["分子变小", "分子分成原子，原子重新组合成新分子", "原子变大", "分子静止不动"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "分子与原子",
+      explanation: "化学变化中分子先分成原子，原子再重新组合成新的分子，原子种类和数目不变。"
+    },
+    {
+      prompt: "下列事实，用“分子之间有间隔”解释最恰当的是（　）",
+      options: ["糖溶于水看不见了", "热胀冷缩", "阳光下灰尘飞舞", "闻到酒香"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "分子的性质",
+      explanation: "热胀冷缩是分子间间隔随温度变化而改变；糖溶解是分子扩散，灰尘飞舞是宏观运动，酒香是分子运动。"
+    },
+    {
+      prompt: "关于分子、原子的说法，正确的是（　）",
+      options: ["分子大原子小", "分子能构成物质，原子不能", "化学变化中原子重新组合，种类不变", "原子是保持物质化学性质的最小粒子"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "分子与原子",
+      explanation: "化学变化中原子种类和数目不变、重新组合；原子也能直接构成物质；分子原子大小不能简单比较。"
+    },
+    {
+      prompt: "水电解生成氢气和氧气，从分子角度看，发生改变的是（　）",
+      options: ["氢原子和氧原子", "水分子", "原子种类", "原子数目"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "分子与原子",
+      explanation: "水分子分成氢原子和氧原子后重新组合成氢分子、氧分子，原子种类数目都不变，改变的是分子。"
+    },
+    {
+      prompt: "下列现象中，属于分子运动导致的是（　）",
+      options: ["风吹树叶飘", "墨水在水中扩散", "沙尘被风扬起", "石头被水流冲走"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "分子的性质",
+      explanation: "墨水扩散是墨水分子在水中运动的结果；其余是肉眼可见物体的宏观运动。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-09"] = {
+  dayNumber: "09",
+  title: "原子的结构",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "原子已经是“最小”了，它还能再分吗？里面到底是什么？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "上一课说原子是化学变化中的最小粒子，那是“化学变化里不能再分”。可原子自己还有内部结构：它由更小的粒子组成。今天揭开原子内部的面纱。"
+      ]
+    },
+    {
+      title: "原子内部的“三件套”",
+      body: [
+        "原子由居于中心的原子核和核外运动的电子构成。原子核又由带正电的质子和不带电的中子构成。",
+        "三种粒子各带什么电：质子带正电，电子带负电，中子不带电。",
+        "在原子中，质子数 = 核电荷数 = 核外电子数，所以原子整体不显电性。",
+        { text: "记住三个等式：质子数 = 核电荷数 = 核外电子数，原子对外不显电性。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "原子很小，原子核更小",
+      body: [
+        "如果把原子比作一个足球场，原子核大约只有场中央的一粒芝麻那么大，核外电子就在广阔的“场地上”运动。",
+        "所以原子的质量几乎全部集中在原子核上，电子的质量极小，通常忽略不计。"
+      ]
+    },
+    {
+      title: "什么决定了原子是谁？",
+      body: [
+        "质子数（即核电荷数）决定原子的种类。质子数相同的一类原子就是同一种元素。",
+        "核外电子分层排布，其中最外层电子数决定元素的化学性质：最外层电子少的（金属）易失去电子，多的（非金属）易得到电子，达到相对稳定结构。",
+        "这也解释了为什么同族的元素化学性质相似——它们最外层电子数相同。"
+      ]
+    },
+    {
+      title: "相对原子质量：一个方便的比较标准",
+      body: [
+        "原子的真实质量太小，用起来不方便，科学家就以“一种碳原子质量的 1/12”作为标准，把其他原子的质量与之相比，得到的比值就是相对原子质量。",
+        "相对原子质量是一个比值，没有单位（或说单位是“1”）。近似地，相对原子质量 ≈ 质子数 + 中子数。",
+        "例：氧原子有 8 个质子、8 个中子，相对原子质量约为 16。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：原子结构示意图的读法（圆圈内数字是质子数、弧线上的数字是电子层数和各层电子数）、质子数与核外电子数的关系、相对原子质量的计算。",
+        "看到“某原子结构示意图”，先看圆圈内的质子数判断元素种类，再检查质子数是否等于核外电子总数（原子时应相等）。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "原子 = 原子核 + 核外电子；原子核 = 质子（+）+ 中子（0）。质子数 = 核电荷数 = 核外电子数，原子不显电性。质子数决定元素种类，最外层电子数决定化学性质。相对原子质量 ≈ 质子数 + 中子数。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "原子是实心的、不可分割的小球。",
+        verdict: "错",
+        explanation: "原子内部有原子核和核外电子，电子在广阔空间里运动，原子绝大部分是“空的”。"
+      },
+      {
+        statement: "原子中质子数等于核外电子数，所以原子不显电性。",
+        verdict: "对",
+        explanation: "质子的正电荷和电子的负电荷数目相等，相互抵消，原子整体不显电性。"
+      },
+      {
+        statement: "质子数决定原子的种类。",
+        verdict: "对",
+        explanation: "质子数不同就是不同元素；质子数相同则属于同一种元素。"
+      },
+      {
+        statement: "原子的质量主要集中在中子上。",
+        verdict: "错",
+        explanation: "原子的质量几乎全部集中在原子核上（质子和中子），电子质量极小可忽略。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-09"] = {
+  questions: [
+    {
+      prompt: "原子核由哪些粒子构成（　）",
+      options: ["质子和电子", "质子和中子", "中子和电子", "只有质子"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "原子结构",
+      explanation: "原子核由带正电的质子和不带电的中子构成，电子在核外运动。"
+    },
+    {
+      prompt: "原子中质子数与核外电子数（　）",
+      options: ["相等", "质子数多", "电子数多", "没有关系"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "原子结构",
+      explanation: "原子中质子数等于核外电子数，正负电荷抵消，原子不显电性。"
+    },
+    {
+      prompt: "决定原子（元素）种类的是（　）",
+      options: ["中子数", "质子数", "核外电子数", "相对原子质量"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "原子结构",
+      explanation: "质子数（核电荷数）决定原子的种类，质子数不同就是不同元素。"
+    },
+    {
+      prompt: "某原子的质子数为 8，中子数为 8，其相对原子质量约为（　）",
+      options: ["8", "16", "24", "0"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "相对原子质量",
+      explanation: "相对原子质量 ≈ 质子数 + 中子数 = 8 + 8 = 16。"
+    },
+    {
+      prompt: "关于原子核的说法，正确的是（　）",
+      options: ["原子核带负电", "原子核很小，但原子的质量几乎全部集中在原子核上", "原子核中只有中子", "原子核可以再分成分子"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "原子结构",
+      explanation: "原子核带正电、体积很小但集中了原子几乎全部质量；电子质量极小可忽略。"
+    },
+    {
+      prompt: "下列粒子中，带正电的是（　）",
+      options: ["电子", "质子", "中子", "原子核外的电子云"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "原子结构",
+      explanation: "质子带正电，电子带负电，中子不带电。"
+    },
+    {
+      prompt: "相对原子质量是（　）",
+      options: ["原子的实际质量", "一个比值，以碳原子质量的 1/12 为标准比较得出", "原子的体积", "原子核的质量"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "相对原子质量",
+      explanation: "相对原子质量是原子的质量与碳原子质量的 1/12 相比得到的比值，没有实际质量那么大，也无单位。"
+    },
+    {
+      prompt: "决定元素化学性质的主要因素是（　）",
+      options: ["质子数", "中子数", "核外电子数", "最外层电子数"],
+      answer: "3",
+      difficulty: "挑战",
+      topic: "核外电子排布",
+      explanation: "元素化学性质主要由最外层电子数决定，最外层电子数相同的元素化学性质相似。"
+    },
+    {
+      prompt: "氧原子的核电荷数为 8，则氧原子的核外电子数为（　）",
+      options: ["8", "16", "4", "2"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "原子结构",
+      explanation: "质子数（核电荷数）= 核外电子数，所以氧原子核外有 8 个电子。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-10"] = {
+  dayNumber: "10",
+  title: "元素",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "世界上的物质千千万，为什么只需一百多种“积木”就能拼出来？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "地球上的物质成千上万，可组成它们的“积木”——元素——只有一百多种。今天的任务：弄清什么是元素、元素符号怎么读写，以及元素和原子有什么不同。"
+      ]
+    },
+    {
+      title: "什么是元素？",
+      body: [
+        "元素是质子数相同的一类原子的总称。质子数相同，就是同一种元素，不管它的中子数多还是少。",
+        "所以“水由氢、氧两种元素组成”，是说水中所有的氢原子和氧原子分别属于氢元素和氧元素。",
+        { text: "一句话记牢：元素看质子数，质子数相同的原子归为一类，就是同一种元素。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "元素符号：国际通用的“字母名片”",
+      body: [
+        "每种元素有一个国际通用的符号：用它的拉丁文名称的第一个字母（大写）表示，如果与别的元素重名，再加上第二个字母（小写）。",
+        "常见例子：氢 H、氧 O、碳 C、氮 N、钠 Na、铁 Fe、铜 Cu、金 Au。",
+        "书写规则：一大二小——第一个字母大写，若有第二个字母必须小写。写“co”就分不清是钴 Co 还是一氧化碳 CO 了。"
+      ]
+    },
+    {
+      title: "元素周期表：一百多种元素的家谱",
+      body: [
+        "元素周期表把一百多种元素按规律排成一张表。每个格子就是“一个元素”，格子里通常有：原子序数（=质子数）、元素符号、元素名称、相对原子质量。",
+        "周期表按原子序数从小到大排列，同一横行叫一个周期，同一纵列（族）的元素最外层电子数相同、化学性质相似。",
+        "看格子时先找原子序数，它就是质子数，直接决定这是哪种元素。"
+      ]
+    },
+    {
+      title: "地壳里哪些元素最多？",
+      body: [
+        "地壳中含量前四位的元素：氧、硅、铝、铁。口诀可以记“氧硅铝铁”。",
+        "生物体中含量最多的元素是氧；空气中含量最多的元素是氮。",
+        "注意区分“含量最多的元素”和“含量最多的气体”：空气中含量最多的气体是氮气，最多的元素是氮元素（按体积）。"
+      ]
+    },
+    {
+      title: "元素与原子：宏观与微观",
+      body: [
+        "元素是宏观概念，只讲种类不讲个数，用于描述物质的组成；原子是微观概念，既讲种类也讲个数，用于描述分子的构成。",
+        "例：“水由氢元素和氧元素组成”（宏观）；“一个水分子由两个氢原子和一个氧原子构成”（微观）。",
+        "考试陷阱：不能写“水由一个氢分子和一个氧原子构成”——那是把宏观和微观混在一起了。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：元素概念的判断（质子数相同）、元素符号书写正误、元素周期表单元格信息的读取、地壳含量。",
+        "看到“某元素”想质子数；看到“元素符号”想一大二小的书写规则；看到周期表格子，先读原子序数再读相对原子质量。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "元素：质子数相同的一类原子的总称，是宏观概念，讲种类不讲个数。符号：一大二小（如 Na、Fe）。周期表：原子序数=质子数。地壳前四：氧、硅、铝、铁。元素说组成，原子说构成。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "元素是质子数相同的一类原子的总称。",
+        verdict: "对",
+        explanation: "判断是否同一种元素，看质子数是否相同。"
+      },
+      {
+        statement: "二氧化碳由两个氧元素和一个碳元素组成。",
+        verdict: "错",
+        explanation: "元素是宏观概念只讲种类不讲个数，应说“二氧化碳由碳、氧两种元素组成”；个数要用“原子”来说。"
+      },
+      {
+        statement: "元素符号中的第一个字母必须大写，第二个字母必须小写。",
+        verdict: "对",
+        explanation: "这就是“一大二小”的书写规则，如钠 Na、铁 Fe。"
+      },
+      {
+        statement: "地壳中含量最多的元素是氧元素。",
+        verdict: "对",
+        explanation: "地壳中含量前四位的元素是氧、硅、铝、铁，最多的是氧。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-10"] = {
+  questions: [
+    {
+      prompt: "决定元素种类的是（　）",
+      options: ["中子数", "质子数", "核外电子数", "最外层电子数"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "元素概念",
+      explanation: "元素是质子数相同的一类原子的总称，质子数决定元素种类。"
+    },
+    {
+      prompt: "下列元素符号书写正确的是（　）",
+      options: ["hg", "Na", "cu", "FE"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "元素符号",
+      explanation: "书写规则是一大二小：第一个字母大写、第二个字母小写。只有 Na 完全正确，其余三项大小写或第二个字母有误。" 
+    },
+    {
+      prompt: "地壳中含量最多的元素是（　）",
+      options: ["硅", "铝", "氧", "铁"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "元素含量",
+      explanation: "地壳中含量前四位的元素是氧、硅、铝、铁，最多的是氧。"
+    },
+    {
+      prompt: "元素周期表中，一个元素格子里最常出现的信息不包括（　）",
+      options: ["原子序数", "元素符号", "相对原子质量", "原子核内中子个数"],
+      answer: "3",
+      difficulty: "提升",
+      topic: "元素周期表",
+      explanation: "单元格通常给出原子序数、元素符号、元素名称、相对原子质量，一般不直接标中子数。"
+    },
+    {
+      prompt: "元素是宏观概念，下列说法符合的是（　）",
+      options: ["水由两个氢元素和一个氧元素构成", "一个水分子由两个氢原子和一个氧原子构成", "二氧化碳由两个氧元素组成", "铁由铁元素和铁原子两种物质构成"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "元素与原子",
+      explanation: "元素只讲种类不讲个数，讲“构成分子”要用原子且能讲个数，所以选“一个水分子由两个氢原子和一个氧原子构成”。"
+    },
+    {
+      prompt: "氮元素的元素符号是（　）",
+      options: ["N", "Na", "Ne", "Ni"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "元素符号",
+      explanation: "氮元素符号是 N；Na 是钠，Ne 是氖，Ni 是镍。"
+    },
+    {
+      prompt: "同种元素的原子，一定相同的是（　）",
+      options: ["中子数", "质子数", "相对原子质量", "电子层数"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "元素概念",
+      explanation: "同种元素质子数相同；中子数可不同，相对原子质量和电子层数也可能不同。"
+    },
+    {
+      prompt: "下列说法正确的是（　）",
+      options: ["元素既可以讲种类也可以讲个数", "地壳中含量最多的金属元素是铝", "空气中含量最多的元素是氧元素", "元素符号没有大小写规则"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "元素综合",
+      explanation: "地壳含量前四为氧、硅、铝、铁，其中铝是含量最多的金属元素；元素是宏观概念不讲个数。"
+    },
+    {
+      prompt: "元素周期表中，同一纵列（族）的元素（　）",
+      options: ["质子数相同", "相对原子质量相同", "最外层电子数相同，化学性质相似", "中子数相同"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "元素周期表",
+      explanation: "同一族的元素最外层电子数相同，所以化学性质相似；质子数相同是同一元素而非同一族。"
     }
   ]
 };
@@ -605,7 +2069,136 @@ window.ChemLabQuiz["day-02"] = {
     return manifest.filter(function (d) { return d.day === dayKey; })[0];
   }
 
-  // 选项选中态兜底：部分旧版 iPad Safari 不支持 :has()。
+  function moduleIndexFor(dayKey) {
+    var meta = metaFor(dayKey);
+    if (!meta || !meta.module || !window.ChemLabManifest || !window.ChemLabManifest.modules) return 0;
+    var idx = window.ChemLabManifest.modules.findIndex(function (m) { return m.name === meta.module; });
+    return idx < 0 ? 0 : idx;
+  }
+
+  // ---------- 激励层：连续学习天数 / 连击 / 成就 / 薄弱点 ----------
+  var LS_STATS = "chemlab-g9:v3:stats";
+
+  function getStats() {
+    var s = readJSON(LS_STATS) || {};
+    s.achievements = Array.isArray(s.achievements) ? s.achievements : [];
+    s.bestCombo = typeof s.bestCombo === "number" ? s.bestCombo : 0;
+    return s;
+  }
+
+  function saveStats(s) {
+    writeJSON(LS_STATS, { achievements: s.achievements, bestCombo: s.bestCombo, reviewCleared: !!s.reviewCleared });
+  }
+
+  function localDateKey(d) {
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+
+  // 连续学习天数：从今天（若今天未学则从昨天）往前数连续的自然日。
+  function getStreak() {
+    var active = {};
+    manifest.forEach(function (md) {
+      var rec = dayRecord(md.day);
+      if (!rec) return;
+      rec.attempts.forEach(function (a) {
+        if (a.completedAt) active[localDateKey(new Date(a.completedAt))] = true;
+      });
+    });
+    if (!Object.keys(active).length) return 0;
+    var cursor = new Date();
+    if (!active[localDateKey(cursor)]) cursor.setDate(cursor.getDate() - 1);
+    var streak = 0;
+    while (active[localDateKey(cursor)]) {
+      streak += 1;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  }
+
+  // 薄弱知识点：从错题队列聚合题目 topic，按数量排序。
+  function getWeakTopics() {
+    var queue = getReviewQueue();
+    var counts = {};
+    queue.forEach(function (item) {
+      var quiz = getQuiz(item.day);
+      var q = quiz && quiz.questions[item.questionIndex];
+      var topic = (q && q.topic) || "未标注";
+      counts[topic] = (counts[topic] || 0) + 1;
+    });
+    return Object.keys(counts).map(function (t) {
+      return { topic: t, count: counts[t] };
+    }).sort(function (a, b) { return b.count - a.count; }).slice(0, 5);
+  }
+
+  // 成就定义：全部基于本地数据判定，离线可用。
+  var ACHIEVEMENTS = [
+    { id: "first-step", ico: "★", name: "迈出第一步", desc: "完成任意一天的学习" },
+    { id: "days-5",     ico: "◆", name: "坚持五关",   desc: "累计完成 5 天学习" },
+    { id: "all-correct",ico: "✔", name: "一次全对",   desc: "某次测验拿到满分" },
+    { id: "challenge",  ico: "♛", name: "挑战者",     desc: "全对且包含挑战题" },
+    { id: "combo-5",    ico: "▲", name: "连击高手",   desc: "单次连对 5 题" },
+    { id: "streak-3",   ico: "✦", name: "三天不断",   desc: "连续学习 3 天" },
+    { id: "streak-7",   ico: "❖", name: "一周坚持",   desc: "连续学习 7 天" },
+    { id: "review-clear", ico: "●", name: "错题清零", desc: "完成一轮错题复习" }
+  ];
+
+  function evaluateAchievements(progress, stats) {
+    var unlocked = {};
+    stats.achievements.forEach(function (id) { unlocked[id] = true; });
+    var completedCount = Object.keys(progress).length;
+    if (completedCount >= 1) unlocked["first-step"] = true;
+    if (completedCount >= 5) unlocked["days-5"] = true;
+    var hasFull = false, hasFullChallenge = false, maxCombo = stats.bestCombo;
+    Object.keys(progress).forEach(function (key) {
+      var rec = progress[key];
+      rec.attempts.forEach(function (a) {
+        if (a.score === a.total) {
+          hasFull = true;
+          var quiz = getQuiz(key);
+          var hasChallenge = quiz && quiz.questions.some(function (q) { return q.difficulty === "挑战"; });
+          if (hasChallenge) hasFullChallenge = true;
+        }
+      });
+    });
+    if (hasFull) unlocked["all-correct"] = true;
+    if (hasFullChallenge) unlocked["challenge"] = true;
+    if (maxCombo >= 5) unlocked["combo-5"] = true;
+    if (getStreak() >= 3) unlocked["streak-3"] = true;
+    if (getStreak() >= 7) unlocked["streak-7"] = true;
+    if (stats.reviewCleared) unlocked["review-clear"] = true;
+
+    // 更新已解锁列表（持久化，避免重复判定造成闪烁）。
+    var changed = false;
+    ACHIEVEMENTS.forEach(function (a) {
+      if (unlocked[a.id] && stats.achievements.indexOf(a.id) === -1) {
+        stats.achievements.push(a.id);
+        changed = true;
+      }
+    });
+    if (changed) saveStats(stats);
+    return ACHIEVEMENTS.map(function (a) {
+      return { id: a.id, ico: a.ico, name: a.name, desc: a.desc, unlocked: !!unlocked[a.id] };
+    });
+  }
+
+  function miniChart(attempts, modClass) {
+    if (attempts.length < 2) return "";
+    var n = attempts.length;
+    var w = 100, h = 20, pad = 3;
+    var max = Math.max(1, attempts[0].total);
+    var step = n > 1 ? (w - pad * 2) / (n - 1) : 0;
+    var points = attempts.map(function (a, i) {
+      var x = pad + i * step;
+      var y = h - pad - (a.score / max) * (h - pad * 2);
+      return x.toFixed(1) + "," + y.toFixed(1);
+    });
+    return '<svg class="mini-chart" viewBox="0 0 ' + w + " " + h + '" aria-hidden="true"><polyline points="' + points.join(" ") + '"/></svg>';
+  }
+
+  // 选项选中态兜底：部分旧版 iPad Safari 不支持 :has()；同时更新练习区进度条。
   function bindOptionSelection() {
     document.querySelectorAll(".option input").forEach(function (input) {
       input.addEventListener("change", function () {
@@ -615,6 +2208,16 @@ window.ChemLabQuiz["day-02"] = {
           label.classList.remove("selected");
         });
         input.closest(".option").classList.add("selected");
+
+        var form = document.querySelector("#quiz-form");
+        if (form) {
+          var checked = form.querySelectorAll("input:checked").length;
+          var all = form.querySelectorAll(".question").length;
+          var fill = document.querySelector("#qp-fill");
+          var txt = document.querySelector("#qp-text");
+          if (fill && all) fill.style.width = Math.round((checked / all) * 100) + "%";
+          if (txt) txt.textContent = "已答 " + checked + " / " + all;
+        }
       });
     });
   }
@@ -676,40 +2279,55 @@ window.ChemLabQuiz["day-02"] = {
     return svgParts.svg(w, h, inner);
   }
 
-  // ---------- 首页：进度总览 + 学习日导航 ----------
+  // ---------- 首页：进度总览 + 激励区 + 学习日导航 ----------
   function renderHome() {
     var progress = getProgress();
     var completedCount = Object.keys(progress).length;
     var total = manifest.length;
     var percent = total ? Math.round((completedCount / total) * 100) : 0;
     var reviewQueue = getReviewQueue();
+    var stats = getStats();
+    var streak = getStreak();
+    var weakTopics = getWeakTopics();
+    var achievements = evaluateAchievements(progress, stats);
 
     var cards = manifest.map(function (d) {
       var record = progress[d.day];
       var statusText = "未开始";
-      var stateClass = "day-card";
+      var stateClass = "day-card mod-" + moduleIndexFor(d.day);
+      var checkMark = "";
       if (!d.ready) {
         statusText = "开发中";
-        stateClass = "day-card is-locked";
+        stateClass += " is-locked";
       } else if (record) {
         var latest = record.attempts[record.attempts.length - 1];
-        statusText = "已完成 · 最佳 " + record.best + "/" + latest.total +
+        statusText = "最佳 " + record.best + "/" + latest.total +
           (record.attempts.length > 1 ? " · 尝试 " + record.attempts.length + " 次" : "");
-        stateClass = "day-card is-done";
+        stateClass += " is-done";
+        checkMark = '<span class="day-check" aria-hidden="true">✔</span>';
       }
 
       var label =
         '<span class="day-num">DAY ' + d.day + "</span>" +
         '<span class="day-title">' + escapeHtml(d.title) + "</span>" +
-        '<span class="day-status">' + statusText + "</span>";
+        '<span class="day-status">' + statusText + "</span>" +
+        miniChart(record ? record.attempts : [], "mod-" + moduleIndexFor(d.day));
 
       if (d.ready) {
-        return '<li class="' + stateClass + '"><a class="day-card-link" href="?day=' + d.day + '">' + label + "</a></li>";
+        return '<li class="' + stateClass + '"><a class="day-card-link" href="?day=' + d.day + '">' + checkMark + label + "</a></li>";
       }
-      return '<li class="' + stateClass + '"><span class="day-card-link is-disabled" aria-disabled="true">' + label + "</span></li>";
+      return '<li class="' + stateClass + '"><span class="day-card-link is-disabled" aria-disabled="true">' + checkMark + label + "</span></li>";
     }).join("");
 
     var moduleBars = renderModuleProgress(progress);
+
+    var weakBlock = weakTopics.length
+      ? '<div class="weak-tags" role="list" aria-label="薄弱知识点">' +
+          weakTopics.map(function (w) {
+            return '<span class="weak-tag" role="listitem">薄弱：' + escapeHtml(w.topic) + " <b>" + w.count + "</b></span>";
+          }).join("") +
+        "</div>"
+      : "";
 
     var reviewBlock = reviewQueue.length
       ? '<section class="section">' +
@@ -719,18 +2337,46 @@ window.ChemLabQuiz["day-02"] = {
         "</section>"
       : "";
 
+    var achievedCount = achievements.filter(function (a) { return a.unlocked; }).length;
+    var badgeWall =
+      '<section class="section">' +
+        "<h2>成就徽章 <span class='hint' style='font-weight:400;font-size:.85rem'>已点亮 " + achievedCount + " / " + achievements.length + "</span></h2>" +
+        '<div class="badge-wall">' +
+          achievements.map(function (a) {
+            var cls = "badge-item" + (a.unlocked ? "" : " is-locked");
+            var ico = a.unlocked ? a.ico : "?";
+            return (
+              '<div class="' + cls + '"' + (a.unlocked ? "" : ' aria-hidden="true"') + ">" +
+                '<span class="b-ico b-ico-' + ACHIEVEMENTS.map(function (x) { return x.id; }).indexOf(a.id) + '">' + ico + "</span>" +
+                '<span class="b-name">' + escapeHtml(a.name) + "</span>" +
+                '<span class="b-desc">' + escapeHtml(a.desc) + "</span>" +
+              "</div>"
+            );
+          }).join("") +
+        "</div>" +
+      "</section>";
+
+    var statsStrip =
+      '<div class="stats-strip">' +
+        '<span class="stat-chip">连续学习 <b>' + streak + "</b> 天</span>" +
+        '<span class="stat-chip">最高连对 <b>' + stats.bestCombo + "</b> 题</span>" +
+        '<span class="stat-chip">待复习 <b>' + reviewQueue.length + "</b> 题</span>" +
+      "</div>" + weakBlock;
+
     app.innerHTML =
       '<div class="page">' +
         '<header class="hero">' +
           '<p class="eyebrow">CHEMLAB-G9</p>' +
           "<h1>九年级化学 · 30 天自学计划</h1>" +
-          '<p class="meta">已完成 ' + completedCount + " / " + total + " 天</p>" +
+          '<p class="meta">已完成 ' + completedCount + " / " + total + " 天 · 完成率 " + percent + "%</p>" +
           '<div class="progress-bar" role="progressbar" aria-label="学习进度" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + completedCount + '">' +
             '<div class="progress-bar-fill" style="width:' + percent + '%"></div>' +
           "</div>" +
+          statsStrip +
         "</header>" +
         reviewBlock +
-        (moduleBars ? '<section class="section"><h2>模块进度</h2>' + moduleBars + "</section>" : "") +
+        badgeWall +
+        (moduleBars ? '<section class="section mod-section"><h2>模块进度</h2>' + moduleBars + "</section>" : "") +
         '<section class="section">' +
           "<h2>选择学习日</h2>" +
           '<ul class="day-grid">' + cards + "</ul>" +
@@ -738,17 +2384,17 @@ window.ChemLabQuiz["day-02"] = {
       "</div>";
   }
 
-  // 按模块统计完成情况，渲染成小环形图 + 名称 + 已完成数。
+  // 按模块统计完成情况，渲染成可展开列表（环形图 + 名称 + 该模块每天明细）。
   function renderModuleProgress(progress) {
     if (!window.ChemLabManifest || !window.ChemLabManifest.modules) return "";
     var modules = window.ChemLabManifest.modules;
-    return modules.map(function (mod) {
+    return modules.map(function (mod, idx) {
       var daysInMod = manifest.filter(function (d) {
         return d.module === mod.name;
       });
       if (!daysInMod.length) return "";
       var done = daysInMod.filter(function (d) { return progress[d.day]; }).length;
-      var frac = done / daysInMod.length;
+      var frac = daysInMod.length ? done / daysInMod.length : 0;
       var R = 16, C = 2 * Math.PI * R;
       var ring =
         '<svg class="mod-ring" viewBox="0 0 40 40" role="img" aria-label="' +
@@ -757,11 +2403,19 @@ window.ChemLabQuiz["day-02"] = {
           '<circle cx="20" cy="20" r="' + R + '" class="ring-fg" stroke-dasharray="' +
             (frac * C) + " " + C + '" transform="rotate(-90 20 20)"/>' +
         "</svg>";
+      var dayList = daysInMod.map(function (d) {
+        var rec = progress[d.day];
+        var st = !d.ready ? "开发中" : (rec ? "最佳 " + rec.best + "/" + rec.attempts[0].total : "未开始");
+        return "<li><span>DAY " + d.day + " · " + escapeHtml(d.title) + "</span><b>" + st + "</b></li>";
+      }).join("");
       return (
-        '<div class="mod-row">' + ring +
-          '<span class="mod-name">' + escapeHtml(mod.name) + "</span>" +
-          '<span class="mod-count">' + done + " / " + daysInMod.length + "</span>" +
-        "</div>"
+        '<details class="mod-block mod-' + idx + '">' +
+          "<summary>" + ring +
+            '<span class="mod-name">' + escapeHtml(mod.name) + "</span>" +
+            '<span class="mod-count">' + done + " / " + daysInMod.length + "</span>" +
+          "</summary>" +
+          '<ul class="mod-days">' + dayList + "</ul>" +
+        "</details>"
       );
     }).join("");
   }
@@ -792,7 +2446,8 @@ window.ChemLabQuiz["day-02"] = {
     var renderers = {
       "cylinder-reading": figCylinderReading,   // 量筒读数视角对比（可切换）
       "airtight-test": figAirtightTest,          // 检查装置气密性（气泡动画）
-      "graduated-cylinder": figGraduatedCylinder // 量筒静态示意
+      "graduated-cylinder": figGraduatedCylinder, // 量筒静态示意
+      "air-composition": figAirComposition       // 空气成分环形图
     };
     var fn = renderers[fig.type];
     if (!fn) return "";
@@ -936,6 +2591,41 @@ window.ChemLabQuiz["day-02"] = {
     return html;
   }
 
+  // 空气成分环形图：按体积分数绘制，配图例。
+  function figAirComposition(fig) {
+    var cx = 90, cy = 90, r = 58;
+    var C = 2 * Math.PI * r;
+    var segs = [
+      { label: "氮气", pct: "78%", v: 0.78, color: "#4aa7a0" },
+      { label: "氧气", pct: "21%", v: 0.21, color: "#e67b32" },
+      { label: "稀有气体", pct: "0.94%", v: 0.0094, color: "#8a9ba8" },
+      { label: "二氧化碳", pct: "0.03%", v: 0.0003, color: "#6b5ba8" },
+      { label: "其他气体和杂质", pct: "0.03%", v: 0.0003, color: "#c2534f" }
+    ];
+    var offset = 0;
+    var rings = segs.map(function (s) {
+      var len = Math.max(s.v * C, 0.5);
+      var dash = len + " " + C;
+      var seg = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + s.color +
+        '" stroke-width="20" stroke-dasharray="' + dash + '" stroke-dashoffset="' + (-offset) +
+        '" transform="rotate(-90 ' + cx + " " + cy + ')" opacity="0.92"/>';
+      offset += len;
+      return seg;
+    }).join("");
+    var legend = segs.map(function (s) {
+      return (
+        '<div class="air-legend"><span class="swatch" style="background:' + s.color + '"></span>' +
+        "<span>" + s.label + " · " + s.pct + "</span></div>"
+      );
+    }).join("");
+    return (
+      '<div class="air-wrap">' +
+        figSvg(180, 180, rings) +
+        '<div class="air-legend-box" role="list" aria-label="空气成分">' + legend + "</div>" +
+      "</div>"
+    );
+  }
+
   // ---------- 加载并渲染某一天 ----------
   function renderDay(dayKey) {
     var meta = metaFor(dayKey);
@@ -979,7 +2669,13 @@ window.ChemLabQuiz["day-02"] = {
       var safetyBadge = section.safety
         ? '<span class="badge badge-safety">⚠️ 需成人陪同</span> '
         : "";
-      var body = section.body.map(function (p) { return "<p>" + escapeHtml(p) + "</p>"; }).join("");
+      var body = section.body.map(function (p) {
+        if (p && typeof p === "object" && p.text) {
+          var kindClass = p.kind === "takeaway" ? " takeaway" : (p.kind === "note" ? " note-block" : "");
+          return '<p class="' + kindClass.trim() + '">' + escapeHtml(p.text) + "</p>";
+        }
+        return "<p>" + escapeHtml(p) + "</p>";
+      }).join("");
       var figure = section.figure ? renderFigure(section.figure) : "";
       return (
         '<section class="section">' +
@@ -1007,9 +2703,11 @@ window.ChemLabQuiz["day-02"] = {
       : "";
 
     var questions = quiz.questions.map(function (q, index) {
-      var diffBadge = q.difficulty
-        ? '<span class="q-diff" data-diff="' + escapeHtml(q.difficulty) + '">' + escapeHtml(q.difficulty) + "</span>"
-        : "";
+      var tags =
+        '<span class="q-tags">' +
+          (q.difficulty ? '<span class="q-diff" data-diff="' + escapeHtml(q.difficulty) + '">' + escapeHtml(q.difficulty) + "</span>" : "") +
+          (q.topic ? '<span class="q-topic">' + escapeHtml(q.topic) + "</span>" : "") +
+        "</span>";
       var options = q.options.map(function (option, optionIndex) {
         return (
           '<label class="option"><input type="radio" name="q' + index + '" value="' + optionIndex + '"> ' +
@@ -1018,11 +2716,13 @@ window.ChemLabQuiz["day-02"] = {
       }).join("");
       return (
         '<fieldset class="question" data-answer="' + escapeHtml(q.answer) + '" data-explanation="' + escapeHtml(q.explanation) + '">' +
-          "<legend>" + diffBadge + "<strong>" + (index + 1) + ". " + escapeHtml(q.prompt) + "</strong></legend>" +
+          "<legend>" + tags + "<strong>" + (index + 1) + ". " + escapeHtml(q.prompt) + "</strong></legend>" +
           options +
         "</fieldset>"
       );
     }).join("");
+
+    var totalQ = quiz.questions.length;
 
     app.innerHTML =
       '<div class="page">' +
@@ -1044,6 +2744,10 @@ window.ChemLabQuiz["day-02"] = {
           "<h2>今日练习</h2>" +
           '<p class="hint">先独立作答，再查看解析。</p>' +
           '<form id="quiz-form" novalidate>' +
+            '<div class="quiz-progress" aria-hidden="true">' +
+              '<span class="qp-text" id="qp-text">已答 0 / ' + totalQ + "</span>" +
+              '<span class="qp-bar"><span class="qp-fill" id="qp-fill" style="width:0%"></span></span>' +
+            "</div>" +
             questions +
             '<p id="quiz-warning" class="hint warning" hidden>还有题目未作答，请全部完成后再提交。</p>' +
             '<button class="primary" type="submit">提交并查看解析</button>' +
@@ -1145,25 +2849,46 @@ window.ChemLabQuiz["day-02"] = {
       var score = 0;
       var answers = [];
       var wrongItems = [];
+      var combo = 0, maxCombo = 0;
 
       fields.forEach(function (field, index) {
         var selected = field.querySelector("input:checked");
         var correct = selected && selected.value === field.dataset.answer;
         if (correct) {
           score += 1;
+          combo += 1;
+          if (combo > maxCombo) maxCombo = combo;
         } else {
+          combo = 0;
           wrongItems.push({ day: dayKey, questionIndex: index });
         }
         answers[index] = selected ? selected.value : null;
 
+        // 标记选项：正确项高亮、选错的项标红。
+        field.querySelectorAll(".option").forEach(function (label, oi) {
+          if (String(oi) === field.dataset.answer) label.classList.add("is-marked");
+          var input = label.querySelector("input");
+          if (selected && input && input.checked) {
+            label.classList.add(correct ? "is-correct" : "is-wrong");
+          }
+          if (input) input.disabled = true;
+        });
+
         var existing = field.querySelector(".feedback");
         if (existing) existing.remove();
         var note = document.createElement("p");
-        note.className = "hint feedback";
+        note.className = "hint feedback " + (correct ? "fb-ok" : "fb-ko");
         note.setAttribute("role", "status");
         note.textContent = (correct ? "回答正确。" : "再想一想。") + field.dataset.explanation;
         field.append(note);
       });
+
+      // 连击记录：更新本地最高连对。
+      var stats = getStats();
+      if (maxCombo > stats.bestCombo) {
+        stats.bestCombo = maxCombo;
+        saveStats(stats);
+      }
 
       // 尝试历史：同一题多次作答记录为 attempts 数组，不再覆盖。
       var record = dayRecord(dayKey) || { attempts: [] };
@@ -1190,7 +2915,8 @@ window.ChemLabQuiz["day-02"] = {
 
       var result = document.querySelector("#result");
       result.textContent = "本次得分：" + score + " / " + quiz.questions.length +
-        "。已保存本地学习记录" + (wrongItems.length ? "，有 " + wrongItems.length + " 道题进入复习队列。" : "，全部答对！");
+        "，连对 " + maxCombo + " 题。" + (wrongItems.length ? "有 " + wrongItems.length + " 道题进入复习队列。" : "全部答对！") +
+        "已保存本地学习记录。";
       result.focus();
     });
   }
@@ -1326,14 +3052,33 @@ window.ChemLabQuiz["day-02"] = {
           });
         }
 
+        // 选项标记：正确项高亮、选错的项标红。
+        field.querySelectorAll(".option").forEach(function (label, oi) {
+          if (q && String(oi) === q.answer) label.classList.add("is-marked");
+          var input = label.querySelector("input");
+          if (selected && input && input.checked) {
+            label.classList.add(correct ? "is-correct" : "is-wrong");
+          }
+          if (input) input.disabled = true;
+        });
+
         var existing = field.querySelector(".feedback");
         if (existing) existing.remove();
         var note = document.createElement("p");
-        note.className = "hint feedback";
+        note.className = "hint feedback " + (correct ? "fb-ok" : "fb-ko");
         note.setAttribute("role", "status");
         note.textContent = (correct ? "回答正确。" : "再想一想。") + (q ? q.explanation : "");
         field.append(note);
       });
+
+      // 复习后错题清零 → 点亮"错题清零"成就。
+      if (correctCount > 0 && !queue.length) {
+        var rStats = getStats();
+        if (!rStats.reviewCleared) {
+          rStats.reviewCleared = true;
+          saveStats(rStats);
+        }
+      }
 
       writeJSON(LS_REVIEW, queue);
 

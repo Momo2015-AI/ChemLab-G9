@@ -88,6 +88,10 @@ function setSearch(s) {
   context.window.location.search = s;
 }
 
+function questionCount(htmlStr) {
+  return (htmlStr.match(/<fieldset class="question"/g) || []).length;
+}
+
 // 先加载 manifest + 各天内容，再单独运行 app.js（方便按场景重跑）。
 scripts.slice(0, -1).forEach((code, i) => {
   vm.runInNewContext(code, context, { filename: "inline-script-" + i });
@@ -100,14 +104,17 @@ const home = appEl.innerHTML;
 assert(home.includes("30 天自学计划"), "渲染 30 天学习计划标题");
 assert((home.match(/<li class="day-card/g) || []).length === 30, "渲染 30 张学习日卡片");
 assert(home.includes("已完成 0 / 30 天"), "初始进度为 0/30");
-assert(!home.includes("错题复习"), "空复习队列时不显示复习入口");
+assert(home.includes('class="stats-strip"'), "渲染统计条（连续天数/最高连对/待复习）");
+assert(home.includes("成就徽章") && home.includes("badge-wall"), "渲染成就徽章墙");
+assert(home.includes("模块进度") && home.includes("mod-block"), "渲染可展开模块进度");
+assert(!home.includes("开始错题复习"), "空复习队列时不显示复习入口");
 
 console.log("\n[Day01 学习页]");
 setSearch("?day=01");
 runApp();
 let page = appEl.innerHTML;
 assert(page.includes("今日练习") && page.includes("提交并查看解析"), "渲染练习表单");
-assert((page.match(/<fieldset class="question"/g) || []).length === 3, "Day01 渲染 3 道题");
+assert(questionCount(page) === 3, "Day01 渲染 3 道题");
 assert(page.includes("情境自测"), "渲染情境自测");
 assert(page.includes("今日知识卡片"), "渲染今日知识卡片");
 
@@ -117,11 +124,33 @@ runApp();
 page = appEl.innerHTML;
 assert(page.includes("fig-cyl") && page.includes("量筒读数"), "Day02 渲染量筒读数交互图");
 assert(page.includes("fig-air"), "Day02 渲染气密性检查图");
-assert((page.match(/<fieldset class="question"/g) || []).length === 16, "Day02 渲染 16 道题");
+assert(questionCount(page) === 16, "Day02 渲染 16 道题");
 assert(page.includes('data-diff="提升"'), "渲染题目难度标签");
 
-console.log("\n[未开发的天]");
+console.log("\n[Day03-04 学习页]");
 setSearch("?day=03");
+runApp();
+page = appEl.innerHTML;
+assert(questionCount(page) === 6, "Day03 渲染 6 道题");
+assert(page.includes("情境自测"), "Day03 渲染情境自测");
+setSearch("?day=04");
+runApp();
+page = appEl.innerHTML;
+assert(page.includes("air-wrap") && page.includes("空气成分"), "Day04 渲染空气成分环形图");
+assert(questionCount(page) === 8, "Day04 渲染 8 道题");
+
+console.log("\n[Day05-10 学习页]");
+const expected = { "05": 8, "06": 9, "07": 10, "08": 8, "09": 9, "10": 9 };
+Object.keys(expected).forEach((key) => {
+  setSearch("?day=" + key);
+  runApp();
+  page = appEl.innerHTML;
+  assert(questionCount(page) === expected[key], "Day" + key + " 渲染 " + expected[key] + " 道题");
+  assert(page.includes("情境自测"), "Day" + key + " 渲染情境自测");
+});
+
+console.log("\n[未开发的天]");
+setSearch("?day=11");
 runApp();
 page = appEl.innerHTML;
 assert(page.includes("还在开发中"), "未开发天显示开发中提示");

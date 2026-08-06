@@ -6,6 +6,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["烧杯", "量筒", "试管", "集气瓶"],
       answer: "1",
       difficulty: "基础",
+      topic: "仪器识别",
       explanation: "量筒用来量取一定体积的液体；烧杯用于盛放和加热较多量液体，试管用于少量试剂。"
     },
     {
@@ -13,6 +14,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["5 mL", "1--2 mL", "填满容器", "越多越好"],
       answer: "1",
       difficulty: "基础",
+      topic: "药品取用",
       explanation: "按最少量取用，液体一般取 1--2 mL，固体只需铺满试管底部。"
     },
     {
@@ -20,6 +22,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["用手直接接触化学试剂", "把鼻孔凑到容器口闻气体气味", "穿实验服、戴护目镜做实验", "在实验室里吃零食"],
       answer: "2",
       difficulty: "基础",
+      topic: "实验室安全",
       explanation: "做实验应穿实验服、戴护目镜；不能用手接触试剂、把鼻孔凑到容器口闻气味，也不能在实验室吃东西。"
     },
     {
@@ -27,6 +30,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["用嘴吹灭酒精灯", "向燃着的酒精灯里添加酒精", "用灯帽盖灭酒精灯", "用酒精灯去引燃另一盏酒精灯"],
       answer: "2",
       difficulty: "基础",
+      topic: "加热操作",
       explanation: "熄灭酒精灯必须用灯帽盖灭，不可用嘴吹灭，也绝不可向燃着的灯里加酒精或用它引燃另一盏灯。"
     },
     {
@@ -34,6 +38,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["大于 8 mL", "小于 8 mL", "等于 8 mL", "无法确定"],
       answer: "0",
       difficulty: "提升",
+      topic: "量筒读数",
       explanation: "仰视读数偏小，会使实际量取的液体体积偏大，即大于 8 mL。"
     },
     {
@@ -41,6 +46,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["外侧", "手心", "上方", "任意方向都可以"],
       answer: "1",
       difficulty: "基础",
+      topic: "药品取用",
       explanation: "标签朝向手心，防止流出的液体沿瓶壁流下腐蚀标签。"
     },
     {
@@ -48,6 +54,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["先用手紧握容器外壁，再把导管伸入水中", "先把导管一端伸入水中，再用手紧握容器外壁，观察是否有气泡冒出", "直接加热容器观察", "往容器里倒水观察是否漏水"],
       answer: "1",
       difficulty: "基础",
+      topic: "装置气密性",
       explanation: "标准做法：先把导管伸入水中，再用手紧握容器外壁，若导管口有气泡冒出且松手后水柱不回落，则装置不漏气。"
     },
     {
@@ -55,6 +62,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["试管", "蒸发皿", "燃烧匙", "量筒"],
       answer: "3",
       difficulty: "基础",
+      topic: "仪器识别",
       explanation: "量筒只能量取液体，不能加热；试管、蒸发皿、燃烧匙可直接加热。"
     },
     {
@@ -62,6 +70,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["可以对着自己", "可以对着旁边的人", "不要对着自己或他人", "朝向无所谓"],
       answer: "2",
       difficulty: "基础",
+      topic: "加热操作",
       explanation: "加热液体时试管口不能对着自己或他人，以免液体沸腾喷出伤人。"
     },
     {
@@ -69,6 +78,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["聚成水滴", "成股流下", "既不聚成水滴，也不成股流下", "完全蒸发干"],
       answer: "2",
       difficulty: "基础",
+      topic: "仪器洗涤",
       explanation: "洗干净的标准是内壁附着的水既不聚成水滴，也不成股流下。"
     },
     {
@@ -76,6 +86,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["爆炸品", "腐蚀品", "易燃气体", "放射性物品"],
       answer: "1",
       difficulty: "提升",
+      topic: "危险品标志",
       explanation: "浓氨水具有腐蚀性，对应的危险化学品标志是腐蚀品。"
     },
     {
@@ -83,6 +94,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["直接把导管用力塞进去", "先把导管口用水润湿，再稍稍用力转动插入", "用酒精灯把导管加热变软后再插入", "把乳胶管剪短一点再套上"],
       answer: "1",
       difficulty: "基础",
+      topic: "仪器连接",
       explanation: "先用水润湿导管口，再稍稍用力转动插入，可以减小摩擦、防止玻璃管破裂。"
     },
     {
@@ -90,6 +102,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["立即用冷水冲洗", "用试管刷用力刷洗", "待冷却后再洗涤", "随手扔进垃圾桶"],
       answer: "2",
       difficulty: "基础",
+      topic: "仪器洗涤",
       explanation: "刚加热过的试管不能立即用冷水冲洗，骤冷骤热容易使玻璃炸裂，应待其冷却后再洗涤。"
     },
     {
@@ -97,6 +110,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["向上", "略向下倾斜", "水平", "朝向自己"],
       answer: "1",
       difficulty: "提升",
+      topic: "加热操作",
       explanation: "加热固体时试管口略向下倾斜，防止固体受热时生成的水回流到试管底部使试管炸裂。"
     },
     {
@@ -104,6 +118,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["用药匙把粉末直接倒进直立试管", "用镊子夹取", "把试管横放，用药匙或纸槽将粉末送到试管底部，再慢慢竖起试管", "用手把粉末塞进试管"],
       answer: "2",
       difficulty: "提升",
+      topic: "药品取用",
       explanation: "取用粉末状固体要「一横二送三直立」：试管横放，用药匙或纸槽把粉末送到试管底部，再慢慢竖起来。"
     },
     {
@@ -111,6 +126,7 @@ window.ChemLabQuiz["day-02"] = {
       options: ["给试管加热时，先均匀预热，后固定加热", "量取液体时，先倾倒到接近所需体积，后用胶头滴管滴加", "连接导管与乳胶管时，先把导管口润湿，后用力插入", "使用胶头滴管吸液时，先把滴管伸入液体中，后挤压橡胶帽"],
       answer: "3",
       difficulty: "挑战",
+      topic: "操作顺序",
       explanation: "使用胶头滴管时应先挤压橡胶帽排出空气，再伸入液体中松手吸取，不能先伸入液体再挤压。"
     }
   ]

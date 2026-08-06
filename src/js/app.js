@@ -87,7 +87,136 @@
     return manifest.filter(function (d) { return d.day === dayKey; })[0];
   }
 
-  // 选项选中态兜底：部分旧版 iPad Safari 不支持 :has()。
+  function moduleIndexFor(dayKey) {
+    var meta = metaFor(dayKey);
+    if (!meta || !meta.module || !window.ChemLabManifest || !window.ChemLabManifest.modules) return 0;
+    var idx = window.ChemLabManifest.modules.findIndex(function (m) { return m.name === meta.module; });
+    return idx < 0 ? 0 : idx;
+  }
+
+  // ---------- 激励层：连续学习天数 / 连击 / 成就 / 薄弱点 ----------
+  var LS_STATS = "chemlab-g9:v3:stats";
+
+  function getStats() {
+    var s = readJSON(LS_STATS) || {};
+    s.achievements = Array.isArray(s.achievements) ? s.achievements : [];
+    s.bestCombo = typeof s.bestCombo === "number" ? s.bestCombo : 0;
+    return s;
+  }
+
+  function saveStats(s) {
+    writeJSON(LS_STATS, { achievements: s.achievements, bestCombo: s.bestCombo, reviewCleared: !!s.reviewCleared });
+  }
+
+  function localDateKey(d) {
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+
+  // 连续学习天数：从今天（若今天未学则从昨天）往前数连续的自然日。
+  function getStreak() {
+    var active = {};
+    manifest.forEach(function (md) {
+      var rec = dayRecord(md.day);
+      if (!rec) return;
+      rec.attempts.forEach(function (a) {
+        if (a.completedAt) active[localDateKey(new Date(a.completedAt))] = true;
+      });
+    });
+    if (!Object.keys(active).length) return 0;
+    var cursor = new Date();
+    if (!active[localDateKey(cursor)]) cursor.setDate(cursor.getDate() - 1);
+    var streak = 0;
+    while (active[localDateKey(cursor)]) {
+      streak += 1;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  }
+
+  // 薄弱知识点：从错题队列聚合题目 topic，按数量排序。
+  function getWeakTopics() {
+    var queue = getReviewQueue();
+    var counts = {};
+    queue.forEach(function (item) {
+      var quiz = getQuiz(item.day);
+      var q = quiz && quiz.questions[item.questionIndex];
+      var topic = (q && q.topic) || "未标注";
+      counts[topic] = (counts[topic] || 0) + 1;
+    });
+    return Object.keys(counts).map(function (t) {
+      return { topic: t, count: counts[t] };
+    }).sort(function (a, b) { return b.count - a.count; }).slice(0, 5);
+  }
+
+  // 成就定义：全部基于本地数据判定，离线可用。
+  var ACHIEVEMENTS = [
+    { id: "first-step", ico: "★", name: "迈出第一步", desc: "完成任意一天的学习" },
+    { id: "days-5",     ico: "◆", name: "坚持五关",   desc: "累计完成 5 天学习" },
+    { id: "all-correct",ico: "✔", name: "一次全对",   desc: "某次测验拿到满分" },
+    { id: "challenge",  ico: "♛", name: "挑战者",     desc: "全对且包含挑战题" },
+    { id: "combo-5",    ico: "▲", name: "连击高手",   desc: "单次连对 5 题" },
+    { id: "streak-3",   ico: "✦", name: "三天不断",   desc: "连续学习 3 天" },
+    { id: "streak-7",   ico: "❖", name: "一周坚持",   desc: "连续学习 7 天" },
+    { id: "review-clear", ico: "●", name: "错题清零", desc: "完成一轮错题复习" }
+  ];
+
+  function evaluateAchievements(progress, stats) {
+    var unlocked = {};
+    stats.achievements.forEach(function (id) { unlocked[id] = true; });
+    var completedCount = Object.keys(progress).length;
+    if (completedCount >= 1) unlocked["first-step"] = true;
+    if (completedCount >= 5) unlocked["days-5"] = true;
+    var hasFull = false, hasFullChallenge = false, maxCombo = stats.bestCombo;
+    Object.keys(progress).forEach(function (key) {
+      var rec = progress[key];
+      rec.attempts.forEach(function (a) {
+        if (a.score === a.total) {
+          hasFull = true;
+          var quiz = getQuiz(key);
+          var hasChallenge = quiz && quiz.questions.some(function (q) { return q.difficulty === "挑战"; });
+          if (hasChallenge) hasFullChallenge = true;
+        }
+      });
+    });
+    if (hasFull) unlocked["all-correct"] = true;
+    if (hasFullChallenge) unlocked["challenge"] = true;
+    if (maxCombo >= 5) unlocked["combo-5"] = true;
+    if (getStreak() >= 3) unlocked["streak-3"] = true;
+    if (getStreak() >= 7) unlocked["streak-7"] = true;
+    if (stats.reviewCleared) unlocked["review-clear"] = true;
+
+    // 更新已解锁列表（持久化，避免重复判定造成闪烁）。
+    var changed = false;
+    ACHIEVEMENTS.forEach(function (a) {
+      if (unlocked[a.id] && stats.achievements.indexOf(a.id) === -1) {
+        stats.achievements.push(a.id);
+        changed = true;
+      }
+    });
+    if (changed) saveStats(stats);
+    return ACHIEVEMENTS.map(function (a) {
+      return { id: a.id, ico: a.ico, name: a.name, desc: a.desc, unlocked: !!unlocked[a.id] };
+    });
+  }
+
+  function miniChart(attempts, modClass) {
+    if (attempts.length < 2) return "";
+    var n = attempts.length;
+    var w = 100, h = 20, pad = 3;
+    var max = Math.max(1, attempts[0].total);
+    var step = n > 1 ? (w - pad * 2) / (n - 1) : 0;
+    var points = attempts.map(function (a, i) {
+      var x = pad + i * step;
+      var y = h - pad - (a.score / max) * (h - pad * 2);
+      return x.toFixed(1) + "," + y.toFixed(1);
+    });
+    return '<svg class="mini-chart" viewBox="0 0 ' + w + " " + h + '" aria-hidden="true"><polyline points="' + points.join(" ") + '"/></svg>';
+  }
+
+  // 选项选中态兜底：部分旧版 iPad Safari 不支持 :has()；同时更新练习区进度条。
   function bindOptionSelection() {
     document.querySelectorAll(".option input").forEach(function (input) {
       input.addEventListener("change", function () {
@@ -97,6 +226,16 @@
           label.classList.remove("selected");
         });
         input.closest(".option").classList.add("selected");
+
+        var form = document.querySelector("#quiz-form");
+        if (form) {
+          var checked = form.querySelectorAll("input:checked").length;
+          var all = form.querySelectorAll(".question").length;
+          var fill = document.querySelector("#qp-fill");
+          var txt = document.querySelector("#qp-text");
+          if (fill && all) fill.style.width = Math.round((checked / all) * 100) + "%";
+          if (txt) txt.textContent = "已答 " + checked + " / " + all;
+        }
       });
     });
   }
@@ -158,40 +297,55 @@
     return svgParts.svg(w, h, inner);
   }
 
-  // ---------- 首页：进度总览 + 学习日导航 ----------
+  // ---------- 首页：进度总览 + 激励区 + 学习日导航 ----------
   function renderHome() {
     var progress = getProgress();
     var completedCount = Object.keys(progress).length;
     var total = manifest.length;
     var percent = total ? Math.round((completedCount / total) * 100) : 0;
     var reviewQueue = getReviewQueue();
+    var stats = getStats();
+    var streak = getStreak();
+    var weakTopics = getWeakTopics();
+    var achievements = evaluateAchievements(progress, stats);
 
     var cards = manifest.map(function (d) {
       var record = progress[d.day];
       var statusText = "未开始";
-      var stateClass = "day-card";
+      var stateClass = "day-card mod-" + moduleIndexFor(d.day);
+      var checkMark = "";
       if (!d.ready) {
         statusText = "开发中";
-        stateClass = "day-card is-locked";
+        stateClass += " is-locked";
       } else if (record) {
         var latest = record.attempts[record.attempts.length - 1];
-        statusText = "已完成 · 最佳 " + record.best + "/" + latest.total +
+        statusText = "最佳 " + record.best + "/" + latest.total +
           (record.attempts.length > 1 ? " · 尝试 " + record.attempts.length + " 次" : "");
-        stateClass = "day-card is-done";
+        stateClass += " is-done";
+        checkMark = '<span class="day-check" aria-hidden="true">✔</span>';
       }
 
       var label =
         '<span class="day-num">DAY ' + d.day + "</span>" +
         '<span class="day-title">' + escapeHtml(d.title) + "</span>" +
-        '<span class="day-status">' + statusText + "</span>";
+        '<span class="day-status">' + statusText + "</span>" +
+        miniChart(record ? record.attempts : [], "mod-" + moduleIndexFor(d.day));
 
       if (d.ready) {
-        return '<li class="' + stateClass + '"><a class="day-card-link" href="?day=' + d.day + '">' + label + "</a></li>";
+        return '<li class="' + stateClass + '"><a class="day-card-link" href="?day=' + d.day + '">' + checkMark + label + "</a></li>";
       }
-      return '<li class="' + stateClass + '"><span class="day-card-link is-disabled" aria-disabled="true">' + label + "</span></li>";
+      return '<li class="' + stateClass + '"><span class="day-card-link is-disabled" aria-disabled="true">' + checkMark + label + "</span></li>";
     }).join("");
 
     var moduleBars = renderModuleProgress(progress);
+
+    var weakBlock = weakTopics.length
+      ? '<div class="weak-tags" role="list" aria-label="薄弱知识点">' +
+          weakTopics.map(function (w) {
+            return '<span class="weak-tag" role="listitem">薄弱：' + escapeHtml(w.topic) + " <b>" + w.count + "</b></span>";
+          }).join("") +
+        "</div>"
+      : "";
 
     var reviewBlock = reviewQueue.length
       ? '<section class="section">' +
@@ -201,18 +355,46 @@
         "</section>"
       : "";
 
+    var achievedCount = achievements.filter(function (a) { return a.unlocked; }).length;
+    var badgeWall =
+      '<section class="section">' +
+        "<h2>成就徽章 <span class='hint' style='font-weight:400;font-size:.85rem'>已点亮 " + achievedCount + " / " + achievements.length + "</span></h2>" +
+        '<div class="badge-wall">' +
+          achievements.map(function (a) {
+            var cls = "badge-item" + (a.unlocked ? "" : " is-locked");
+            var ico = a.unlocked ? a.ico : "?";
+            return (
+              '<div class="' + cls + '"' + (a.unlocked ? "" : ' aria-hidden="true"') + ">" +
+                '<span class="b-ico b-ico-' + ACHIEVEMENTS.map(function (x) { return x.id; }).indexOf(a.id) + '">' + ico + "</span>" +
+                '<span class="b-name">' + escapeHtml(a.name) + "</span>" +
+                '<span class="b-desc">' + escapeHtml(a.desc) + "</span>" +
+              "</div>"
+            );
+          }).join("") +
+        "</div>" +
+      "</section>";
+
+    var statsStrip =
+      '<div class="stats-strip">' +
+        '<span class="stat-chip">连续学习 <b>' + streak + "</b> 天</span>" +
+        '<span class="stat-chip">最高连对 <b>' + stats.bestCombo + "</b> 题</span>" +
+        '<span class="stat-chip">待复习 <b>' + reviewQueue.length + "</b> 题</span>" +
+      "</div>" + weakBlock;
+
     app.innerHTML =
       '<div class="page">' +
         '<header class="hero">' +
           '<p class="eyebrow">CHEMLAB-G9</p>' +
           "<h1>九年级化学 · 30 天自学计划</h1>" +
-          '<p class="meta">已完成 ' + completedCount + " / " + total + " 天</p>" +
+          '<p class="meta">已完成 ' + completedCount + " / " + total + " 天 · 完成率 " + percent + "%</p>" +
           '<div class="progress-bar" role="progressbar" aria-label="学习进度" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + completedCount + '">' +
             '<div class="progress-bar-fill" style="width:' + percent + '%"></div>' +
           "</div>" +
+          statsStrip +
         "</header>" +
         reviewBlock +
-        (moduleBars ? '<section class="section"><h2>模块进度</h2>' + moduleBars + "</section>" : "") +
+        badgeWall +
+        (moduleBars ? '<section class="section mod-section"><h2>模块进度</h2>' + moduleBars + "</section>" : "") +
         '<section class="section">' +
           "<h2>选择学习日</h2>" +
           '<ul class="day-grid">' + cards + "</ul>" +
@@ -220,17 +402,17 @@
       "</div>";
   }
 
-  // 按模块统计完成情况，渲染成小环形图 + 名称 + 已完成数。
+  // 按模块统计完成情况，渲染成可展开列表（环形图 + 名称 + 该模块每天明细）。
   function renderModuleProgress(progress) {
     if (!window.ChemLabManifest || !window.ChemLabManifest.modules) return "";
     var modules = window.ChemLabManifest.modules;
-    return modules.map(function (mod) {
+    return modules.map(function (mod, idx) {
       var daysInMod = manifest.filter(function (d) {
         return d.module === mod.name;
       });
       if (!daysInMod.length) return "";
       var done = daysInMod.filter(function (d) { return progress[d.day]; }).length;
-      var frac = done / daysInMod.length;
+      var frac = daysInMod.length ? done / daysInMod.length : 0;
       var R = 16, C = 2 * Math.PI * R;
       var ring =
         '<svg class="mod-ring" viewBox="0 0 40 40" role="img" aria-label="' +
@@ -239,11 +421,19 @@
           '<circle cx="20" cy="20" r="' + R + '" class="ring-fg" stroke-dasharray="' +
             (frac * C) + " " + C + '" transform="rotate(-90 20 20)"/>' +
         "</svg>";
+      var dayList = daysInMod.map(function (d) {
+        var rec = progress[d.day];
+        var st = !d.ready ? "开发中" : (rec ? "最佳 " + rec.best + "/" + rec.attempts[0].total : "未开始");
+        return "<li><span>DAY " + d.day + " · " + escapeHtml(d.title) + "</span><b>" + st + "</b></li>";
+      }).join("");
       return (
-        '<div class="mod-row">' + ring +
-          '<span class="mod-name">' + escapeHtml(mod.name) + "</span>" +
-          '<span class="mod-count">' + done + " / " + daysInMod.length + "</span>" +
-        "</div>"
+        '<details class="mod-block mod-' + idx + '">' +
+          "<summary>" + ring +
+            '<span class="mod-name">' + escapeHtml(mod.name) + "</span>" +
+            '<span class="mod-count">' + done + " / " + daysInMod.length + "</span>" +
+          "</summary>" +
+          '<ul class="mod-days">' + dayList + "</ul>" +
+        "</details>"
       );
     }).join("");
   }
@@ -274,7 +464,8 @@
     var renderers = {
       "cylinder-reading": figCylinderReading,   // 量筒读数视角对比（可切换）
       "airtight-test": figAirtightTest,          // 检查装置气密性（气泡动画）
-      "graduated-cylinder": figGraduatedCylinder // 量筒静态示意
+      "graduated-cylinder": figGraduatedCylinder, // 量筒静态示意
+      "air-composition": figAirComposition       // 空气成分环形图
     };
     var fn = renderers[fig.type];
     if (!fn) return "";
@@ -418,6 +609,41 @@
     return html;
   }
 
+  // 空气成分环形图：按体积分数绘制，配图例。
+  function figAirComposition(fig) {
+    var cx = 90, cy = 90, r = 58;
+    var C = 2 * Math.PI * r;
+    var segs = [
+      { label: "氮气", pct: "78%", v: 0.78, color: "#4aa7a0" },
+      { label: "氧气", pct: "21%", v: 0.21, color: "#e67b32" },
+      { label: "稀有气体", pct: "0.94%", v: 0.0094, color: "#8a9ba8" },
+      { label: "二氧化碳", pct: "0.03%", v: 0.0003, color: "#6b5ba8" },
+      { label: "其他气体和杂质", pct: "0.03%", v: 0.0003, color: "#c2534f" }
+    ];
+    var offset = 0;
+    var rings = segs.map(function (s) {
+      var len = Math.max(s.v * C, 0.5);
+      var dash = len + " " + C;
+      var seg = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + s.color +
+        '" stroke-width="20" stroke-dasharray="' + dash + '" stroke-dashoffset="' + (-offset) +
+        '" transform="rotate(-90 ' + cx + " " + cy + ')" opacity="0.92"/>';
+      offset += len;
+      return seg;
+    }).join("");
+    var legend = segs.map(function (s) {
+      return (
+        '<div class="air-legend"><span class="swatch" style="background:' + s.color + '"></span>' +
+        "<span>" + s.label + " · " + s.pct + "</span></div>"
+      );
+    }).join("");
+    return (
+      '<div class="air-wrap">' +
+        figSvg(180, 180, rings) +
+        '<div class="air-legend-box" role="list" aria-label="空气成分">' + legend + "</div>" +
+      "</div>"
+    );
+  }
+
   // ---------- 加载并渲染某一天 ----------
   function renderDay(dayKey) {
     var meta = metaFor(dayKey);
@@ -461,7 +687,13 @@
       var safetyBadge = section.safety
         ? '<span class="badge badge-safety">⚠️ 需成人陪同</span> '
         : "";
-      var body = section.body.map(function (p) { return "<p>" + escapeHtml(p) + "</p>"; }).join("");
+      var body = section.body.map(function (p) {
+        if (p && typeof p === "object" && p.text) {
+          var kindClass = p.kind === "takeaway" ? " takeaway" : (p.kind === "note" ? " note-block" : "");
+          return '<p class="' + kindClass.trim() + '">' + escapeHtml(p.text) + "</p>";
+        }
+        return "<p>" + escapeHtml(p) + "</p>";
+      }).join("");
       var figure = section.figure ? renderFigure(section.figure) : "";
       return (
         '<section class="section">' +
@@ -489,9 +721,11 @@
       : "";
 
     var questions = quiz.questions.map(function (q, index) {
-      var diffBadge = q.difficulty
-        ? '<span class="q-diff" data-diff="' + escapeHtml(q.difficulty) + '">' + escapeHtml(q.difficulty) + "</span>"
-        : "";
+      var tags =
+        '<span class="q-tags">' +
+          (q.difficulty ? '<span class="q-diff" data-diff="' + escapeHtml(q.difficulty) + '">' + escapeHtml(q.difficulty) + "</span>" : "") +
+          (q.topic ? '<span class="q-topic">' + escapeHtml(q.topic) + "</span>" : "") +
+        "</span>";
       var options = q.options.map(function (option, optionIndex) {
         return (
           '<label class="option"><input type="radio" name="q' + index + '" value="' + optionIndex + '"> ' +
@@ -500,11 +734,13 @@
       }).join("");
       return (
         '<fieldset class="question" data-answer="' + escapeHtml(q.answer) + '" data-explanation="' + escapeHtml(q.explanation) + '">' +
-          "<legend>" + diffBadge + "<strong>" + (index + 1) + ". " + escapeHtml(q.prompt) + "</strong></legend>" +
+          "<legend>" + tags + "<strong>" + (index + 1) + ". " + escapeHtml(q.prompt) + "</strong></legend>" +
           options +
         "</fieldset>"
       );
     }).join("");
+
+    var totalQ = quiz.questions.length;
 
     app.innerHTML =
       '<div class="page">' +
@@ -526,6 +762,10 @@
           "<h2>今日练习</h2>" +
           '<p class="hint">先独立作答，再查看解析。</p>' +
           '<form id="quiz-form" novalidate>' +
+            '<div class="quiz-progress" aria-hidden="true">' +
+              '<span class="qp-text" id="qp-text">已答 0 / ' + totalQ + "</span>" +
+              '<span class="qp-bar"><span class="qp-fill" id="qp-fill" style="width:0%"></span></span>' +
+            "</div>" +
             questions +
             '<p id="quiz-warning" class="hint warning" hidden>还有题目未作答，请全部完成后再提交。</p>' +
             '<button class="primary" type="submit">提交并查看解析</button>' +
@@ -627,25 +867,46 @@
       var score = 0;
       var answers = [];
       var wrongItems = [];
+      var combo = 0, maxCombo = 0;
 
       fields.forEach(function (field, index) {
         var selected = field.querySelector("input:checked");
         var correct = selected && selected.value === field.dataset.answer;
         if (correct) {
           score += 1;
+          combo += 1;
+          if (combo > maxCombo) maxCombo = combo;
         } else {
+          combo = 0;
           wrongItems.push({ day: dayKey, questionIndex: index });
         }
         answers[index] = selected ? selected.value : null;
 
+        // 标记选项：正确项高亮、选错的项标红。
+        field.querySelectorAll(".option").forEach(function (label, oi) {
+          if (String(oi) === field.dataset.answer) label.classList.add("is-marked");
+          var input = label.querySelector("input");
+          if (selected && input && input.checked) {
+            label.classList.add(correct ? "is-correct" : "is-wrong");
+          }
+          if (input) input.disabled = true;
+        });
+
         var existing = field.querySelector(".feedback");
         if (existing) existing.remove();
         var note = document.createElement("p");
-        note.className = "hint feedback";
+        note.className = "hint feedback " + (correct ? "fb-ok" : "fb-ko");
         note.setAttribute("role", "status");
         note.textContent = (correct ? "回答正确。" : "再想一想。") + field.dataset.explanation;
         field.append(note);
       });
+
+      // 连击记录：更新本地最高连对。
+      var stats = getStats();
+      if (maxCombo > stats.bestCombo) {
+        stats.bestCombo = maxCombo;
+        saveStats(stats);
+      }
 
       // 尝试历史：同一题多次作答记录为 attempts 数组，不再覆盖。
       var record = dayRecord(dayKey) || { attempts: [] };
@@ -672,7 +933,8 @@
 
       var result = document.querySelector("#result");
       result.textContent = "本次得分：" + score + " / " + quiz.questions.length +
-        "。已保存本地学习记录" + (wrongItems.length ? "，有 " + wrongItems.length + " 道题进入复习队列。" : "，全部答对！");
+        "，连对 " + maxCombo + " 题。" + (wrongItems.length ? "有 " + wrongItems.length + " 道题进入复习队列。" : "全部答对！") +
+        "已保存本地学习记录。";
       result.focus();
     });
   }
@@ -808,14 +1070,33 @@
           });
         }
 
+        // 选项标记：正确项高亮、选错的项标红。
+        field.querySelectorAll(".option").forEach(function (label, oi) {
+          if (q && String(oi) === q.answer) label.classList.add("is-marked");
+          var input = label.querySelector("input");
+          if (selected && input && input.checked) {
+            label.classList.add(correct ? "is-correct" : "is-wrong");
+          }
+          if (input) input.disabled = true;
+        });
+
         var existing = field.querySelector(".feedback");
         if (existing) existing.remove();
         var note = document.createElement("p");
-        note.className = "hint feedback";
+        note.className = "hint feedback " + (correct ? "fb-ok" : "fb-ko");
         note.setAttribute("role", "status");
         note.textContent = (correct ? "回答正确。" : "再想一想。") + (q ? q.explanation : "");
         field.append(note);
       });
+
+      // 复习后错题清零 → 点亮"错题清零"成就。
+      if (correctCount > 0 && !queue.length) {
+        var rStats = getStats();
+        if (!rStats.reviewCleared) {
+          rStats.reviewCleared = true;
+          saveStats(rStats);
+        }
+      }
 
       writeJSON(LS_REVIEW, queue);
 

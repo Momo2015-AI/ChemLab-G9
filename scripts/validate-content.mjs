@@ -88,6 +88,18 @@ publishedDays.forEach((key) => {
     day.sections.forEach((sec, i) => {
       if (!sec.title) err(`Day ${key}: sections[${i}] 缺少 title`);
       if (!Array.isArray(sec.body) || !sec.body.length) err(`Day ${key}: sections[${i}] body 必须为非空数组`);
+      else {
+        sec.body.forEach((p, j) => {
+          if (typeof p === "string") return;
+          if (p && typeof p === "object" && typeof p.text === "string") {
+            if (p.kind !== undefined && !["takeaway", "note"].includes(p.kind)) {
+              err(`Day ${key}: sections[${i}].body[${j}] kind 应为 takeaway 或 note`);
+            }
+          } else {
+            err(`Day ${key}: sections[${i}].body[${j}] 应为字符串或 {text, kind?}`);
+          }
+        });
+      }
       if (sec.safety !== undefined && sec.safety !== "supervised") {
         err(`Day ${key}: sections[${i}] safety 应为 "supervised"`);
       }
@@ -129,6 +141,9 @@ publishedDays.forEach((key) => {
     if (!item.explanation) err(`${where}: 缺少 explanation`);
     if (item.difficulty !== undefined && !DIFF_ALLOWED.includes(item.difficulty)) {
       err(`${where}: difficulty "${item.difficulty}" 应为 基础/提升/挑战 之一`);
+    }
+    if (item.topic !== undefined && (typeof item.topic !== "string" || !item.topic.trim())) {
+      err(`${where}: topic 应为非空字符串`);
     }
   });
 });
