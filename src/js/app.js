@@ -465,7 +465,14 @@
       "cylinder-reading": figCylinderReading,   // 量筒读数视角对比（可切换）
       "airtight-test": figAirtightTest,          // 检查装置气密性（气泡动画）
       "graduated-cylinder": figGraduatedCylinder, // 量筒静态示意
-      "air-composition": figAirComposition       // 空气成分环形图
+      "air-composition": figAirComposition,      // 空气成分环形图
+      "candle-burn": figCandleBurn,          // 蜡烛燃烧动画 + 物化变化判断
+      "change-judge": figChangeJudge,        // 物质变化类型判断器
+      "science-inquiry": figScienceInquiry,  // 科学探究步骤拖拽排序
+      "red-phosphorus": figRedPhosphorus,    // 红磷燃烧测氧气含量
+      "oxygen-combustion": figOxygenCombustion, // 三种物质在氧气中燃烧
+      "kmno4-setup": figKmno4Setup,          // 高锰酸钾制氧装置图
+      "molecule-motion": figMoleculeMotion   // 分子运动模拟
     };
     var fn = renderers[fig.type];
     if (!fn) return "";
@@ -642,6 +649,287 @@
         '<div class="air-legend-box" role="list" aria-label="空气成分">' + legend + "</div>" +
       "</div>"
     );
+  }
+
+  // ---------- 蜡烛燃烧动画：点燃/熄灭，展示熔化和燃烧两个过程 ----------
+  function figCandleBurn(fig) {
+    var id = "cnd-" + uid();
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-action="light">点燃</button>' +
+      '<button type="button" class="fig-pill" data-action="extinguish">熄灭</button>' +
+      '</div>';
+    var svgId = id + "-svg";
+    var defs =
+      '<defs>' +
+        '<linearGradient id="' + id + '-flame" x1="0" y1="1" x2="0" y2="0">' +
+          '<stop offset="0" stop-color="#f5a623"/><stop offset="60%" stop-color="#f7c948"/>' +
+          '<stop offset="100%" stop-color="#fff4b8" stop-opacity="0.6"/>' +
+        '</linearGradient>' +
+        '<filter id="' + id + '-glow"><feGaussianBlur stdDeviation="3" result="blur"/>' +
+          '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+      '</defs>';
+    var candleBody =
+      '<rect x="68" y="100" width="24" height="60" rx="3" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1.5"/>' +
+      '<rect x="72" y="100" width="4" height="60" rx="2" fill="#fff8e8" opacity="0.5"/>';
+    var wick = '<line x1="80" y1="100" x2="80" y2="88" stroke="#5a4a32" stroke-width="2" stroke-linecap="round"/>';
+    var flame = '<g class="candle-flame" data-flame opacity="0" filter="url(#' + id + '-glow)">' +
+      '<ellipse cx="80" cy="74" rx="8" ry="16" fill="url(#' + id + '-flame)"/>' +
+      '<ellipse cx="80" cy="78" rx="4" ry="10" fill="#fff4b8" opacity="0.7"/>' +
+    '</g>';
+    var smoke = '<g class="candle-smoke" data-smoke opacity="0">' +
+      '<circle cx="76" cy="58" r="4" fill="#b0c4c1" opacity="0.4"/>' +
+      '<circle cx="84" cy="52" r="5" fill="#b0c4c1" opacity="0.3"/>' +
+      '<circle cx="80" cy="44" r="6" fill="#b0c4c1" opacity="0.2"/>' +
+    '</g>';
+    var waxDrip = '<path class="candle-wax" data-wax opacity="0" d="M92 105 Q96 115 93 125 Q91 130 94 132 L94 158 L90 158 L90 132 Q87 128 89 124 Q92 114 89 105 Z" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1"/>';
+    var products = '<g class="candle-products" data-products opacity="0">' +
+      '<text x="118" y="55" fill="#146c6e" font-size="11" font-weight="600">CO₂ + H₂O</text>' +
+      '<text x="118" y="70" fill="#587073" font-size="9">新物质生成 → 化学变化</text>' +
+      '<line x1="110" y1="60" x2="90" y2="68" stroke="#587073" stroke-width="1" opacity="0.5"/>' +
+    '</g>';
+    var meltNote = '<g class="candle-melt" data-melt opacity="0">' +
+      '<text x="48" y="130" fill="#e67b32" font-size="9" font-weight="600">熔化 → 物理变化</text>' +
+      '<text x="48" y="142" fill="#587073" font-size="8">状态改变，无新物质</text>' +
+    '</g>';
+    var svgInner = defs +
+      '<rect x="60" y="155" width="40" height="4" rx="2" fill="#d9e8e5" stroke="#b0c4c1" stroke-width="1"/>' +
+      candleBody + wick + flame + smoke + waxDrip + products + meltNote;
+    var html =
+      '<div class="fig-candle" data-candle>' +
+        pills +
+        figSvg(160, 170, svgInner) +
+        '<p class="candle-hint" data-hint>点击「点燃」观察蜡烛燃烧过程。</p>' +
+      '</div>';
+    return html;
+  }
+
+  // ---------- 物质变化类型判断器：给出描述，判断物理/化学变化 ----------
+  function figChangeJudge(fig) {
+    var items = [
+      { text: "冰融化成水", type: "物理", note: "状态改变，没有新物质。" },
+      { text: "铁钉生锈", type: "化学", note: "铁变成了铁锈（新物质）。" },
+      { text: "玻璃破碎", type: "物理", note: "形状改变，没有新物质。" },
+      { text: "食物腐败", type: "化学", note: "产生了新物质，有异味和变色。" }
+    ];
+    var pills = items.map(function (item, i) {
+      return '<button type="button" class="fig-pill judge-btn" data-idx="' + i + '">' + item.text + "</button>";
+    }).join("");
+    var resultArea = '<div class="judge-result" data-result>点击上方卡片开始判断。</div>';
+    return '<div class="fig-judge" data-judge>' +
+      '<div class="fig-ctrl judge-grid">' + pills + '</div>' +
+      resultArea +
+    '</div>';
+  }
+
+  // ---------- 科学探究步骤拖拽排序 ----------
+  function figScienceInquiry(fig) {
+    var steps = [
+      { id: "ask", text: "提出问题", correct: 0 },
+      { id: "hypo", text: "猜想与假设", correct: 1 },
+      { id: "plan", text: "制定计划", correct: 2 },
+      { id: "experiment", text: "进行实验", correct: 3 },
+      { id: "evidence", text: "收集证据", correct: 4 },
+      { id: "conclude", text: "得出结论", correct: 5 }
+    ];
+    var initialOrder = [3, 0, 4, 1, 5, 2];
+    var slots = steps.map(function (_, i) {
+      return '<div class="inq-slot" data-index="' + i + '"><span class="slot-num">' + (i + 1) + '</span><span class="slot-hint">拖放步骤到此处</span></div>';
+    }).join("");
+    var draggables = initialOrder.map(function (si) {
+      return '<div class="inq-drag" data-id="' + steps[si].id + '" draggable="true">' + steps[si].text + '</div>';
+    }).join("");
+    var resetBtn = '<button type="button" class="fig-pill" id="inq-reset">重置</button>';
+    var checkBtn = '<button type="button" class="fig-pill" id="inq-check">检查顺序</button>';
+    var resultDiv = '<div class="inq-result" data-inqresult></div>';
+    return '<div class="fig-inquiry" data-inquiry>' +
+      '<p class="inq-instruct">将下列步骤拖放到正确位置（科学探究顺序）：</p>' +
+      '<div class="inq-slots">' + slots + '</div>' +
+      '<div class="inq-draggables" data-inqdrag>' + draggables + '</div>' +
+      '<div class="fig-ctrl inq-ctrl">' + checkBtn + resetBtn + '</div>' +
+      resultDiv +
+    '</div>';
+  }
+
+  // ---------- 红磷燃烧测定氧气含量 ----------
+  function figRedPhosphorus(fig) {
+    var id = "rp-" + uid();
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-stage="setup">实验前</button>' +
+      '<button type="button" class="fig-pill" data-stage="burn">燃烧中</button>' +
+      '<button type="button" class="fig-pill" data-stage="result">冷却后</button>' +
+      '</div>';
+    var defs =
+      '<defs>' +
+        '<linearGradient id="' + id + '-water" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="#bfe9e4"/><stop offset="1" stop-color="#7cc7bf"/>' +
+        '</linearGradient>' +
+      '</defs>';
+    // Stage: setup
+    var setupG =
+      '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+      '<path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/>' +
+      '<rect x="46" y="56" width="8" height="10" rx="2" fill="#e67b32" opacity="0.8"/>' +
+      '<text x="60" y="140" fill="#587073" font-size="9" text-anchor="middle">钟罩</text>' +
+      '<rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/>' +
+      '<text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽（水）</text>' +
+      '<text x="60" y="120" fill="#146c6e" font-size="9" text-anchor="middle" data-rp-note>红磷在密闭容器内</text>';
+    // Stage: burning
+    var burnG =
+      '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+      '<path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/>' +
+      '<ellipse cx="60" cy="58" rx="6" ry="8" fill="#e67b32" opacity="0.9" class="rp-flame"/>' +
+      '<ellipse cx="60" cy="54" rx="3" ry="5" fill="#f7c948" opacity="0.8"/>' +
+      '<circle cx="55" cy="45" r="2" fill="#b0c4c1" opacity="0.5" class="rp-smoke1"/>' +
+      '<circle cx="65" cy="42" r="2.5" fill="#b0c4c1" opacity="0.4" class="rp-smoke2"/>' +
+      '<text x="60" y="120" fill="#c2534f" font-size="9" text-anchor="middle" data-rp-note">红磷燃烧，产生大量白烟</text>' +
+      '<rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/>' +
+      '<text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽</text>';
+    // Stage: result
+    var resultG =
+      '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+      '<path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/>' +
+      '<rect x="32" y="120" width="56" height="48" fill="url(#' + id + '-water)"/>' +
+      '<text x="60" y="150" fill="#146c6e" font-size="10" text-anchor="middle" font-weight="600" data-rp-note>水面上升约 1/5</text>' +
+      '<text x="60" y="112" fill="#587073" font-size="8" text-anchor="middle">剩余气体（主要是氮气）</text>' +
+      '<rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/>' +
+      '<text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽</text>';
+    var stageMap = { setup: setupG, burn: burnG, result: resultG };
+    var svgInner = defs +
+      '<g class="rp-stage" data-rp-stage>' + setupG + '</g>';
+    var html =
+      '<div class="fig-rp" data-rp>' +
+        pills +
+        figSvg(160, 185, svgInner) +
+        '<p class="rp-hint" data-rphint>点击按钮切换实验阶段。</p>' +
+      '</div>';
+    return html;
+  }
+
+  // ---------- 三种物质在氧气中燃烧 ----------
+  function figOxygenCombustion(fig) {
+    var subs = [
+      { name: "木炭", color: "#f5f5f5", effect: "发出白光，放热", product: "CO₂（使石灰水变浑浊）", detail: "碳 + 氧气 → 二氧化碳" },
+      { name: "硫", color: "#e67b32", effect: "蓝紫色火焰", product: "SO₂（刺激性气味）", detail: "硫 + 氧气 → 二氧化硫" },
+      { name: "铁丝", color: "#587073", effect: "火星四射，黑色固体", product: "Fe₃O₄", detail: "铁 + 氧气 → 四氧化三铁" }
+    ];
+    var pills = subs.map(function (s, i) {
+      return '<button type="button" class="fig-pill" data-sub="' + i + '">' + s.name + '</button>';
+    }).join("");
+    var id = "oc-" + uid();
+    var defs =
+      '<defs>' +
+        '<radialGradient id="' + id + '-glow"><stop offset="0" stop-color="#f7c948" stop-opacity="0.6"/>' +
+          '<stop offset="1" stop-color="#f7c948" stop-opacity="0"/></radialGradient>' +
+      '</defs>';
+    var svgId = id;
+    var inner = defs +
+      '<rect x="10" y="10" width="140" height="90" rx="6" fill="rgba(20,108,110,.06)" stroke="#146c6e" stroke-width="1.5"/>' +
+      '<text x="80" y="26" fill="#146c6e" font-size="9" text-anchor="middle" font-weight="600">集气瓶（充满氧气）</text>' +
+      '<line x1="30" y1="30" x2="130" y2="30" stroke="#d9e8e5" stroke-width="1"/>' +
+      '<text x="80" y="78" fill="#587073" font-size="9" text-anchor="middle" data-oc-effect>点击上方按钮观察现象</text>' +
+      '<text x="80" y="92" fill="#146c6e" font-size="9" text-anchor="middle" font-weight="600" data-oc-product></text>';
+    var resultArea =
+      '<div class="oc-result" data-ocresult>' +
+        '<p class="oc-name" data-ocname></p>' +
+        '<p class="oc-detail" data-ocdetail></p>' +
+      '</div>';
+    return '<div class="fig-oc" data-oc>' +
+      '<div class="fig-ctrl">' + pills + '</div>' +
+      figSvg(160, 108, inner) +
+      resultArea +
+    '</div>';
+  }
+
+  // ---------- 高锰酸钾制氧气装置（可点击标注） ----------
+  function figKmno4Setup(fig) {
+    var highlights = [
+      { key: "tube", label: "试管（口略向下倾斜）", note: "防止冷凝水回流炸裂试管" },
+      { key: "cotton", label: "棉花", note: "防止高锰酸钾粉末进入导管" },
+      { key: "酒精灯", label: "酒精灯", note: "加热提供反应所需温度" },
+      { key: "收集", label: "排水法收集", note: "氧气不易溶于水，可用排水法" }
+    ];
+    var pills = highlights.map(function (h) {
+      return '<button type="button" class="fig-pill" data-part="' + h.key + '">' + h.label + '</button>';
+    }).join("");
+    var id = "km-" + uid();
+    var svgInner =
+      '<defs>' +
+        '<linearGradient id="' + id + '-flame" x1="0" y1="1" x2="0" y2="0">' +
+          '<stop offset="0" stop-color="#e67b32"/><stop offset="1" stop-color="#f7c948"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      // 试管（略向下倾斜）
+      '<g class="km-tube" data-part="tube">' +
+        '<rect x="20" y="30" width="80" height="18" rx="3" fill="rgba(255,255,255,.6)" stroke="#587073" stroke-width="2" transform="rotate(-5 60 39)"/>' +
+        '<rect x="22" y="32" width="12" height="14" rx="1" fill="#6b5ba8" opacity="0.7" transform="rotate(-5 60 39)"/>' +
+        '<text x="28" y="43" fill="#fff" font-size="6" transform="rotate(-5 60 39)">KMnO₄</text>' +
+      '</g>' +
+      // 棉花
+      '<g class="km-cotton" data-part="cotton">' +
+        '<ellipse cx="100" cy="28" rx="5" ry="3" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1"/>' +
+      '</g>' +
+      // 导管
+      '<path d="M104 28 L120 28 L120 55 L145 55" fill="none" stroke="#587073" stroke-width="2" stroke-linejoin="round"/>' +
+      // 酒精灯
+      '<g class="km-heat" data-part="heat">' +
+        '<path d="M30 85 L50 85 L48 100 L32 100 Z" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1.5"/>' +
+        '<ellipse cx="40" cy="82" rx="6" ry="10" fill="url(#' + id + '-flame)" class="km-flame"/>' +
+      '</g>' +
+      // 铁架台
+      '<line x1="15" y1="100" x2="15" y2="50" stroke="#587073" stroke-width="3" stroke-linecap="round"/>' +
+      '<rect x="8" y="55" width="14" height="4" rx="2" fill="#587073"/>' +
+      // 集气瓶（排水法）
+      '<g class="km-collect" data-part="收集">' +
+        '<rect x="130" y="30" width="30" height="50" rx="4" fill="rgba(191,233,228,.3)" stroke="#587073" stroke-width="2"/>' +
+        '<rect x="132" y="45" width="26" height="33" rx="2" fill="rgba(191,233,228,.5)"/>' +
+        '<text x="145" y="65" fill="#146c6e" font-size="7" text-anchor="middle">O₂</text>' +
+      '</g>' +
+      '<text x="80" y="120" fill="#587073" font-size="8" text-anchor="middle" data-kmnote>点击按钮查看各部件作用</text>';
+    var resultBox = '<div class="km-result" data-kmresult></div>';
+    return '<div class="fig-km" data-km>' +
+      '<div class="fig-ctrl">' + pills + '</div>' +
+      figSvg(170, 135, svgInner) +
+      resultBox +
+    '</div>';
+  }
+
+  // ---------- 分子运动模拟：气体/液体/固体 + 温度控制 ----------
+  function figMoleculeMotion(fig) {
+    var states = [
+      { key: "solid", label: "固态", color: "#4aa7a0", spacing: "紧密", motion: "振动", n: 16 },
+      { key: "liquid", label: "液态", color: "#2f9aa8", spacing: "较近", motion: "滑动", n: 16 },
+      { key: "gas", label: "气态", color: "#e67b32", spacing: "远", motion: "快速无规则", n: 16 }
+    ];
+    var pills = states.map(function (s) {
+      return '<button type="button" class="fig-pill" data-state="' + s.key + '">' + s.label + '</button>';
+    }).join("");
+    var particles = states.map(function (s) {
+      var cx = 40, cy = 40, r = 5, spacing = s.key === "solid" ? 12 : (s.key === "liquid" ? 14 : 28);
+      var cols = s.key === "solid" ? 4 : (s.key === "liquid" ? 4 : 3);
+      var dots = "";
+      for (var i = 0; i < s.n; i++) {
+        var col = i % cols, row = Math.floor(i / cols);
+        var x = cx + col * spacing + (s.key === "liquid" ? Math.sin(i * 1.3) * 3 : 0);
+        var y = cy + row * spacing + (s.key === "gas" ? (Math.random() - 0.5) * 10 : 0);
+        dots += '<circle class="mol-particle" data-state="' + s.key + '" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4" fill="' + s.color + '" opacity="0.85"/>';
+      }
+      return dots;
+    }).join("");
+    var svgInner =
+      '<g class="mol-solid" data-mol="solid">' + particles.split('data-state="gas"')[0].split('data-state="liquid"')[0] + '</g>' +
+      '<line x1="10" y1="72" x2="110" y2="72" stroke="#d9e8e5" stroke-width="1" stroke-dasharray="4,3"/>' +
+      '<g class="mol-liquid" data-mol="liquid">' + particles.split('data-state="gas"')[0].split('data-state="liquid"')[1] + '</g>' +
+      '<line x1="10" y1="120" x2="110" y2="120" stroke="#d9e8e5" stroke-width="1" stroke-dasharray="4,3"/>' +
+      '<g class="mol-gas" data-mol="gas">' + particles.split('data-state="gas"')[1] + '</g>';
+    var descBox = '<div class="mol-desc" data-moldesc>' +
+      '<p class="mol-state-name" data-molname>固态</p>' +
+      '<p class="mol-desc-text" data-moldtxt>分子排列紧密，只能在固定位置振动。</p>' +
+    '</div>';
+    return '<div class="fig-mol" data-molfig>' +
+      '<div class="fig-ctrl">' + pills + '</div>' +
+      figSvg(120, 155, svgInner) +
+      descBox +
+    '</div>';
   }
 
   // ---------- 加载并渲染某一天 ----------
@@ -849,6 +1137,290 @@
         pill.addEventListener("click", function () { applyAir(pill.dataset.air); });
       });
       applyAir("ok");
+    });
+
+    // 蜡烛燃烧交互
+    document.querySelectorAll("[data-candle]").forEach(function (box) {
+      var flame = box.querySelector("[data-flame]");
+      var smoke = box.querySelector("[data-smoke]");
+      var wax = box.querySelector("[data-wax]");
+      var products = box.querySelector("[data-products]");
+      var melt = box.querySelector("[data-melt]");
+      var hint = box.querySelector("[data-hint]");
+      function setLit(on) {
+        if (flame) flame.style.opacity = on ? "1" : "0";
+        if (smoke) smoke.style.opacity = on ? "0" : "0.8";
+        if (wax) wax.style.opacity = on ? "0.9" : "0";
+        if (products) products.style.opacity = on ? "1" : "0";
+        if (melt) melt.style.opacity = on ? "1" : "0";
+        if (hint) hint.textContent = on
+          ? "蜡烛燃烧：熔化（物理变化）+ 生成 CO₂/H₂O（化学变化），两者同时发生。"
+          : "点击「点燃」观察蜡烛燃烧过程。";
+      }
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          setLit(pill.dataset.action === "light");
+        });
+      });
+    });
+
+    // 物质变化判断器
+    document.querySelectorAll("[data-judge]").forEach(function (box) {
+      var items = [
+        { type: "物理", note: "状态改变，没有新物质。" },
+        { type: "化学", note: "铁变成了铁锈（新物质）。" },
+        { type: "物理", note: "形状改变，没有新物质。" },
+        { type: "化学", note: "产生了新物质，有异味和变色。" }
+      ];
+      box.querySelectorAll(".judge-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var idx = parseInt(btn.dataset.idx);
+          var item = items[idx];
+          var result = box.querySelector("[data-result]");
+          btn.classList.add("is-active");
+          box.querySelectorAll(".judge-btn").forEach(function (b) {
+            if (b !== btn) b.classList.remove("is-active");
+          });
+          if (result) {
+            result.innerHTML =
+              '<strong>' + escapeHtml(item.type) + "变化</strong>： " +
+              escapeHtml(item.note) +
+              '<br><span class="hint">判断依据：是否有新物质生成。</span>';
+          }
+        });
+      });
+    });
+
+    // 科学探究步骤拖拽排序
+    document.querySelectorAll("[data-inquiry]").forEach(function (box) {
+      var steps = [
+        { id: "ask", text: "提出问题" },
+        { id: "hypo", text: "猜想与假设" },
+        { id: "plan", text: "制定计划" },
+        { id: "experiment", text: "进行实验" },
+        { id: "evidence", text: "收集证据" },
+        { id: "conclude", text: "得出结论" }
+      ];
+      var correctOrder = steps.map(function (s) { return s.id; });
+      var initialOrder = [3, 0, 4, 1, 5, 2];
+      var currentOrder = initialOrder.slice();
+      var slots = box.querySelectorAll(".inq-slot");
+      var draggables = box.querySelectorAll(".inq-drag");
+      var resultDiv = box.querySelector("[data-inqresult]");
+      var checkBtn = box.querySelector("#inq-check");
+      var resetBtn = box.querySelector("#inq-reset");
+
+      // 将 draggable 元素放入初始位置
+      draggables.forEach(function (el, i) {
+        slots[i].appendChild(el);
+        el.addEventListener("dragstart", function (e) {
+          e.dataTransfer.setData("text/plain", el.dataset.id);
+          el.classList.add("is-dragging");
+        });
+        el.addEventListener("dragend", function () {
+          el.classList.remove("is-dragging");
+        });
+      });
+
+      slots.forEach(function (slot) {
+        slot.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          slot.classList.add("is-drop-target");
+        });
+        slot.addEventListener("dragleave", function () {
+          slot.classList.remove("is-drop-target");
+        });
+        slot.addEventListener("drop", function (e) {
+          e.preventDefault();
+          slot.classList.remove("is-drop-target");
+          var id = e.dataTransfer.getData("text/plain");
+          var el = box.querySelector("[data-id='" + id + "']");
+          if (!el) return;
+          // 如果目标 slot 已有元素，交换
+          if (slot.querySelector(".inq-drag")) {
+            var existing = slot.querySelector(".inq-drag");
+            var placeholder = slot.querySelector(".slot-hint");
+            var parent = existing.parentNode;
+            if (parent === slot) {
+              parent.appendChild(existing);
+            }
+            slot.appendChild(existing);
+          }
+          slot.appendChild(el);
+          // 更新 currentOrder
+          var newOrder = [];
+          slots.forEach(function (s) {
+            var d = s.querySelector(".inq-drag");
+            newOrder.push(d ? d.dataset.id : null);
+          });
+          currentOrder = newOrder;
+        });
+      });
+
+      // 将 slot-hint 放入空 slot
+      function refreshSlots() {
+        slots.forEach(function (slot) {
+          if (!slot.querySelector(".inq-drag")) {
+            var hint = document.createElement("span");
+            hint.className = "slot-hint";
+            hint.textContent = "拖放步骤到此处";
+            slot.appendChild(hint);
+          }
+        });
+      }
+
+      if (checkBtn) {
+        checkBtn.addEventListener("click", function () {
+          var placed = currentOrder.filter(Boolean);
+          if (placed.length !== steps.length) {
+            if (resultDiv) resultDiv.innerHTML = '<span class="hint fb-ko">请把全部步骤拖放到槽位中。</span>';
+            return;
+          }
+          var isCorrect = placed.every(function (id, i) { return id === correctOrder[i]; });
+          if (resultDiv) {
+            resultDiv.innerHTML = isCorrect
+              ? '<span class="hint fb-ok">✔ 正确！科学探究顺序：提出问题 → 猜想与假设 → 制定计划 → 进行实验 → 收集证据 → 得出结论。</span>'
+              : '<span class="hint fb-ko">✘ 顺序有误，再想想。提示：先有问题和猜想，才能设计实验。</span>';
+          }
+        });
+      }
+      if (resetBtn) {
+        resetBtn.addEventListener("click", function () {
+          currentOrder = initialOrder.slice();
+          slots.forEach(function (slot) { slot.innerHTML = ''; });
+          draggables.forEach(function (el, i) {
+            slots[i].appendChild(el);
+          });
+          refreshSlots();
+          if (resultDiv) resultDiv.innerHTML = "";
+        });
+      }
+      refreshSlots();
+    });
+
+    // 红磷燃烧阶段切换
+    document.querySelectorAll("[data-rp]").forEach(function (box) {
+      var stageMap = {
+        setup: 'setup', burn: 'burn', result: 'result'
+      };
+      function applyStage(key) {
+        var stage = box.querySelector("[data-rp-stage]");
+        if (!stage) return;
+        // 重建 stage 内容（简单方式：隐藏所有，显示当前）
+        var svgEl = box.querySelector(".chem-svg");
+        if (!svgEl) return;
+        var ns = "http://www.w3.org/2000/svg";
+        // 保留 defs
+        var defs = svgEl.querySelector("defs");
+        // 清除 stage group
+        var existing = svgEl.querySelector(".rp-stage");
+        if (existing) existing.remove();
+        var g = document.createElementNS(ns, "g");
+        g.setAttribute("class", "rp-stage");
+        g.setAttribute("data-rp-stage", "");
+        var content = key === "setup"
+          ? '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/><path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/><rect x="46" y="56" width="8" height="10" rx="2" fill="#e67b32" opacity="0.8"/><text x="60" y="140" fill="#587073" font-size="9" text-anchor="middle">钟罩</text><rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/><text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽（水）</text><text x="60" y="120" fill="#146c6e" font-size="9" text-anchor="middle" data-rp-note>红磷在密闭容器内</text>'
+          : (key === "burn"
+            ? '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/><path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/><ellipse cx="60" cy="58" rx="6" ry="8" fill="#e67b32" opacity="0.9" class="rp-flame"/><ellipse cx="60" cy="54" rx="3" ry="5" fill="#f7c948" opacity="0.8"/><circle cx="55" cy="45" r="2" fill="#b0c4c1" opacity="0.5" class="rp-smoke1"/><circle cx="65" cy="42" r="2.5" fill="#b0c4c1" opacity="0.4" class="rp-smoke2"/><text x="60" y="120" fill="#c2534f" font-size="9" text-anchor="middle" data-rp-note>红磷燃烧，产生大量白烟</text><rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/><text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽</text>'
+            : '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/><path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/><rect x="32" y="120" width="56" height="48" fill="url(#' + (box.querySelector(".chem-svg") && box.querySelector(".chem-svg").querySelector("defs") ? box.querySelector(".chem-svg").querySelector("defs").getAttribute("id").replace("rp-", "") + '-water' : '') + ')"/><text x="60" y="150" fill="#146c6e" font-size="10" text-anchor="middle" font-weight="600" data-rp-note>水面上升约 1/5</text><text x="60" y="112" fill="#587073" font-size="8" text-anchor="middle">剩余气体（主要是氮气）</text><rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/><text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽</text>');
+        g.innerHTML = content;
+        svgEl.appendChild(g);
+        box.querySelectorAll(".fig-pill").forEach(function (pill) {
+          var active = pill.dataset.stage === key;
+          pill.classList.toggle("is-active", active);
+          pill.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        var hint = box.querySelector("[data-rphint]");
+        if (hint) {
+          hint.textContent = key === "setup"
+            ? "实验前：钟罩内充满空气，红磷未点燃。"
+            : (key === "burn"
+              ? "燃烧中：红磷与氧气反应生成五氧化二磷白烟，消耗氧气。"
+              : "冷却后：水面上升约 1/5，证明氧气约占空气体积的 1/5。");
+        }
+      }
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () { applyStage(pill.dataset.stage); });
+      });
+      applyStage("setup");
+    });
+
+    // 氧气助燃实验
+    document.querySelectorAll("[data-oc]").forEach(function (box) {
+      var subs = [
+        { name: "木炭", effect: "发出白光，放热", product: "CO₂（使石灰水变浑浊）", detail: "C + O₂ → CO₂" },
+        { name: "硫", effect: "蓝紫色火焰，放热", product: "SO₂（刺激性气味）", detail: "S + O₂ → SO₂" },
+        { name: "铁丝", effect: "火星四射，生成黑色固体", product: "Fe₃O₄", detail: "3Fe + 2O₂ → Fe₃O₄" }
+      ];
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var idx = parseInt(pill.dataset.sub);
+          var s = subs[idx];
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          var effectEl = box.querySelector("[data-oc-effect]");
+          var productEl = box.querySelector("[data-oc-product]");
+          var nameEl = box.querySelector("[data-ocname]");
+          var detailEl = box.querySelector("[data-ocdetail]");
+          if (effectEl) effectEl.textContent = s.effect;
+          if (productEl) productEl.textContent = s.product;
+          if (nameEl) nameEl.textContent = s.name + "在氧气中燃烧";
+          if (detailEl) detailEl.textContent = s.detail;
+        });
+      });
+    });
+
+    // 高锰酸钾制氧装置
+    document.querySelectorAll("[data-km]").forEach(function (box) {
+      var parts = {
+        tube: { note: "试管口略向下倾斜，防止冷凝水回流炸裂试管。" },
+        cotton: { note: "试管口放一小团棉花，防止高锰酸钾粉末进入导管堵塞导管。" },
+        heat: { note: "酒精灯加热，使高锰酸钾达到分解温度。" },
+        "收集": { note: "氧气不易溶于水，用排水法收集，气体较纯净。" }
+      };
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var key = pill.dataset.part;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          var result = box.querySelector("[data-kmresult]");
+          if (result) {
+            var p = parts[key];
+            result.innerHTML = '<strong>' + escapeHtml(pill.textContent) + '</strong><br><span class="hint">' + escapeHtml(p.note) + '</span>';
+          }
+          var note = box.querySelector("[data-kmnote]");
+          if (note) note.textContent = p ? p.note : "";
+        });
+      });
+    });
+
+    // 分子运动状态切换
+    document.querySelectorAll("[data-molfig]").forEach(function (box) {
+      var stateInfo = {
+        solid: { name: "固态", text: "分子排列紧密，只能在固定位置振动，有固定形状和体积。" },
+        liquid: { name: "液态", text: "分子较近，可相对滑动，有固定体积但无固定形状。" },
+        gas: { name: "气态", text: "分子间隔很大，快速无规则运动，无固定形状和体积，易压缩。" }
+      };
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var key = pill.dataset.state;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          // 切换粒子动画
+          box.querySelectorAll(".mol-particle").forEach(function (circle) {
+            var st = circle.dataset.state;
+            circle.classList.toggle("is-active", st === key);
+          });
+          var info = stateInfo[key];
+          var nameEl = box.querySelector("[data-molname]");
+          var txtEl = box.querySelector("[data-moldtxt]");
+          if (nameEl) nameEl.textContent = info.name;
+          if (txtEl) txtEl.textContent = info.text;
+        });
+      });
     });
 
     document.querySelector("#quiz-form").addEventListener("submit", function (event) {

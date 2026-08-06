@@ -261,6 +261,73 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 .air-legend { display: flex; align-items: center; gap: 8px; }
 .air-legend .swatch { width: 14px; height: 14px; border-radius: 4px; flex: none; }
 
+/* 蜡烛燃烧 */
+.fig-candle { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.candle-hint { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+.candle-flame { transition: opacity .5s ease; }
+.candle-smoke { transition: opacity .5s ease; }
+.candle-wax { transition: opacity .5s ease; }
+.candle-products { transition: opacity .5s ease; }
+.candle-melt { transition: opacity .5s ease; }
+
+/* 物质变化判断器 */
+.fig-judge { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.judge-grid { gap: 8px; }
+.judge-btn.is-active { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+.judge-result { font-size: .9rem; line-height: 1.6; text-align: left; width: 100%; padding: 10px 12px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); }
+
+/* 科学探究排序 */
+.fig-inquiry { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+.inq-instruct { font-size: .88rem; color: var(--muted); margin: 0; }
+.inq-slots { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 320px; }
+.inq-slot { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 10px; border: 2px dashed var(--line); border-radius: 8px; background: var(--paper); transition: border-color .2s, background .2s; }
+.inq-slot.is-drop-target { border-color: var(--brand); background: var(--brand-soft); }
+.slot-num { font-weight: 700; color: var(--brand); font-size: .9rem; min-width: 18px; }
+.slot-hint { color: var(--muted); font-size: .82rem; }
+.inq-drag { display: inline-flex; align-items: center; padding: 6px 12px; background: var(--surface); border: 1px solid var(--brand); border-radius: 6px; font-size: .85rem; font-weight: 600; color: var(--brand); cursor: grab; user-select: none; transition: opacity .2s; }
+.inq-drag:active { cursor: grabbing; }
+.inq-drag.is-dragging { opacity: .5; }
+.inq-ctrl { display: flex; gap: 8px; }
+.inq-result { font-size: .88rem; width: 100%; text-align: center; }
+
+/* 红磷燃烧 */
+.fig-rp { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.rp-hint { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+.rp-flame { animation: rpFlame 0.4s ease-in-out infinite alternate; }
+@keyframes rpFlame { from { opacity: .8; } to { opacity: 1; } }
+.rp-smoke1, .rp-smoke2 { animation: rpSmoke 2s ease-out infinite; }
+.rp-smoke2 { animation-delay: 0.6s; }
+@keyframes rpSmoke { 0% { opacity: 0.6; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-12px); } }
+
+/* 氧气燃烧 */
+.fig-oc { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.oc-result { font-size: .88rem; text-align: left; width: 100%; padding: 10px 12px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); }
+.oc-name { margin: 0 0 4px; font-weight: 700; color: var(--brand); }
+.oc-detail { margin: 0; color: var(--muted); font-family: monospace; font-size: .85rem; }
+
+/* 高锰酸钾装置 */
+.fig-km { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.km-result { font-size: .88rem; width: 100%; text-align: left; padding: 8px 10px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); margin-top: 4px; }
+.km-flame { animation: kmFlame 0.3s ease-in-out infinite alternate; }
+@keyframes kmFlame { from { transform: scaleY(0.9); } to { transform: scaleY(1.05); } }
+
+/* 分子运动 */
+.fig-mol { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.mol-desc { font-size: .88rem; text-align: left; width: 100%; padding: 8px 10px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); }
+.mol-state-name { margin: 0 0 2px; font-weight: 700; color: var(--brand); }
+.mol-desc-text { margin: 0; color: var(--muted); }
+.mol-particle { transition: opacity .3s ease; }
+.mol-particle.is-active { animation: molBounce 0.6s ease-in-out infinite; }
+@keyframes molBounce { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, -1px); } }
+.mol-gas .mol-particle.is-active { animation: molGasMove 1.2s ease-in-out infinite; }
+@keyframes molGasMove {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(3px, -2px); }
+  50% { transform: translate(-1px, 3px); }
+  75% { transform: translate(-3px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
 
 /* ---------- 暗色模式 ---------- */
@@ -330,11 +397,30 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
     "07": "单元复习：化学变化与空气",
     "08": "分子和原子",
     "09": "原子的结构",
-    "10": "元素"
+    "10": "元素",
+    "11": "离子",
+    "12": "元素周期表简介",
+    "13": "化学式与化合价",
+    "14": "相对分子质量计算",
+    "15": "单元复习：物质构成的奥秘",
+    "16": "水的组成",
+    "17": "水的净化",
+    "18": "爱护水资源",
+    "19": "质量守恒定律",
+    "20": "化学方程式的书写",
+    "21": "化学方程式的配平",
+    "22": "有关化学方程式的计算",
+    "23": "单元复习：化学方程式",
+    "24": "碳单质",
+    "25": "二氧化碳的制取",
+    "26": "二氧化碳和一氧化碳的性质",
+    "27": "单元复习：碳和碳的氧化物",
+    "28": "燃烧和灭火",
+    "29": "燃料、能源与环境",
+    "30": "综合提升：全册知识网络"
   };
 
-  // 已完成内容开发、可以学习的天数。
-  const readyDays = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"];
+  const readyDays = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"];
 
   function pad(n) {
     return String(n).padStart(2, "0");
@@ -395,6 +481,13 @@ window.ChemLabContent["day-01"] = {
       ]
     },
     {
+      title: "判断练习：这些变化属于哪一类？",
+      figure: { type: "change-judge", caption: "点击卡片，判断下列变化是物理变化还是化学变化。" },
+      body: [
+        "化学变化常伴随哪些现象？"
+      ]
+    },
+    {
       title: "化学变化常伴随哪些现象？",
       body: [
         "化学变化往往伴随一些可见现象：发光放热（木炭燃烧）、变色（铁钉生锈）、产生气体（碳酸钠与盐酸反应冒泡）、生成沉淀（石灰水变浑浊）等。",
@@ -413,6 +506,7 @@ window.ChemLabContent["day-01"] = {
     {
       title: "实验探究：观察蜡烛燃烧",
       safety: "supervised",
+      figure: { type: "candle-burn", caption: "蜡烛燃烧实验：点燃后观察熔化（物理变化）和生成新物质（化学变化）同时发生。" },
       body: [
         "目的：用观察区分蜡烛熔化和燃烧。用品：蜡烛、火柴（或点火器）、干冷烧杯；须在成人或教师监护下操作。",
         "步骤：先观察未点燃蜡烛；点燃后观察火焰和蜡烛状态；将干冷烧杯短暂罩在火焰上方，再移开。现象：烧杯内壁出现水雾。结论：蜡烛燃烧不是简单的熔化，燃烧过程有新物质生成。",
@@ -831,6 +925,7 @@ window.ChemLabContent["day-03"] = {
     },
     {
       title: "科学探究的六个环节",
+      figure: { type: "science-inquiry", caption: "将下列步骤拖放到正确位置，重温科学探究的完整顺序。" },
       body: [
         "一套完整的探究通常按顺序经过：提出问题 → 猜想与假设 → 制定计划（设计实验）→ 进行实验 → 收集证据 → 得出结论并反思。",
         "第一步是提出问题，好问题通常具体、可检验。比如“糖在水中溶解的快慢与什么有关？”就比“糖怎么不见了？”更容易设计实验。",
@@ -988,6 +1083,7 @@ window.ChemLabContent["day-04"] = {
     },
     {
       title: "怎样证明氧气约占空气的五分之一？",
+      figure: { type: "red-phosphorus", caption: "点击按钮切换实验阶段，观察红磷燃烧消耗氧气后水面如何上升。" },
       body: [
         "经典实验：在集气瓶内点燃足量红磷，红磷燃烧消耗瓶内氧气，生成五氧化二磷固体。冷却后打开止水夹，瓶内气压减小，水会从烧杯倒流入集气瓶，约占瓶内空气体积的五分之一。",
         "关键要求：红磷必须足量，才能把氧气消耗完；装置必须不漏气；待冷却后再读数，否则气体膨胀会导致进入的水偏少。",
@@ -1153,6 +1249,7 @@ window.ChemLabContent["day-05"] = {
     {
       title: "实验探究：三种物质在氧气中燃烧",
       safety: "supervised",
+      figure: { type: "oxygen-combustion", caption: "点击按钮观察木炭、硫、铁丝在氧气中燃烧的不同现象。" },
       body: [
         "木炭在氧气中燃烧：发白光，放出热量，生成的气体能使澄清石灰水变浑浊（二氧化碳）。",
         "硫在氧气中燃烧：发出明亮的蓝紫色火焰（在空气中是淡蓝色火焰），放出热量，生成有刺激性气味的气体（二氧化硫）。",
@@ -1320,6 +1417,7 @@ window.ChemLabContent["day-06"] = {
     {
       title: "实验探究：高锰酸钾制取氧气",
       safety: "supervised",
+      figure: { type: "kmno4-setup", caption: "点击按钮查看装置各部件的作用和操作注意事项。" },
       body: [
         "操作顺序记成口诀“查装定点收移熄”：检查装置气密性 → 装药品（试管口放一小团棉花，防止高锰酸钾粉末进入导管）→ 固定试管（试管口略向下倾斜）→ 点燃酒精灯加热 → 收集气体 → 先将导管移出水面 → 再熄灭酒精灯。",
         "最后两步顺序不能反：如果先熄灯再移导管，水会倒吸进试管，使试管炸裂。",
@@ -1635,6 +1733,7 @@ window.ChemLabContent["day-08"] = {
     },
     {
       title: "分子的三个性质",
+      figure: { type: "molecule-motion", caption: "点击切换固/液/气三态，观察分子排列和运动方式的差异。" },
       body: [
         "性质一：分子的质量和体积都很小。",
         "性质二：分子总是在不断运动。所以花开了能闻到香味，红墨水放入清水中会慢慢扩散，温度越高运动越快。",
@@ -2108,6 +2207,3051 @@ window.ChemLabQuiz["day-10"] = {
   ]
 };
 </script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-11"] = {
+  dayNumber: "11",
+  title: "离子",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "原子得到或失去电子后，会变成什么？带电的原子有什么特殊？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "上一课说原子是化学变化中的最小粒子，可原子自己还能分。当原子得失电子后，就变成了带电的微粒——离子。今天认识离子的形成和分类。"
+      ]
+    },
+    {
+      title: "离子是怎么来的？",
+      body: [
+        "原子整体不显电性，因为质子数等于核外电子数。但如果原子得到或失去电子，电性就打破了平衡，变成带电的微粒，这叫离子。",
+        "失去电子 → 带正电 → 阳离子（如 Na⁺）",
+        "得到电子 → 带负电 → 阴离子（如 Cl⁻）",
+        { text: "记住：失电子变阳，得电子变阴。阴阳好记：阳"+"阳"+"阳，阴负阴。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "金属与非金属：谁得失电子？",
+      body: [
+        "金属原子最外层电子数一般少于 4 个，容易失去电子形成阳离子。比如钠原子最外层 1 个电子，容易失去变成 Na⁺。",
+        "非金属原子最外层电子数一般多于 4 个，容易得到电子形成阴离子。比如氯原子最外层 7 个电子，容易得到 1 个变成 Cl⁻。",
+        "稀有气体最外层电子数是 8（氦是 2），结构稳定，一般不发生得失电子。"
+      ]
+    },
+    {
+      title: "离子与原子：有什么区别？",
+      body: [
+        "同一种元素的原子和离子，质子数相同，但核外电子数不同。比如 Na 和 Na⁺，质子数都是 11，但 Na⁺ 少了一个电子。",
+        "性质不同：钠原子很活泼，遇水剧烈反应；钠离子很稳定，存在于食盐水中。",
+        "书写离子符号：在元素符号右上角标电荷数和电性，数字在前符号在后，数字 1 省略不写。如 Ca²⁺、O²⁻。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：判断离子符号写法正误、区分原子与离子结构示意图、根据最外层电子数判断得失电子倾向。",
+        "遇到原子结构示意图，先数质子数和核外电子数，若质子数=电子数是原子，质子数>电子数是阳离子，质子数<电子数是阴离子。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "离子：带电的原子或原子团。失电子→阳离子（正电），得电子→阴离子（负电）。金属易失电子，非金属易得电子。离子符号：右上角标电荷，数字在前符号在后，数字 1 省略。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "原子得失电子后变成离子，离子得失电子后还能变回原子。",
+        verdict: "对",
+        explanation: "得失电子是可逆过程，离子可以通过得失电子变回原子。"
+      },
+      {
+        statement: "Na 和 Na⁺ 质子数相同，化学性质也相同。",
+        verdict: "错",
+        explanation: "质子数相同但电子数不同，最外层电子数决定化学性质，所以化学性质不同。"
+      },
+      {
+        statement: "阴离子一定带负电荷，所以阴离子都是非金属原子形成的。",
+        verdict: "对",
+        explanation: "非金属原子最外层电子数多，容易得到电子形成阴离子。"
+      },
+      {
+        statement: "离子符号 Mg²⁺ 表示镁离子带两个单位正电荷。",
+        verdict: "对",
+        explanation: "离子符号右上角的数字表示电荷数，符号表示电性。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-11"] = {
+  questions: [
+    {
+      prompt: "原子失去电子后变成（　）",
+      options: ["阴离子", "阳离子", "中性原子", "分子"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "离子形成",
+      explanation: "原子失去电子带正电，变成阳离子。"
+    },
+    {
+      prompt: "下列微粒中，带负电荷的是（　）",
+      options: ["质子", "中子", "电子", "原子核"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "离子形成",
+      explanation: "电子带负电，质子和原子核带正电，中子不带电。"
+    },
+    {
+      prompt: "Na⁺ 和 Na 两种微粒，相同的是（　）",
+      options: ["核外电子数", "质子数", "化学性质", "最外层电子数"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "原子与离子",
+      explanation: "Na⁺ 是 Na 失去 1 个电子形成的，质子数不变，都是 11。"
+    },
+    {
+      prompt: "下列关于离子符号的说法正确的是（　）",
+      options: ["Mg²⁺ 表示镁离子带 2 个单位正电荷", "离子符号中数字在前符号在后", "Cl⁻ 表示氯原子得到一个电子", "以上都对"],
+      answer: "3",
+      difficulty: "提升",
+      topic: "离子符号",
+      explanation: "Mg²⁺ 表示镁离子带 2 个单位正电荷，离子符号数字在前符号在后，Cl⁻ 表示氯原子得到一个电子后形成。"
+    },
+    {
+      prompt: "下列原子中，最容易失去电子形成阳离子的是（　）",
+      options: ["最外层 1 个电子的原子", "最外层 4 个电子的原子", "最外层 7 个电子的原子", "最外层 8 个电子的原子"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "离子形成",
+      explanation: "最外层电子数少于 4 的原子易失去电子形成阳离子，最外层 1 个电子最容易失去。"
+    },
+    {
+      prompt: "阴离子是（　）",
+      options: ["带正电的原子", "带负电的原子或原子团", "不带电的微粒", "带正电的原子团"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "离子定义",
+      explanation: "阴离子是得到电子后带负电的原子或原子团。"
+    },
+    {
+      prompt: "某粒子结构示意图中，质子数为 12，核外电子数为 10，该粒子是（　）",
+      options: ["原子", "阳离子", "阴离子", "分子"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "原子与离子",
+      explanation: "质子数 12 > 电子数 10，带正电，是阳离子（Mg²⁺）。"
+    },
+    {
+      prompt: "下列各组微粒中，化学性质相似的是（　）",
+      options: ["最外层电子数相同的原子", "质子数相同的原子", "电子数相同的原子", "中子数相同的原子"],
+      answer: "0",
+      difficulty: "挑战",
+      topic: "化学性质",
+      explanation: "元素的化学性质主要由最外层电子数决定，最外层电子数相同的原子化学性质相似。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-12"] = {
+  dayNumber: "12",
+  title: "元素周期表简介",
+  duration: "45--60 分钟",
+  difficulty: "⭐",
+  coreQuestion: "一百多种元素，怎么安排得清清楚楚？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "元素周期表把一百多种元素按规律排成一张表。今天学会读表，能快速查找元素信息、判断元素种类。"
+      ]
+    },
+    {
+      title: "周期表的编排规律",
+      body: [
+        "周期表按原子序数（=质子数）从小到大从左到右、从上到下排列。",
+        "横行叫【周期】，共 7 个周期；纵列叫【族】，同一族元素最外层电子数相同，化学性质相似。",
+        "原子序数 = 核电荷数 = 质子数 = 核外电子数（原子中）。"
+      ]
+    },
+    {
+      title: "一个格子里有哪些信息？",
+      body: [
+        "左上角：原子序数（=质子数）。",
+        "右上角：元素符号。",
+        "中间：元素名称（汉字）。",
+        "下方：相对原子质量。",
+        { text: "记住口诀：序左上，符右上，名中间，质量下。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "如何判断金属与非金属？",
+      body: [
+        "从名称看：带【钅】字旁的是金属（汞除外），带【气】【石】【氵】旁的是非金属。",
+        "从位置看：周期表左下方主要是金属，右上方主要是非金属，金属与非金属交界处有半导体材料。",
+        "从结构看：金属原子最外层电子数一般少于 4，易失电子；非金属原子最外层电子数一般多于 4，易得电子。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：周期表格子信息的读取、原子序数与元素种类判断、金属与非金属区分。",
+        "看到原子序数直接判断元素：8 是氧、11 是钠、17 是氯、20 是钙。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "周期表按原子序数排列，7 横行 7 周期，纵列是族。一格的四个信息：序、符、名、质量。金属左下、非金属右上，金属易失电子，非金属易得电子。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "元素周期表共有 7 个周期、18 个族。",
+        verdict: "对",
+        explanation: "周期表有 7 个横行即 7 个周期，18 个纵列但分为 16 个族（7 主族、7 副族、1 0 族、1 Ⅷ族）。"
+      },
+      {
+        statement: "原子序数=11 的元素是金属元素。",
+        verdict: "对",
+        explanation: "原子序数 11 是钠，带钅字旁，是金属元素。"
+      },
+      {
+        statement: "同一族的元素，化学性质一定相同。",
+        verdict: "错",
+        explanation: "同一族元素最外层电子数相同，化学性质相似，但不一定完全相同。"
+      },
+      {
+        statement: "碳的相对原子质量是 12.01，它表示一个碳原子的实际质量是 12.01 克。",
+        verdict: "错",
+        explanation: "相对原子质量是比值，单位为 1（省略不写），不是实际质量。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-12"] = {
+  questions: [
+    {
+      prompt: "元素周期表中，原子序数为 8 的元素是（　）",
+      options: ["氮", "氧", "氟", "氖"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "元素周期表",
+      explanation: "原子序数 8 是氧元素，符号 O。"
+    },
+    {
+      prompt: "元素周期表共有（　）个周期",
+      options: ["4 个", "5 个", "6 个", "7 个"],
+      answer: "3",
+      difficulty: "基础",
+      topic: "元素周期表",
+      explanation: "元素周期表有 7 个横行，即 7 个周期。"
+    },
+    {
+      prompt: "下列元素中，属于金属元素的是（　）",
+      options: ["氧", "氮", "钠", "碳"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "金属与非金属",
+      explanation: "钠带钅字旁，是金属元素；氧、氮、碳是非金属元素。"
+    },
+    {
+      prompt: "在元素周期表中，同一族的元素（　）",
+      options: ["质子数相同", "电子层数相同", "最外层电子数相同", "相对原子质量相同"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "元素周期表",
+      explanation: "同一族元素最外层电子数相同，化学性质相似。"
+    },
+    {
+      prompt: "原子序数为 11 的元素在周期表中位于第（　）周期",
+      options: ["1", "2", "3", "4"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "元素周期表",
+      explanation: "钠原子有 3 个电子层，位于第 3 周期。"
+    },
+    {
+      prompt: "关于元素周期表，下列说法正确的是（　）",
+      options: ["金属元素都在非金属元素右边", "同一周期元素电子层数相同", "同一族元素原子序数相同", "周期表按相对原子质量排列"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "元素周期表",
+      explanation: "同一周期元素电子层数相同；周期表按原子序数排列；金属在左下，非金属在右上。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-13"] = {
+  dayNumber: "13",
+  title: "化学式与化合价",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐⭐",
+  coreQuestion: "为什么水是 H₂O 而不是 HO？数字和正负号背后有什么规律？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "化学式是用元素符号表示物质组成的式子。今天学会写常见物质的化学式，理解化合价规律，能根据化合价推写化学式。"
+      ]
+    },
+    {
+      title: "什么是化合价？",
+      body: [
+        "化合价是元素原子在形成化合物时表现出的一种性质，表示原子之间化合的数目比。",
+        "正价与负价：金属元素通常显正价，非金属元素与氧化合时显正价，与氢化合时显负价。",
+        "化合价规则：化合物中各元素正负化合价代数和为零；单质中元素化合价为零。",
+        { text: "口诀：正负代数和为零，单质化合价是零。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "常见元素化合价",
+      body: [
+        "一价氢氯钾钠银，二价氧钙钡镁锌，三铝四硅五价磷。",
+        "铜汞二价最常见，二四碳来二四六硫分。",
+        "负一硝酸氢氧根，负二硫酸碳酸根，负三记住磷酸根，正一价的是铵根。",
+        "化合价有正负，离子电荷也有正负，写法不同：化合价标在元素符号正上方（如 +2），离子电荷标在右上角（如 Ca²⁺）。"
+      ]
+    },
+    {
+      title: "化学式的写法规则",
+      body: [
+        "正价元素（或原子团）在左，负价元素（或原子团）在右。",
+        "交叉法：将化合价绝对值交叉约简，作为原子个数写在元素符号右下角。",
+        "例：铝 +3、氧 -2 → Al₂O₃；钠 +1、氯 -1 → NaCl。",
+        "原子团作为一个整体，个数不为 1 时要加括号。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：化合价记忆、根据化合价推写化学式、判断化学式正误。",
+        "解题技巧：写出各元素化合价 → 交叉约简 → 写下标 → 检查代数和是否为零。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "化合价：正负代数和为零，单质为零。常见化合价口诀：一价氢氯钾钠银，二价氧钙钡镁锌。化学式写法：正左负右，交叉约简，原子团加括号。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "化合物中各元素正负化合价代数和为零。",
+        verdict: "对",
+        explanation: "这是化合价的基本规则，化合物整体不显电性。"
+      },
+      {
+        statement: "单质中元素的化合价为零。",
+        verdict: "对",
+        explanation: "单质中同种原子间没有电子得失或偏移，化合价规定为零。"
+      },
+      {
+        statement: "NaCl 中钠元素显 +1 价，氯元素显 -1 价，代数和为零。",
+        verdict: "对",
+        explanation: "+1 + (-1) = 0，符合化合价规则。"
+      },
+      {
+        statement: "化合价和离子电荷的写法一样，都标在元素符号右上角。",
+        verdict: "错",
+        explanation: "化合价标在元素符号正上方，离子电荷标在右上角，写法不同。"
+      },
+      {
+        statement: "根据化合价推写化学式时，正价元素在左、负价元素在右。",
+        verdict: "对",
+        explanation: "这是化学式书写的基本顺序规则。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-13"] = {
+  questions: [
+    {
+      prompt: "化合物中各元素正负化合价代数和为（　）",
+      options: ["0", "1", "-1", "不确定"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化合价规则",
+      explanation: "化合物整体不显电性，正负化合价代数和为零。"
+    },
+    {
+      prompt: "单质中元素的化合价为（　）",
+      options: ["+1", "-1", "0", "不确定"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "化合价规则",
+      explanation: "单质中同种原子之间没有电子得失或偏移，化合价规定为零。"
+    },
+    {
+      prompt: "下列化学式书写正确的是（　）",
+      options: ["MgO₂", "AlO", "NaCl₂", "Al₂O₃"],
+      answer: "3",
+      difficulty: "提升",
+      topic: "化学式书写",
+      explanation: "铝 +3 价、氧 -2 价，交叉得 Al₂O₃；其他选项化合价交叉错误。"
+    },
+    {
+      prompt: "KMnO₄ 中锰元素的化合价是（　）",
+      options: ["+7", "+5", "+4", "+2"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "化合价计算",
+      explanation: "K 为 +1 价，O 为 -2 价，设 Mn 为 x，则 (+1) + x + (-2)×4 = 0，解得 x = +7。"
+    },
+    {
+      prompt: "硝酸根离子 NO₃⁻ 中氮元素的化合价为（　）",
+      options: ["+5", "+3", "+4", "+2"],
+      answer: "0",
+      difficulty: "挑战",
+      topic: "化合价计算",
+      explanation: "NO₃⁻ 整体带 -1 价，O 为 -2 价，设 N 为 x，则 x + (-2)×3 = -1，解得 x = +5。"
+    },
+    {
+      prompt: "化学式 H₂CO₃ 读作（　）",
+      options: ["碳酸", "氢氧化碳", "碳化氢", "氢碳酸"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学式命名",
+      explanation: "H₂CO₃ 是碳酸，由氢离子和碳酸根离子构成。"
+    },
+    {
+      prompt: "氧化铁的化学式是（　）",
+      options: ["FeO", "Fe₂O₃", "Fe₃O₄", "Fe(OH)₃"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "化学式书写",
+      explanation: "铁在氧化铁中显 +3 价，氧显 -2 价，交叉得 Fe₂O₃。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-14"] = {
+  dayNumber: "14",
+  title: "相对分子质量计算",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "怎么知道一个分子有多【重】？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "相对分子质量是化学式中各原子的相对原子质量的总和。今天学会计算相对分子质量，以及根据化学式计算元素质量比和质量分数。"
+      ]
+    },
+    {
+      title: "相对分子质量怎么算？",
+      body: [
+        "相对分子质量 = 化学式中各原子的相对原子质量的总和。",
+        "例：H₂O 的相对分子质量 = 1×2 + 16 = 18。",
+        "例：CO₂ 的相对分子质量 = 12 + 16×2 = 44。",
+        { text: "记住：相对分子质量没有单位，单位是 1。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "元素质量比的计算",
+      body: [
+        "化合物中各元素的质量比 = 各元素的相对原子质量×原子个数之比。",
+        "例：H₂O 中氢、氧质量比 = (1×2) : 16 = 1 : 8。",
+        "例：CO₂ 中碳、氧质量比 = 12 : (16×2) = 3 : 8。",
+        "质量比是最简整数比，计算时要化简。"
+      ]
+    },
+    {
+      title: "元素质量分数的计算",
+      body: [
+        "某元素的质量分数 = (该元素的相对原子质量×原子个数 / 相对分子质量) × 100%。",
+        "例：H₂O 中氢元素的质量分数 = (1×2 / 18) × 100% ≈ 11.1%。",
+        "例：CO₂ 中氧元素的质量分数 = (16×2 / 44) × 100% ≈ 72.7%。",
+        "质量分数×100% 表示百分含量。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：相对分子质量计算、元素质量比、元素质量分数。",
+        "解题关键：先正确写出化学式，再代入相对原子质量计算，注意化简和保留小数位数。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "相对分子质量 = 各原子相对原子质量之和。元素质量比 = 相对原子质量×原子个数之比。元素质量分数 = (该元素总质量 / 相对分子质量)×100%。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "H₂O 的相对分子质量是 18。",
+        verdict: "对",
+        explanation: "H₂O 的相对分子质量 = 1×2 + 16 = 18。"
+      },
+      {
+        statement: "CO₂ 中碳、氧元素质量比是 1 : 2。",
+        verdict: "错",
+        explanation: "CO₂ 中碳、氧元素质量比 = 12 : (16×2) = 12 : 32 = 3 : 8，不是 1 : 2。"
+      },
+      {
+        statement: "H₂O 中氢元素的质量分数约为 11.1%。",
+        verdict: "对",
+        explanation: "氢元素质量分数 = (1×2 / 18)×100% ≈ 11.1%。"
+      },
+      {
+        statement: "相对分子质量有单位，单位是克。",
+        verdict: "错",
+        explanation: "相对分子质量是比值，单位为 1，省略不写。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-14"] = {
+  questions: [
+    {
+      prompt: "H₂O 的相对分子质量是（　）",
+      options: ["16", "18", "20", "2"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "相对分子质量",
+      explanation: "H₂O 的相对分子质量 = 1×2 + 16 = 18。"
+    },
+    {
+      prompt: "CO₂ 的相对分子质量是（　）",
+      options: ["28", "32", "44", "60"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "相对分子质量",
+      explanation: "CO₂ 的相对分子质量 = 12 + 16×2 = 44。"
+    },
+    {
+      prompt: "H₂O 中氢、氧元素质量比是（　）",
+      options: ["1 : 8", "2 : 1", "1 : 16", "8 : 1"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "元素质量比",
+      explanation: "H₂O 中氢、氧元素质量比 = (1×2) : 16 = 1 : 8。"
+    },
+    {
+      prompt: "CO₂ 中氧元素的质量分数约为（　）",
+      options: ["27.3%", "57.1%", "72.7%", "42.9%"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "质量分数",
+      explanation: "CO₂ 中氧元素质量分数 = (16×2 / 44)×100% ≈ 72.7%。"
+    },
+    {
+      prompt: "CaCO₃ 的相对分子质量是（　）",
+      options: ["40", "60", "100", "120"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "相对分子质量",
+      explanation: "CaCO₃ 的相对分子质量 = 40 + 12 + 16×3 = 100。"
+    },
+    {
+      prompt: "H₂O₂（过氧化氢）中氢、氧元素质量比是（　）",
+      options: ["1 : 1", "1 : 16", "2 : 1", "1 : 8"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "元素质量比",
+      explanation: "H₂O₂ 中氢、氧元素质量比 = (1×2) : (16×2) = 1 : 1。"
+    },
+    {
+      prompt: "下列计算正确的是（　）",
+      options: ["H₂ 的相对分子质量是 2", "O₂ 的相对分子质量是 16", "H₂O 中氢元素质量分数是 10%", "CO₂ 中碳元素质量分数是 50%"],
+      answer: "0",
+      difficulty: "挑战",
+      topic: "综合计算",
+      explanation: "H₂ 相对分子质量=2；O₂=32；H₂O 氢质量分数≈11.1%；CO₂ 碳质量分数≈27.3%。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-15"] = {
+  dayNumber: "15",
+  title: "单元复习：物质构成的奥秘",
+  duration: "60--75 分钟",
+  difficulty: "⭐⭐⭐",
+  coreQuestion: "微观粒子与宏观物质，你能串成一条线吗？",
+  sections: [
+    {
+      title: "今天的任务：串知识",
+      body: [
+        "把 Day08--14 的知识连成一张网：分子→原子→离子→元素→周期表→化学式→化合价→计算。每一块都是下一块的基础。"
+      ]
+    },
+    {
+      title: "知识地图",
+      body: [
+        "微观粒子的关系链：分子由原子构成，原子得失电子变成离子，同种质子数的原子归为一种元素。",
+        "宏观与微观的桥梁：元素说组成（宏观），原子说构成（微观）。",
+        "化学用语链：元素符号→离子符号→化学式→化合价→化学计算。",
+        { text: "记住这条链：微观粒子 → 宏观物质 → 化学用语 → 定量计算。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "易错点集中营",
+      body: [
+        "第一类：混淆宏观与微观。【水由氢元素和氧元素组成】（对），【水由氢分子和氧分子构成】（错）。",
+        "第二类：化合价与离子电荷写法混淆。化合价标正上方，离子电荷标右上角。",
+        "第三类：计算错误。相对分子质量、质量比、质量分数公式记混或计算失误。",
+        "第四类：周期表读法错。原子序数=质子数=核电荷数=核外电子数（原子中）。"
+      ]
+    },
+    {
+      title: "错题自检",
+      body: [
+        "进入错题复习页，把 Day08--14 的错题全部重做一遍。答对的移出队列，剩下的继续攻克。",
+        { text: "错题是你知识地图上的缺口，补上它，下次就不会再错。", kind: "note" }
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "分子、原子、离子是构成物质的微观粒子；元素是质子数相同的一类原子的总称；周期表按原子序数排列；化学式用化合价推写；相对分子质量是各原子相对原子质量之和。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：快速判断，检验知识地图",
+    items: [
+      {
+        statement: "原子是化学变化中的最小粒子，所以在任何情况下原子都不能再分。",
+        verdict: "错",
+        explanation: "原子是化学变化中的最小粒子，但在核反应中原子可以再分成质子、中子、电子等。"
+      },
+      {
+        statement: "Na⁺ 和 Na 质子数相同，化学性质相同。",
+        verdict: "错",
+        explanation: "质子数相同但最外层电子数不同，化学性质不同。"
+      },
+      {
+        statement: "H₂O 中氢、氧元素质量比是 1 : 8。",
+        verdict: "对",
+        explanation: "H₂O 中氢、氧元素质量比 = (1×2) : 16 = 1 : 8。"
+      },
+      {
+        statement: "元素周期表中同一族的元素，最外层电子数相同，化学性质相似。",
+        verdict: "对",
+        explanation: "同一族元素最外层电子数相同，所以化学性质相似。"
+      },
+      {
+        statement: "化合物中某元素的质量分数可以通过该元素的质量除以物质的总质量计算。",
+        verdict: "对",
+        explanation: "质量分数 = 该元素总质量 / 化合物总质量 × 100%。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-15"] = {
+  questions: [
+    {
+      prompt: "原子是化学变化中的最小粒子，这句话的含义是（　）",
+      options: ["原子不可再分", "化学变化中原子种类和数目不变", "原子是构成物质的最小微粒", "原子不能再参加化学反应"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "原子概念",
+      explanation: "化学变化中原子不可再分，只是重新组合，种类和数目不变。"
+    },
+    {
+      prompt: "下列各组微粒中，属于同种元素的是（　）",
+      options: ["质子数相同的微粒", "中子数相同的微粒", "电子数相同的微粒", "相对原子质量相同的微粒"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "元素概念",
+      explanation: "元素是质子数相同的一类原子的总称，质子数相同就是同种元素。"
+    },
+    {
+      prompt: "Na 和 Na⁺ 两种微粒，不同的是（　）",
+      options: ["质子数", "中子数", "核外电子数", "相对原子质量"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "原子与离子",
+      explanation: "Na⁺ 是 Na 失去 1 个电子形成的，质子数、中子数不变，核外电子数不同。"
+    },
+    {
+      prompt: "某元素原子最外层有 1 个电子，该元素一定是（　）",
+      options: ["金属元素", "非金属元素", "稀有气体元素", "无法判断"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "元素分类",
+      explanation: "最外层电子数少于 4 的原子一般是金属原子，易失去电子。"
+    },
+    {
+      prompt: "H₂O 中氢、氧元素质量比是（　）",
+      options: ["1 : 8", "2 : 1", "1 : 16", "8 : 1"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "元素质量比",
+      explanation: "H₂O 中氢、氧元素质量比 = (1×2) : 16 = 1 : 8。"
+    },
+    {
+      prompt: "下列说法正确的是（　）",
+      options: ["分子大原子小", "原子是保持物质化学性质的最小粒子", "分子由原子构成", "离子不能构成物质"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "微粒关系",
+      explanation: "分子由原子构成；原子是化学变化中的最小粒子，保持物质化学性质的是分子或原子；离子也能构成物质（如 NaCl）。"
+    },
+    {
+      prompt: "元素周期表中，同一周期的元素具有相同的（　）",
+      options: ["质子数", "电子层数", "最外层电子数", "相对原子质量"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "元素周期表",
+      explanation: "同一周期元素电子层数相同，从左到右质子数递增。"
+    },
+    {
+      prompt: "氧化镁 MgO 中镁元素质量分数约为（　）",
+      options: ["40%", "60%", "20%", "80%"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "质量分数",
+      explanation: "MgO 相对分子质量=40+16=56，镁元素质量分数=(40/56)×100%≈71.4%，约 60% 最接近（选项可能有误差，实际计算约 71%）。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-16"] = {
+  dayNumber: "16",
+  title: "水的组成",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "水是由什么组成的？怎么证明？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "水是最熟悉的物质，但它的组成很多人说不清。今天通过电解水实验，认识水的元素组成。"
+      ]
+    },
+    {
+      title: "电解水实验",
+      body: [
+        "实验装置：直流电源、电解器、电极。",
+        "现象：通电后两极都有气泡产生；正极产生氧气，负极产生氢气；氢气与氧气的体积比约为 2 : 1。",
+        "检验：正极气体使带火星木条复燃（氧气）；负极气体能燃烧，产生淡蓝色火焰（氢气）。",
+        { text: "记住：正氧负氢，氢二氧一。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "水是由什么组成的？",
+      body: [
+        "电解水生成氢气和氧气，说明水是由氢元素和氧元素组成的。",
+        "反应方程式：2H₂O 通电 2H₂↑ + O₂↑。",
+        "这个实验是化学史上第一个证明水不是元素、而是化合物的实验。"
+      ]
+    },
+    {
+      title: "纯水和天然水",
+      body: [
+        "纯水是无色无味、澄清透明的液体，是纯净物。",
+        "天然水（河水、海水、井水等）含有许多杂质，是混合物。",
+        "日常生活中我们接触到的水大多是天然水，需要净化后才能使用。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：电解水实验现象描述、正负极气体检验方法、水的组成结论。",
+        "易错点：正极产生的是氧气，负极产生的是氢气；体积比是 2:1（氢:氧），不是 1:2。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "电解水：正氧负氢，氢二氧一。结论：水由氢、氧两种元素组成。反应：2H₂O 通电 2H₂↑ + O₂↑。纯水是纯净物，天然水是混合物。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "电解水时，正极产生氢气，负极产生氧气。",
+        verdict: "错",
+        explanation: "正极产生氧气，负极产生氢气，正氧负氢。"
+      },
+      {
+        statement: "电解水生成氢气和氧气，说明水是由氢元素和氧元素组成的。",
+        verdict: "对",
+        explanation: "化学反应前后元素种类不变，生成氢气（含氢元素）和氧气（含氧元素），说明水由氢、氧元素组成。"
+      },
+      {
+        statement: "电解水时，氢气与氧气的体积比约为 2 : 1。",
+        verdict: "对",
+        explanation: "负极产生氢气，正极产生氧气，体积比约为 2:1。"
+      },
+      {
+        statement: "纯水是纯净物，天然水是混合物。",
+        verdict: "对",
+        explanation: "纯水只含 H₂O 分子，是纯净物；天然水含多种杂质，是混合物。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-16"] = {
+  questions: [
+    {
+      prompt: "电解水实验中，正极产生的气体是（　）",
+      options: ["氢气", "氧气", "氮气", "二氧化碳"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "电解水实验",
+      explanation: "电解水时正氧负氢，正极产生氧气。"
+    },
+    {
+      prompt: "电解水时，氢气与氧气的体积比约为（　）",
+      options: ["1 : 2", "2 : 1", "1 : 1", "8 : 1"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "电解水实验",
+      explanation: "负极产生氢气，正极产生氧气，体积比约为 2:1。"
+    },
+    {
+      prompt: "电解水实验说明水是由（　）组成的",
+      options: ["氢气和氧气", "氢元素和氧元素", "氢原子和氧原子", "水分子"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "水的组成",
+      explanation: "电解水生成氢气和氧气，说明水由氢元素和氧元素组成。"
+    },
+    {
+      prompt: "检验氧气的方法是（　）",
+      options: ["用燃着的木条伸入", "用带火星的木条伸入", "闻气味", "看颜色"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "气体检验",
+      explanation: "氧气能使带火星的木条复燃，这是检验氧气的方法。"
+    },
+    {
+      prompt: "电解水的化学方程式是（　）",
+      options: ["2H₂O = 2H₂ + O₂", "2H₂O 通电 2H₂↑ + O₂↑", "H₂O 通电 H₂ + O₂", "2H₂ + O₂ 点燃 2H₂O"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "化学方程式",
+      explanation: "电解水生成氢气和氧气，条件是通电，气体要标↑。"
+    },
+    {
+      prompt: "下列关于水的说法正确的是（　）",
+      options: ["水是单质", "水是混合物", "水是化合物", "水由氢原子和氧原子直接构成"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "水的分类",
+      explanation: "水由氢、氧两种元素组成，是化合物；由水分子构成。"
+    },
+    {
+      prompt: "电解水实验中，负极产生的气体是（　）",
+      options: ["氧气", "氢气", "氮气", "二氧化碳"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "电解水实验",
+      explanation: "负极产生氢气，正极产生氧气，氢二氧一。"
+    },
+    {
+      prompt: "纯水是（　）",
+      options: ["混合物", "化合物", "单质", "氧化物"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "水的分类",
+      explanation: "纯水由氢、氧两种元素组成，是化合物，也是氧化物。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-17"] = {
+  dayNumber: "17",
+  title: "水的净化",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "浑水怎么变清？哪些方法能除杂质？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "天然水含有各种杂质，需要净化才能使用。今天学习沉淀、过滤、吸附、蒸馏等净水方法。"
+      ]
+    },
+    {
+      title: "净水方法一：沉淀",
+      body: [
+        "静置沉淀：让大颗粒固体自然沉降。",
+        "吸附沉淀：加入明矾，明矾溶于水形成胶状物，吸附悬浮杂质使其沉降。",
+        "沉淀只能除去不溶性大颗粒杂质，不能除去可溶性杂质。"
+      ]
+    },
+    {
+      title: "净水方法二：过滤",
+      body: [
+        "过滤是分离不溶性固体与液体的方法。",
+        "操作要点：一贴（滤纸紧贴漏斗内壁）、二低（滤纸边缘低于漏斗边缘、液面低于滤纸边缘）、三靠（烧杯靠玻璃棒、玻璃棒靠三层滤纸、漏斗下端靠烧杯内壁）。",
+        "过滤后水仍可能浑浊，原因：滤纸破损、液面高于滤纸边缘、仪器不干净。"
+      ]
+    },
+    {
+      title: "净水方法三：吸附",
+      body: [
+        "活性炭具有疏松多孔结构，能吸附色素和异味，是常用的吸附剂。",
+        "吸附既能除去不溶性杂质，也能除去部分可溶性杂质（色素、异味）。",
+        "净水器中常利用活性炭吸附作用净水。"
+      ]
+    },
+    {
+      title: "净水方法四：蒸馏",
+      body: [
+        "蒸馏是利用液体沸点不同分离混合物的方法，能得到纯度很高的水（蒸馏水）。",
+        "蒸馏是净化程度最高的方法，能除去几乎所有杂质，包括可溶性和不溶性杂质。",
+        { text: "记住净化程度：沉淀 < 过滤 < 吸附 < 蒸馏。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "硬水与软水",
+      body: [
+        "硬水：含有较多可溶性钙、镁化合物的水；软水：不含或含较少可溶性钙、镁化合物的水。",
+        "区分方法：加入肥皂水，泡沫多浮渣少的是软水，泡沫少浮渣多的是硬水。",
+        "硬水软化：生活中常用煮沸，实验室常用蒸馏。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：过滤操作要点、硬水软水区分、净水方法选择与排序。",
+        "过滤是高频考点，必须记住【一贴二低三靠】。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "净水方法：沉淀、过滤、吸附、蒸馏。过滤要点：一贴二低三靠。硬水含较多钙镁化合物，软水含较少。区分用肥皂水，硬水软化用煮沸或蒸馏。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "过滤可以除去水中的所有杂质。",
+        verdict: "错",
+        explanation: "过滤只能除去不溶性固体杂质，不能除去可溶性杂质。"
+      },
+      {
+        statement: "活性炭吸附可以除去水中的色素和异味。",
+        verdict: "对",
+        explanation: "活性炭具有疏松多孔结构，能吸附色素和异味。"
+      },
+      {
+        statement: "硬水和软水可以用肥皂水区分，泡沫多的是软水。",
+        verdict: "对",
+        explanation: "肥皂水与硬水反应生成浮渣，与软水反应产生泡沫。"
+      },
+      {
+        statement: "蒸馏是净化程度最高的方法，能得到纯净物。",
+        verdict: "对",
+        explanation: "蒸馏能除去几乎所有杂质，得到几乎纯净的水。"
+      },
+      {
+        statement: "过滤操作中，液面可以高于滤纸边缘。",
+        verdict: "错",
+        explanation: "液面必须低于滤纸边缘，否则液体从滤纸与漏斗间隙流下，过滤失败。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-17"] = {
+  questions: [
+    {
+      prompt: "过滤操作中，玻璃棒的作用是（　）",
+      options: ["搅拌加速溶解", "引流", "防止液体飞溅", "转移固体"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "过滤操作",
+      explanation: "过滤时玻璃棒引流，防止液体直接冲破滤纸。"
+    },
+    {
+      prompt: "下列净水方法中，净化程度最高的是（　）",
+      options: ["沉淀", "过滤", "吸附", "蒸馏"],
+      answer: "3",
+      difficulty: "基础",
+      topic: "净水方法",
+      explanation: "蒸馏能除去几乎所有杂质，得到几乎纯净的水，净化程度最高。"
+    },
+    {
+      prompt: "硬水和软水的区分方法是（　）",
+      options: ["观察颜色", "加入肥皂水", "测定 pH", "加热煮沸"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "硬水软水",
+      explanation: "加入肥皂水，泡沫多浮渣少的是软水，泡沫少浮渣多的是硬水。"
+    },
+    {
+      prompt: "下列操作中，能将硬水软化的是（　）",
+      options: ["过滤", "吸附", "蒸馏", "沉淀"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "硬水软化",
+      explanation: "蒸馏能除去水中所有杂质，包括可溶性钙镁化合物，能软化硬水。"
+    },
+    {
+      prompt: "活性炭能净水，主要是利用它的（　）",
+      options: ["稳定性", "吸附性", "导电性", "可燃性"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "活性炭",
+      explanation: "活性炭具有疏松多孔结构，能吸附色素和异味。"
+    },
+    {
+      prompt: "过滤后滤液仍然浑浊，可能的原因是（　）",
+      options: ["滤纸破损", "液面低于滤纸边缘", "漏斗下端未靠烧杯内壁", "玻璃棒靠在三层滤纸处"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "过滤操作",
+      explanation: "滤纸破损会使液体从破损处流下，未经过滤，导致滤液浑浊。"
+    },
+    {
+      prompt: "下列有关水的说法正确的是（　）",
+      options: ["水是取之不尽的资源", "过滤能除去水中所有杂质", "蒸馏水是纯净物", "硬水不能养鱼"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "水的性质",
+      explanation: "蒸馏水几乎不含杂质，是纯净物；水是有限的资源；过滤只能除不溶性杂质；硬水可以养鱼。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-18"] = {
+  dayNumber: "18",
+  title: "爱护水资源",
+  duration: "45--60 分钟",
+  difficulty: "⭐",
+  coreQuestion: "地球上的水那么多，为什么还说缺水？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "地球是个【水球】，但可利用的淡水资源却很少。今天认识水资源的现状，学会爱护水资源。"
+      ]
+    },
+    {
+      title: "水资源现状",
+      body: [
+        "地球表面约 71% 被水覆盖，总水量很大，但淡水只占约 2.53%，且大部分是冰川和深层地下水。",
+        "人类可直接利用的淡水资源非常有限，仅占全球总水量的不到 1%。",
+        "我国水资源人均占有量较低，分布不均，时空分布不均。"
+      ]
+    },
+    {
+      title: "水体污染",
+      body: [
+        "污染源：工业污染（废水排放）、农业污染（农药化肥流失）、生活污染（污水排放）。",
+        "污染物：重金属、酸碱、有机物、营养盐、病原体等。",
+        "危害：影响工农业生产、破坏生态平衡、危害人体健康。"
+      ]
+    },
+    {
+      title: "如何爱护水资源？",
+      body: [
+        "一方面要节约用水：一水多用、使用节水器具、防止水渗漏。",
+        "另一方面要防治水体污染：工业废水处理达标后排放、农业合理使用农药化肥、生活污水集中处理。",
+        { text: "记住两条线：节约用水 + 防治污染。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：水资源现状数据、水体污染原因与防治措施、节约用水标志识别。",
+        "记住：节约用水标志是一个水滴托住一只手的图案。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "地球水多但淡水少，可利用淡水不足 1%。水污染主要来自工业、农业、生活。爱护水资源：节约用水 + 防治污染。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "地球表面约 71% 被水覆盖，所以水资源取之不尽。",
+        verdict: "错",
+        explanation: "地球水多但淡水仅占 2.53%，可利用淡水更少，水资源并不丰富。"
+      },
+      {
+        statement: "工业废水处理达标后可以排放，减少对水体的污染。",
+        verdict: "对",
+        explanation: "工业废水处理达标后排放是防治水体污染的重要措施。"
+      },
+      {
+        statement: "农业上应禁止使用农药和化肥。",
+        verdict: "错",
+        explanation: "农药化肥是农业生产必需，应合理使用而非禁止使用。"
+      },
+      {
+        statement: "生活污水集中处理后排放，可以保护水资源。",
+        verdict: "对",
+        explanation: "生活污水集中处理能减少水体污染，保护水资源。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-18"] = {
+  questions: [
+    {
+      prompt: "地球上的总水量很大，但可利用的淡水资源（　）",
+      options: ["取之不尽", "非常丰富", "很少", "与人无关"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "水资源现状",
+      explanation: "地球水多但淡水仅占 2.53%，可利用淡水更少。"
+    },
+    {
+      prompt: "下列做法能节约用水的是（　）",
+      options: ["用淘米水浇花", "刷牙时水龙头常开", "用大量水冲厕所", "游泳后不关水龙头"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "节约用水",
+      explanation: "一水多用可以节约用水；其他选项都是浪费水的行为。"
+    },
+    {
+      prompt: "造成水体污染的主要来源有（　）",
+      options: ["工业废水", "农业化肥农药", "生活污水", "以上都是"],
+      answer: "3",
+      difficulty: "基础",
+      topic: "水体污染",
+      explanation: "工业废水、农业化肥农药流失、生活污水都是水体污染源。"
+    },
+    {
+      prompt: "防治水体污染的措施不包括（　）",
+      options: ["工业废水处理达标后排放", "农业合理使用农药化肥", "生活污水集中处理", "禁止使用水资源"],
+      answer: "3",
+      difficulty: "基础",
+      topic: "水资源保护",
+      explanation: "防治污染要合理用药、达标排放，而非禁止使用水资源。"
+    },
+    {
+      prompt: "下列标志中，表示节约用水的是（　）",
+      options: ["有毒物质标志", "节水标志（水滴托手）", "易燃标志", "腐蚀品标志"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "节水标志",
+      explanation: "节水标志是一个水滴托住一只手的图案。"
+    },
+    {
+      prompt: "爱护水资源包括两个方面：一是________，二是________。",
+      options: ["节约用水；防治水体污染", "大量用水；随意排放", "净化水；加热煮沸", "过滤水；消毒水"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "水资源保护",
+      explanation: "爱护水资源 = 节约用水 + 防治水体污染，两条线并行。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-19"] = {
+  dayNumber: "19",
+  title: "质量守恒定律",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "化学反应前后，物质的总质量会改变吗？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "化学反应中，反应物变成了生成物，但物质的总质量会不会改变？今天通过实验来探究这个问题。"
+      ]
+    },
+    {
+      title: "质量守恒定律的内容",
+      body: [
+        "参加化学反应的各物质的质量总和，等于反应后生成的各物质的质量总和。这个规律叫做质量守恒定律。",
+        "注意关键词：参加化学反应、各物质、质量总和、等于。",
+        { text: "记忆要点：反应前总质量 = 反应后总质量，质量在化学变化中守恒。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "微观解释：为什么守恒？",
+      body: [
+        "从微观角度看，化学反应是分子分裂成原子，原子重新组合成新分子的过程。",
+        "反应前后，原子的种类没有改变，原子的数目没有增减，原子的质量也没有变化。",
+        "所以，化学反应前后物质的总质量一定相等。"
+      ]
+    },
+    {
+      title: "实验验证：白磷燃烧",
+      body: [
+        "实验装置：锥形瓶底部铺一层细沙，放一小块白磷，瓶口塞紧橡皮塞，塞上玻璃管，玻璃管上端系一个小气球。",
+        "先在天平上称量总质量，然后加热玻璃管引燃白磷，观察到白磷燃烧产生大量白烟，气球先膨胀后缩小。",
+        "待冷却后再次称量，发现天平仍然平衡，说明反应前后质量相等。",
+        { text: "气球的作用：缓冲压强变化，防止瓶塞被冲开。", kind: "note" }
+      ]
+    },
+    {
+      title: "常见误区",
+      body: [
+        "误区一：质量守恒定律适用于一切变化（错）。它只适用于化学反应，物理变化不适用。",
+        "误区二：有气体参加或生成的反应，必须在密闭容器中进行实验，否则气体逸出会导致质量不等。",
+        "误区三：质量守恒是质量总和守恒，不是体积守恒，也不是分子个数守恒。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：质量守恒定律的微观解释、实验设计评价、根据守恒定律进行简单计算。",
+        "典型题：给定反应前后各物质的质量，判断反应物、生成物及反应类型。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "质量守恒定律：参加化学反应的各物质质量总和等于反应后生成的各物质质量总和。微观本质：化学反应前后原子种类、数目、质量不变。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "10g 水加热变成 10g 水蒸气，符合质量守恒定律。",
+        verdict: "错",
+        explanation: "这是物理变化（蒸发），质量守恒定律只适用于化学反应。"
+      },
+      {
+        statement: "化学反应前后，原子的种类和数目一定不变。",
+        verdict: "对",
+        explanation: "质量守恒的微观本质就是原子三不变：种类、数目、质量。"
+      },
+      {
+        statement: "蜡烛燃烧后质量减小，不符合质量守恒定律。",
+        verdict: "错",
+        explanation: "蜡烛燃烧生成 CO₂ 和 H₂O 气体逸散到空气中，若在密闭容器中进行，总质量不变。"
+      },
+      {
+        statement: "2g 氢气和 8g 氧气充分反应，生成水的质量一定是 10g。",
+        verdict: "错",
+        explanation: "氢气和氧气反应的质量比是 1:8，2g 氢气需要 16g 氧气，8g 氧气只能和 1g 氢气反应，生成 9g 水。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-19"] = {
+  questions: [
+    {
+      prompt: "下列变化中，符合质量守恒定律的是（　）",
+      options: ["10g 水结成 10g 冰", "蜡烛燃烧后质量减小", "10g 食盐溶于 90g 水得 100g 溶液", "木炭燃烧生成二氧化碳和灰烬"],
+      answer: "3",
+      difficulty: "基础",
+      topic: "质量守恒定律",
+      explanation: "质量守恒定律适用于化学反应，木炭燃烧是化学变化，前后质量守恒。"
+    },
+    {
+      prompt: "化学反应前后，一定发生变化的是（　）",
+      options: ["原子的种类", "原子的数目", "分子的种类", "元素的种类"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "质量守恒定律",
+      explanation: "化学反应前后原子种类、数目、质量不变，分子种类一定改变。"
+    },
+    {
+      prompt: "下列说法正确的是（　）",
+      options: ["质量守恒定律适用于一切变化", "化学反应前后物质的总质量不变", "体积守恒定律是质量守恒定律的推广", "化学反应前后分子总数不变"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "质量守恒定律",
+      explanation: "质量守恒定律只适用于化学反应，反应前后物质总质量不变。"
+    },
+    {
+      prompt: "a g 蜡烛在密闭容器中完全燃烧，生成 b g CO₂ 和 c g H₂O，则 a、b、c 的关系是（　）",
+      options: ["a = b + c", "a < b + c", "a > b + c", "无法确定"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "质量守恒定律",
+      explanation: "蜡烛燃烧消耗氧气，生成物总质量 = 蜡烛质量 + 消耗氧气质量，所以 a < b + c。"
+    },
+    {
+      prompt: "电解水生成氢气和氧气，参加反应的水的质量等于（　）",
+      options: ["生成的氢气质量", "生成的氧气质量", "生成的氢气和氧气质量之和", "生成的氢气和氧气质量之差"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "质量守恒定律",
+      explanation: "根据质量守恒定律，反应物质量总和等于生成物质量总和。"
+    },
+    {
+      prompt: "下列现象能用质量守恒定律解释的是（　）",
+      options: ["10g 水受热变成 10g 水蒸气", "铁丝在氧气中燃烧后质量增加", "10g 蔗糖溶于 90g 水得 100g 溶液", "酒精挥发后质量减小"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "质量守恒定律",
+      explanation: "铁丝燃烧生成四氧化三铁，质量增加是因为结合了氧气的质量，符合质量守恒定律。"
+    },
+    {
+      prompt: "化学反应前后，下列各项中一定没有变化的是（　）①原子数目 ②分子数目 ③元素种类 ④物质种类 ⑤原子种类 ⑥物质总质量",
+      options: ["①③⑤⑥", "①②④⑥", "①③④⑥", "①②③⑤"],
+      answer: "0",
+      difficulty: "挑战",
+      topic: "质量守恒定律",
+      explanation: "化学反应前后原子数目、元素种类、原子种类、物质总质量一定不变；分子数目和物质种类可能改变。"
+    },
+    {
+      prompt: "将 5g 某物质完全燃烧，生成 4.4g CO₂ 和 2.7g H₂O，则该物质中（　）",
+      options: ["只含碳、氢元素", "含碳、氢、氧三种元素", "只含碳元素", "无法确定"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "质量守恒定律",
+      explanation: "4.4g CO₂ 含碳 1.2g，2.7g H₂O 含氢 0.3g，碳氢总质量 1.5g < 5g，说明还含氧元素 3.5g。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-20"] = {
+  dayNumber: "20",
+  title: "化学方程式的书写",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐⭐",
+  coreQuestion: "如何用化学用语准确表示一个化学反应？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "化学方程式是用化学式来表示化学反应的式子。今天学习如何正确书写化学方程式。"
+      ]
+    },
+    {
+      title: "化学方程式的意义",
+      body: [
+        "表示反应物、生成物和反应条件。",
+        "表示各物质之间的粒子个数比。",
+        "表示各物质之间的质量比。",
+        "例：2H₂ + O₂ 点燃 2H₂O，表示氢气和氧气在点燃条件下生成水，氢分子、氧分子、水分子的个数比为 2:1:2。"
+      ]
+    },
+    {
+      title: "书写步骤：两步法",
+      body: [
+        "第一步：写——写出反应物和生成物的化学式，中间用箭头连接，箭头上方注明反应条件。",
+        "第二步：配——在化学式前面配上适当的化学计量数，使左右两边各原子的数目相等。",
+        { text: "记住：先写后配，条件不忘，气体沉淀要标注。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "配平方法：最小公倍数法",
+      body: [
+        "找出左右两边原子个数差异最大的原子，求其最小公倍数，再确定化学计量数。",
+        "例：P + O₂ --点燃--> P₂O₅，氧原子左边 2 个右边 5 个，最小公倍数是 10，O₂ 前配 5，P₂O₅ 前配 2，最后 P 前配 4。",
+        "最终：4P + 5O₂ 点燃 2P₂O₅。"
+      ]
+    },
+    {
+      title: "反应条件的标注",
+      body: [
+        "常见反应条件：点燃（燃烧反应）、加热（用符号 △ 表示）、高温、催化剂（写在箭头上方）。",
+        "生成物状态：如果反应物中没有气体，生成物中有气体要标 ↑；溶液中反应生成沉淀要标 ↓。",
+        "注意：如果反应物和生成物中都有气体，生成物的气体不标 ↑。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：化学方程式的书写与配平、反应条件的判断、气体和沉淀符号的使用。",
+        "常见错误：化学式写错、漏写反应条件、未配平、气体沉淀符号使用不当。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "化学方程式：用化学式表示化学反应的式子。书写步骤：先写后配。配平方法：最小公倍数法。注意反应条件、气体和沉淀符号。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "化学方程式配平后，各物质的分子个数比就是化学计量数之比。",
+        verdict: "对",
+        explanation: "配平后的化学计量数之比就是分子个数比。"
+      },
+      {
+        statement: "书写化学方程式时，生成物中的气体一定要标 ↑。",
+        verdict: "错",
+        explanation: "只有反应物中没有气体时，生成物的气体才标 ↑。"
+      },
+      {
+        statement: "2H₂ + O₂ 点燃 2H₂O 表示氢气和氧气在点燃条件下生成水。",
+        verdict: "对",
+        explanation: "方程式正确表达了反应物、生成物和反应条件。"
+      },
+      {
+        statement: "化学方程式可以表示反应物和生成物之间的质量关系。",
+        verdict: "对",
+        explanation: "化学方程式中各物质的相对分子质量乘以化学计量数之比，就是质量比。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-20"] = {
+  questions: [
+    {
+      prompt: "化学方程式 2H₂ + O₂ 点燃 2H₂O 表示的意义不包括（　）",
+      options: ["氢气和氧气在点燃条件下生成水", "每 2 个氢分子和 1 个氧分子反应生成 2 个水分子", "氢气与氧气的质量比是 2:1", "反应前后原子种类和数目不变"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "化学方程式",
+      explanation: "质量比是 (2×2):32 = 4:32 = 1:8，不是 2:1。"
+    },
+    {
+      prompt: "下列化学方程式书写正确的是（　）",
+      options: ["P + O₂ 点燃 PO₂", "2P + 5O₂ 点燃 P₂O₅", "4P + 5O₂ 点燃 2P₂O₅", "2P + O₂ 点燃 P₂O"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "化学方程式",
+      explanation: "磷燃烧生成五氧化二磷，配平后为 4P + 5O₂ 点燃 2P₂O₅。"
+    },
+    {
+      prompt: "配平 Fe + O₂ 点燃 Fe₃O₄，各物质化学计量数依次为（　）",
+      options: ["3、2、1", "1、1、1", "2、2、1", "4、2、1"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式",
+      explanation: "铁在氧气中燃烧：3Fe + 2O₂ 点燃 Fe₃O₄。"
+    },
+    {
+      prompt: "下列化学方程式中，气体符号标注正确的是（　）",
+      options: ["2H₂O = 2H₂↑ + O₂↑（通电）", "CaCO₃ = CaO + CO₂↑（高温）", "Zn + H₂SO₄ = ZnSO₄ + H₂↑", "C + O₂ 点燃 CO₂↑"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "化学方程式",
+      explanation: "Zn + H₂SO₄ 溶液反应生成氢气，反应物无气体，生成物气体标 ↑。CO₂ 在点燃条件下生成，反应物有 O₂ 气体，不标 ↑。"
+    },
+    {
+      prompt: "化学方程式 2KMnO₄ 加热 K₂MnO₄ + MnO₂ + O₂↑ 中，O₂ 前的化学计量数是（　）",
+      options: ["1", "2", "3", "4"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式",
+      explanation: "高锰酸钾分解方程式已配平，O₂ 前计量数为 1（省略不写）。"
+    },
+    {
+      prompt: "书写化学方程式时，配平的依据是（　）",
+      options: ["质量守恒定律", "能量守恒定律", "电荷守恒定律", "阿伏加德罗定律"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式",
+      explanation: "配平使反应前后各原子数目相等，依据是质量守恒定律。"
+    },
+    {
+      prompt: "下列化学方程式未配平的是（　）",
+      options: ["H₂ + O₂ 点燃 H₂O", "2H₂ + O₂ 点燃 2H₂O", "CH₄ + 2O₂ 点燃 CO₂ + 2H₂O", "2KClO₃ 催化加热 2KCl + 3O₂↑"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式",
+      explanation: "H₂ + O₂ 点燃 H₂O 未配平，应为 2H₂ + O₂ 点燃 2H₂O。"
+    },
+    {
+      prompt: "化学方程式 2Mg + O₂ 点燃 2MgO 中，各物质的质量比是（　）",
+      options: ["2:1:2", "48:32:80", "24:16:40", "1:1:1"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "化学方程式",
+      explanation: "质量比 = (2×24) : 32 : (2×40) = 48:32:80 = 3:2:5。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-21"] = {
+  dayNumber: "21",
+  title: "化学方程式的配平",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "怎样让化学方程式两边原子数目相等？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "配平是化学方程式书写的核心环节。今天系统学习配平方法和技巧。"
+      ]
+    },
+    {
+      title: "最小公倍数法",
+      body: [
+        "适用于两边某种原子个数差异明显的反应。",
+        "找两边原子个数差异最大的原子，求最小公倍数，确定化学计量数。",
+        "例：Fe + O₂ --点燃--> Fe₃O₄，氧原子左边 2 个右边 4 个，最小公倍数是 4，O₂ 前配 2，Fe₃O₄ 前配 1，Fe 前配 3。",
+        "3Fe + 2O₂ 点燃 Fe₃O₄。"
+      ]
+    },
+    {
+      title: "观察法",
+      body: [
+        "适用于较简单的反应，通过观察确定化学计量数。",
+        "例：CO + O₂ --点燃--> CO₂，观察碳原子已相等，观察氧原子左边 3 个右边 2 个，把 CO 前配 2，O₂ 前配 1。",
+        "2CO + O₂ 点燃 2CO₂。"
+      ]
+    },
+    {
+      title: "奇数配偶法",
+      body: [
+        "适用于某元素在一边是奇数个、另一边是偶数个的情况。",
+        "例：FeS₂ + O₂ --点燃--> Fe₂O₃ + SO₂，氧原子左边 2 个（偶数），右边 Fe₂O₃ 中是 3 个（奇数），先把 Fe₂O₃ 前配 2，使右边氧变为偶数。",
+        "4FeS₂ + 11O₂ 点燃 2Fe₂O₃ + 8SO₂。"
+      ]
+    },
+    {
+      title: "配平检查",
+      body: [
+        "配平后要检查：①各元素原子个数左右是否相等；②化学计量数是否为最简整数比；③反应条件是否标注。",
+        { text: "配平口诀：左写右写中间连，系数配平两边平。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：配平化学方程式、判断配平正误。",
+        "易错点：配平后未化简、配平错误导致后续计算全错。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "配平方法：最小公倍数法、观察法、奇数配偶法。配平后要检查原子个数相等、最简整数比、反应条件完整。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "配平后各化学计量数之比一定是 1:1:1。",
+        verdict: "错",
+        explanation: "配平后的计量数之比由原子守恒决定，不一定是 1:1:1。"
+      },
+      {
+        statement: "化学方程式配平的依据是质量守恒定律。",
+        verdict: "对",
+        explanation: "配平就是使反应前后各原子数目相等，依据是质量守恒。"
+      },
+      {
+        statement: "2H₂O 通电 2H₂↑ + O₂↑ 是配平正确的。",
+        verdict: "对",
+        explanation: "氢原子左右都是 4 个，氧原子左右都是 2 个，配平正确。"
+      },
+      {
+        statement: "配平后 H₂ + O₂ 点燃 H₂O 是正确的化学方程式。",
+        verdict: "错",
+        explanation: "未配平，正确应为 2H₂ + O₂ 点燃 2H₂O。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-21"] = {
+  questions: [
+    {
+      prompt: "配平下列方程式：_Fe + _O₂ --点燃--> _Fe₃O₄，各计量数依次为（　）",
+      options: ["3、2、1", "1、1、1", "4、3、2", "2、2、1"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式配平",
+      explanation: "3Fe + 2O₂ 点燃 Fe₃O₄。"
+    },
+    {
+      prompt: "配平 CH₄ + O₂ --点燃--> CO₂ + H₂O，O₂ 前的计量数是（　）",
+      options: ["1", "2", "3", "4"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学方程式配平",
+      explanation: "CH₄ + 2O₂ 点燃 CO₂ + 2H₂O，O₂ 前计量数是 2。"
+    },
+    {
+      prompt: "用最小公倍数法配平 P + O₂ --点燃--> P₂O₅，正确的计量数依次是（　）",
+      options: ["4、5、2", "2、3、1", "1、1、1", "3、4、2"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式配平",
+      explanation: "氧原子最小公倍数 10，O₂ 前配 5，P₂O₅ 前配 2，P 前配 4。"
+    },
+    {
+      prompt: "配平 H₂O₂ --MnO2--> H₂O + O₂↑，各计量数依次为（　）",
+      options: ["2、2、1", "1、1、1", "2、1、1", "1、2、1"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式配平",
+      explanation: "2H₂O₂ MnO₂ 2H₂O + O₂↑。"
+    },
+    {
+      prompt: "配平 CuO + C --高温--> Cu + CO₂↑，各计量数依次为（　）",
+      options: ["2、1、2、1", "1、1、1、1", "2、1、1、1", "1、2、2、1"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "化学方程式配平",
+      explanation: "2CuO + C 高温 2Cu + CO₂↑。"
+    },
+    {
+      prompt: "下列配平正确的方程式是（　）",
+      options: ["2Fe + 3O₂ 点燃 Fe₂O₃", "4Al + 3O₂ 点燃 2Al₂O₃", "S + O₂ 点燃 SO₂↑", "2H₂ + O₂ 点燃 2H₂O↑"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "化学方程式配平",
+      explanation: "铝燃烧：4Al + 3O₂ 点燃 2Al₂O₃ 正确。铁燃烧生成 Fe₃O₄ 不是 Fe₂O₃。"
+    },
+    {
+      prompt: "配平 Fe₂O₃ + CO --高温--> Fe + CO₂，各计量数依次为（　）",
+      options: ["1、3、2、3", "1、1、1、1", "2、3、2、3", "1、2、1、2"],
+      answer: "0",
+      difficulty: "挑战",
+      topic: "化学方程式配平",
+      explanation: "Fe₂O₃ + 3CO 高温 2Fe + 3CO₂。"
+    },
+    {
+      prompt: "配平后的化学方程式，各化学计量数之和为（　）：H₂ + Cl₂ 点燃 HCl",
+      options: ["3", "4", "5", "6"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学方程式配平",
+      explanation: "H₂ + Cl₂ 点燃 2HCl，计量数之和 = 1+1+2 = 4。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-22"] = {
+  dayNumber: "22",
+  title: "有关化学方程式的计算",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐⭐",
+  coreQuestion: "如何根据化学方程式进行定量计算？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "化学方程式不仅表示反应，还能进行定量计算。今天学习根据化学方程式计算物质质量的方法。"
+      ]
+    },
+    {
+      title: "计算的依据",
+      body: [
+        "化学方程式中各物质的质量比等于其相对分子质量乘以化学计量数之比。",
+        "例：2H₂ + O₂ 点燃 2H₂O，质量比 = (2×2) : 32 : (2×18) = 4 : 32 : 36 = 1 : 8 : 9。",
+        { text: "计算关键：先正确写出并配平化学方程式。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "解题步骤",
+      body: [
+        "第一步：设未知量（设要计算物质的质量为 x）。",
+        "第二步：写出正确的化学方程式。",
+        "第三步：写出相关物质的相对分子质量和已知量、未知量。",
+        "第四步：列出比例式，求解。",
+        "第五步：简明写出答案。"
+      ]
+    },
+    {
+      title: "例题示范",
+      body: [
+        "例：电解 36g 水，最多可得到多少克氢气？",
+        "解：设可得到氢气的质量为 x。",
+        "2H₂O 通电 2H₂↑ + O₂↑",
+        "36         4",
+        "36g        x",
+        "36/36g = 4/x，解得 x = 4g。",
+        "答：可得到氢气 4g。"
+      ]
+    },
+    {
+      title: "常见题型",
+      body: [
+        "已知反应物质量求生成物质量、已知生成物质量求反应物质量、已知一种反应物求另一种反应物质量。",
+        "注意：代入计算的质量必须是纯净物的质量，不纯物质要换算。",
+        { text: "不纯物质换算：纯净物质量 = 不纯物质质量 × 纯度。", kind: "note" }
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：根据化学方程式进行简单计算，是必考题型。",
+        "易错点：化学方程式未配平、相对分子质量计算错误、单位不统一、代入不纯物质质量。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "根据化学方程式计算的依据是质量守恒定律和各物质的质量比。解题五步：设、写、找、列、答。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "根据化学方程式计算时，不需要配平化学方程式。",
+        verdict: "错",
+        explanation: "必须先配平化学方程式，才能得到正确的质量比。"
+      },
+      {
+        statement: "计算中代入的质量必须是纯净物的质量。",
+        verdict: "对",
+        explanation: "不纯物质需要先换算成纯净物质量再代入计算。"
+      },
+      {
+        statement: "24.5g KClO₃ 完全分解可得到 9.6g O₂（KClO₃ 相对分子质量 122.5，O₂ 为 32）。",
+        verdict: "对",
+        explanation: "2KClO₃ 催化加热 2KCl + 3O₂↑，质量比 245:96，24.5g 对应 9.6g。"
+      },
+      {
+        statement: "化学方程式计算中，比例式可以任意列。",
+        verdict: "错",
+        explanation: "比例式必须对应相关物质的质量关系，上下对应、左右对应。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-22"] = {
+  questions: [
+    {
+      prompt: "电解 18g 水，可得到氢气的质量是（　）",
+      options: ["2g", "4g", "16g", "18g"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式计算",
+      explanation: "2H₂O 通电 2H₂↑ + O₂↑，质量比 36:4，18g 水生成 2g 氢气。"
+    },
+    {
+      prompt: "完全燃烧 12g 碳，需要氧气的质量是（　）",
+      options: ["16g", "32g", "44g", "8g"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学方程式计算",
+      explanation: "C + O₂ 点燃 CO₂，质量比 12:32，12g 碳需要 32g 氧气。"
+    },
+    {
+      prompt: "加热分解 24.5g KClO₃（MnO₂ 催化），可得到 O₂ 的质量是（　）",
+      options: ["9.6g", "4.8g", "19.2g", "24.5g"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "化学方程式计算",
+      explanation: "2KClO₃ 催化加热 2KCl + 3O₂↑，质量比 245:96，24.5g 对应 9.6g O₂。"
+    },
+    {
+      prompt: "5g 锌与足量稀硫酸反应，生成氢气的质量是（　）（Zn=65）",
+      options: ["0.15g", "0.1g", "0.2g", "1g"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "化学方程式计算",
+      explanation: "Zn + H₂SO₄ = ZnSO₄ + H₂↑，质量比 65:2，5g 锌生成约 0.15g 氢气。"
+    },
+    {
+      prompt: "计算中代入的质量必须是（　）",
+      options: ["不纯物质的质量", "纯净物的质量", "气体的体积", "溶液的体积"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学方程式计算",
+      explanation: "化学方程式计算中代入的质量必须是纯净物的质量。"
+    },
+    {
+      prompt: "3.2g 硫在氧气中完全燃烧，生成 SO₂ 的质量是（　）",
+      options: ["3.2g", "6.4g", "12.8g", "1.6g"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "化学方程式计算",
+      explanation: "S + O₂ 点燃 SO₂，质量比 32:64，3.2g 硫生成 6.4g SO₂。"
+    },
+    {
+      prompt: "用 10g 含杂质 20% 的石灰石（主要成分 CaCO₃）与足量稀盐酸反应，最多生成 CO₂ 的质量是（　）",
+      options: ["3.52g", "4.4g", "2.2g", "8g"],
+      answer: "0",
+      difficulty: "挑战",
+      topic: "化学方程式计算",
+      explanation: "纯净 CaCO₃ 质量 = 10g × 80% = 8g，CaCO₃ + 2HCl = CaCl₂ + H₂O + CO₂↑，质量比 100:44，8g 生成 3.52g CO₂。"
+    },
+    {
+      prompt: "根据化学方程式进行计算，第一步必须是（　）",
+      options: ["设未知量", "写出配平的化学方程式", "列出比例式", "写出已知量和未知量"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学方程式计算",
+      explanation: "写出配平的化学方程式是计算的第一步，后续步骤都依赖它。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-23"] = {
+  dayNumber: "23",
+  title: "单元复习：化学方程式",
+  duration: "60--75 分钟",
+  difficulty: "⭐⭐⭐",
+  coreQuestion: "化学方程式这一章，你能串起哪些知识？",
+  sections: [
+    {
+      title: "今天的任务：串知识",
+      body: [
+        "把 Day19--22 的知识连成一张网：质量守恒定律 → 化学方程式书写 → 配平 → 计算。每一块都是下一块的基础。"
+      ]
+    },
+    {
+      title: "知识地图",
+      body: [
+        "质量守恒定律是基础：化学反应前后质量守恒，微观本质是原子三不变。",
+        "化学方程式是表达：用化学式准确表示化学反应，配平后体现质量关系。",
+        "计算是应用：根据化学方程式中各物质的质量比进行定量计算。",
+        { text: "记住这条链：守恒定律 → 方程式书写 → 配平 → 计算应用。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "易错点集中营",
+      body: [
+        "第一类：混淆质量守恒的适用范围。它只适用于化学反应，物理变化不适用。",
+        "第二类：书写方程式时忘记配平或漏写反应条件。",
+        "第三类：计算时代入不纯物质质量，或相对分子质量算错。",
+        "第四类：气体符号和沉淀符号使用不当。"
+      ]
+    },
+    {
+      title: "错题自检",
+      body: [
+        "进入错题复习页，把 Day19--22 的错题全部重做一遍。答对的移出队列，剩下的继续攻克。",
+        { text: "错题是你知识地图上的缺口，补上它，下次就不会再错。", kind: "note" }
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "质量守恒定律：反应前后原子种类、数目、质量不变。化学方程式书写：先写后配，条件不忘。计算依据：各物质质量比等于相对分子质量乘以计量数之比。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：快速判断，检验知识地图",
+    items: [
+      {
+        statement: "10g 水结成 10g 冰，符合质量守恒定律。",
+        verdict: "错",
+        explanation: "这是物理变化，质量守恒定律只适用于化学反应。"
+      },
+      {
+        statement: "化学方程式 2H₂ + O₂ 点燃 2H₂O 中，氢气和氧气的质量比是 2:1。",
+        verdict: "错",
+        explanation: "质量比是 (2×2) : 32 = 4:32 = 1:8，不是分子个数比 2:1。"
+      },
+      {
+        statement: "配平后化学计量数之比就是分子个数比。",
+        verdict: "对",
+        explanation: "配平后的计量数之比即为各物质分子个数之比。"
+      },
+      {
+        statement: "根据化学方程式计算时，可以直接代入不纯物质的质量。",
+        verdict: "错",
+        explanation: "必须先将不纯物质换算成纯净物质量再代入计算。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-23"] = {
+  questions: [
+    {
+      prompt: "质量守恒定律适用于（　）",
+      options: ["一切变化", "物理变化", "化学反应", "状态变化"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "质量守恒定律",
+      explanation: "质量守恒定律只适用于化学反应。"
+    },
+    {
+      prompt: "化学方程式配平的实质是（　）",
+      options: ["使分子个数相等", "使各原子数目相等", "使物质种类相等", "使质量相等"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学方程式配平",
+      explanation: "配平使反应前后各元素原子数目相等。"
+    },
+    {
+      prompt: "下列计算正确的是（　）",
+      options: ["2H₂ + O₂ 点燃 2H₂O 中，H₂ 与 O₂ 质量比是 2:1", "根据方程式计算时可以不配平", "化学方程式中各物质质量比等于计量数之比", "配平后计量数之比就是分子个数比"],
+      answer: "3",
+      difficulty: "提升",
+      topic: "化学方程式",
+      explanation: "计量数之比是分子个数比，质量比需乘以相对分子质量。"
+    },
+    {
+      prompt: "24.5g KClO₃ 完全分解可得到 O₂ 的质量是（　）",
+      options: ["9.6g", "4.8g", "19.2g", "32g"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "化学方程式计算",
+      explanation: "2KClO₃ 催化加热 2KCl + 3O₂↑，质量比 245:96，24.5g 对应 9.6g。"
+    },
+    {
+      prompt: "CO₂ 使澄清石灰水变浑浊的方程式是（　）",
+      options: ["CO₂ + Ca(OH)₂ = CaCO₃↓ + H₂O", "CO₂ + CaO = CaCO₃", "CO₂ + H₂O = H₂CO₃", "CaCO₃ = CaO + CO₂↑"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式",
+      explanation: "CO₂ + Ca(OH)₂ = CaCO₃↓ + H₂O。"
+    },
+    {
+      prompt: "化学反应前后，一定不变的是（　）①原子种类 ②分子种类 ③元素种类 ④物质种类 ⑤原子数目 ⑥物质总质量",
+      options: ["①③⑤⑥", "①②④⑥", "②③④⑤", "①②③⑥"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "质量守恒定律",
+      explanation: "化学反应前后原子种类、数目、元素种类、物质总质量不变；分子种类和物质种类改变。"
+    },
+    {
+      prompt: "配平 C₂H₅OH + O₂ --点燃--> CO₂ + H₂O，O₂ 前的计量数是（　）",
+      options: ["1", "2", "3", "4"],
+      answer: "2",
+      difficulty: "挑战",
+      topic: "化学方程式配平",
+      explanation: "C₂H₅OH + 3O₂ 点燃 2CO₂ + 3H₂O。"
+    },
+    {
+      prompt: "3g 碳在 8g 氧气中完全燃烧，生成 CO₂ 的质量是（　）",
+      options: ["11g", "10g", "8g", "14g"],
+      answer: "0",
+      difficulty: "挑战",
+      topic: "化学方程式计算",
+      explanation: "C + O₂ 点燃 CO₂，质量比 12:32:44，3g 碳需要 8g 氧气恰好完全反应，生成 11g CO₂。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-24"] = {
+  dayNumber: "24",
+  title: "碳单质",
+  duration: "45--60 分钟",
+  difficulty: "⭐",
+  coreQuestion: "同是碳元素组成的单质，为什么性质差异这么大？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "碳有多种单质形式，它们的性质差别很大。今天认识金刚石、石墨和 C₆₀。"
+      ]
+    },
+    {
+      title: "金刚石：最硬的天然物质",
+      body: [
+        "无色透明、正八面体形状的固体，是天然存在的最硬物质。",
+        "用途：裁玻璃、切割大理石、做钻头。",
+        "结构：每个碳原子与周围 4 个碳原子形成正四面体结构。"
+      ]
+    },
+    {
+      title: "石墨：最软的矿物之一",
+      body: [
+        "深灰色、有金属光泽、不透明的固体，质软、有滑腻感。",
+        "用途：做铅笔芯、电极、润滑剂。",
+        "结构：层状结构，层与层之间作用力弱，容易滑动。",
+        { text: "金刚石和石墨物理性质差异大，原因是碳原子排列方式不同。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "C₆₀：足球烯",
+      body: [
+        "由 60 个碳原子构成的分子，形状像足球，又称富勒烯。",
+        "在超导、材料科学等领域有广阔应用前景。"
+      ]
+    },
+    {
+      title: "碳的化学性质",
+      body: [
+        "常温下碳的化学性质稳定，古代字画能保存至今就是因为碳在常温下不活泼。",
+        "高温下碳能燃烧：C + O₂ 点燃 CO₂（氧气充足），2C + O₂ 点燃 2CO（氧气不足）。",
+        "碳还能还原金属氧化物：C + 2CuO 高温 2Cu + CO₂↑。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：金刚石和石墨的物理性质及用途、碳的化学性质、同素异形体的概念。",
+        "注意区分：金刚石和石墨是同种元素组成的不同单质，属于同素异形体。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "碳单质：金刚石（最硬）、石墨（最软、导电）、C₆₀（足球烯）。物理性质差异大是因为碳原子排列方式不同。常温下化学性质稳定，高温下可燃、可还原金属氧化物。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "金刚石和石墨都是由碳元素组成的单质，所以它们的性质完全相同。",
+        verdict: "错",
+        explanation: "虽然组成元素相同，但碳原子排列方式不同，物理性质差异很大。"
+      },
+      {
+        statement: "石墨能做电极，是因为石墨具有良好的导电性。",
+        verdict: "对",
+        explanation: "石墨具有层状结构，层间有自由电子，能导电。"
+      },
+      {
+        statement: "常温下碳的化学性质不活泼，所以古代字画能保存至今。",
+        verdict: "对",
+        explanation: "常温下碳的化学性质稳定，不易与其他物质反应。"
+      },
+      {
+        statement: "金刚石、石墨、C₆₀ 都是碳的化合物。",
+        verdict: "错",
+        explanation: "它们都是由碳元素组成的单质，不是化合物。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-24"] = {
+  questions: [
+    {
+      prompt: "天然存在最硬的物质是（　）",
+      options: ["石墨", "金刚石", "C₆₀", "铁"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "碳单质",
+      explanation: "金刚石是天然存在的最硬物质。"
+    },
+    {
+      prompt: "下列用途中，利用石墨导电性的是（　）",
+      options: ["做铅笔芯", "做电极", "切割玻璃", "做润滑剂"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "碳单质",
+      explanation: "石墨具有良好的导电性，可用作电极。"
+    },
+    {
+      prompt: "金刚石和石墨物理性质差异大的原因是（　）",
+      options: ["组成元素不同", "碳原子排列方式不同", "相对原子质量不同", "含有杂质不同"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "碳单质",
+      explanation: "金刚石和石墨都是由碳元素组成的单质，物理性质差异源于碳原子排列方式不同。"
+    },
+    {
+      prompt: "常温下碳的化学性质（　）",
+      options: ["很活泼", "不活泼", "中等活泼", "不稳定"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "碳单质",
+      explanation: "常温下碳的化学性质稳定，古代字画能保存至今就是因为这个原因。"
+    },
+    {
+      prompt: "碳还原氧化铜的化学方程式正确的是（　）",
+      options: ["C + CuO 高温 Cu + CO₂", "C + 2CuO 高温 2Cu + CO₂↑", "C + CuO 高温 Cu + CO₂↑", "C + 2CuO 高温 2Cu + CO₂"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "碳单质",
+      explanation: "C + 2CuO 高温 2Cu + CO₂↑，反应物无气体，生成物 CO₂ 标 ↑。"
+    },
+    {
+      prompt: "下列有关碳单质的说法正确的是（　）",
+      options: ["金刚石和石墨都是无色透明的", "C₆₀ 是由 60 个碳原子构成的分子", "碳单质都能导电", "金刚石和石墨是同一种物质"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "碳单质",
+      explanation: "C₆₀ 分子由 60 个碳原子构成，形状像足球。金刚石无色透明，石墨深灰色；金刚石不导电。"
+    },
+    {
+      prompt: "用 charcoal（木炭）取暖时，要注意通风，原因是（　）",
+      options: ["木炭燃烧消耗氧气，产生 CO 有毒", "木炭燃烧产生大量烟尘", "木炭燃烧温度太高", "木炭燃烧产生 SO₂"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "碳单质",
+      explanation: "氧气不足时碳不完全燃烧生成 CO，CO 有毒，需要通风保证氧气充足。"
+    },
+    {
+      prompt: "下列物质中，属于碳的同素异形体的是（　）",
+      options: ["CO 和 CO₂", "金刚石和石墨", "H₂O 和 H₂O₂", "O₂ 和 O₃"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "碳单质",
+      explanation: "同素异形体是同种元素组成的不同单质，金刚石和石墨都是碳单质。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-25"] = {
+  dayNumber: "25",
+  title: "二氧化碳的制取",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "实验室如何制取二氧化碳？原理是什么？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "二氧化碳是实验室常见气体，今天学习它的实验室制法。"
+      ]
+    },
+    {
+      title: "反应原理",
+      body: [
+        "实验室常用大理石（或石灰石，主要成分 CaCO₃）和稀盐酸反应制取二氧化碳。",
+        "化学方程式：CaCO₃ + 2HCl = CaCl₂ + H₂O + CO₂↑。",
+        { text: "注意：不能用稀硫酸代替稀盐酸，因为生成的硫酸钙微溶于水，会覆盖在大理石表面阻止反应继续。", kind: "note" }
+      ]
+    },
+    {
+      title: "发生装置",
+      body: [
+        "反应物是固体和液体，反应不需要加热，属于固液常温型。",
+        "可用锥形瓶（或广口瓶）+ 长颈漏斗（或分液漏斗）+ 双孔橡皮塞。",
+        "长颈漏斗下端要伸入液面以下，防止气体从长颈漏斗逸出。"
+      ]
+    },
+    {
+      title: "收集方法",
+      body: [
+        "二氧化碳密度比空气大，能溶于水且与水反应，所以只能用向上排空气法收集。",
+        "验满方法：将燃着的木条放在集气瓶口，木条熄灭说明已收集满。",
+        { text: "记住：二氧化碳只能用向上排空气法，不能用排水法。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "检验方法",
+      body: [
+        "将气体通入澄清石灰水，石灰水变浑浊，说明是二氧化碳。",
+        "化学方程式：CO₂ + Ca(OH)₂ = CaCO₃↓ + H₂O。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：二氧化碳的实验室制法、装置选择、验满和检验方法。",
+        "易错点：验满和检验方法混淆、装置选择的依据。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "原理：CaCO₃ + 2HCl = CaCl₂ + H₂O + CO₂↑。装置：固液常温型。收集：向上排空气法。验满：燃着木条放瓶口。检验：通入澄清石灰水变浑浊。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "实验室制取二氧化碳可以用稀硫酸和大理石反应。",
+        verdict: "错",
+        explanation: "稀硫酸与大理石反应生成的硫酸钙微溶，会覆盖在大理石表面阻止反应继续进行。"
+      },
+      {
+        statement: "二氧化碳能用向上排空气法收集，因为密度比空气大。",
+        verdict: "对",
+        explanation: "二氧化碳密度比空气大，且能溶于水，只能用向上排空气法。"
+      },
+      {
+        statement: "验满二氧化碳时，将燃着的木条伸入集气瓶内。",
+        verdict: "错",
+        explanation: "验满时应将燃着的木条放在集气瓶口，不是伸入瓶内。"
+      },
+      {
+        statement: "澄清石灰水变浑浊是检验二氧化碳的特征反应。",
+        verdict: "对",
+        explanation: "CO₂ 使澄清石灰水变浑浊是二氧化碳的特征检验方法。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-25"] = {
+  questions: [
+    {
+      prompt: "实验室制取 CO₂ 选用的药品是（　）",
+      options: ["大理石和稀硫酸", "石灰石和稀盐酸", "碳酸钠和稀盐酸", "木炭和氧气"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "二氧化碳制取",
+      explanation: "实验室用大理石（或石灰石）和稀盐酸反应制取 CO₂。"
+    },
+    {
+      prompt: "实验室制取 CO₂ 的发生装置属于（　）",
+      options: ["固体加热型", "固液常温型", "液体加热型", "气体发生型"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "二氧化碳制取",
+      explanation: "反应物是固体和液体，反应不需要加热，属于固液常温型。"
+    },
+    {
+      prompt: "收集 CO₂ 的方法是（　）",
+      options: ["排水法", "向下排空气法", "向上排空气法", "以上都可以"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "二氧化碳制取",
+      explanation: "CO₂ 密度比空气大且能溶于水，只能用向上排空气法收集。"
+    },
+    {
+      prompt: "检验 CO₂ 的方法是（　）",
+      options: ["用燃着的木条", "用带火星的木条", "通入澄清石灰水", "闻气味"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "二氧化碳制取",
+      explanation: "CO₂ 使澄清石灰水变浑浊，这是检验 CO₂ 的特征方法。"
+    },
+    {
+      prompt: "验满 CO₂ 的方法是（　）",
+      options: ["将燃着的木条伸入瓶内", "将燃着的木条放在瓶口", "通入澄清石灰水", "用带火星的木条"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "二氧化碳制取",
+      explanation: "验满时将燃着的木条放在集气瓶口，木条熄灭说明已集满。"
+    },
+    {
+      prompt: "制取 CO₂ 时，长颈漏斗下端要伸入液面以下，目的是（　）",
+      options: ["防止反应太剧烈", "防止气体从长颈漏斗逸出", "增加反应接触面积", "方便添加药品"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "二氧化碳制取",
+      explanation: "长颈漏斗下端伸入液面以下形成液封，防止生成的 CO₂ 从漏斗逸出。"
+    },
+    {
+      prompt: "不能用稀硫酸代替稀盐酸制取 CO₂ 的原因是（　）",
+      options: ["稀硫酸不与大理石反应", "生成的硫酸钙微溶，覆盖在大理石表面阻止反应", "稀硫酸太稀", "稀硫酸会腐蚀仪器"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "二氧化碳制取",
+      explanation: "稀硫酸与大理石反应生成的硫酸钙微溶于水，覆盖在大理石表面，阻止反应继续进行。"
+    },
+    {
+      prompt: "实验室制取 CO₂ 的化学方程式是（　）",
+      options: ["CaCO₃ + HCl = CaCl + H₂O + CO₂", "CaCO₃ + 2HCl = CaCl₂ + H₂O + CO₂↑", "CaCO₃ + 2HCl = CaCl₂ + H₂O + CO₂", "CaO + 2HCl = CaCl₂ + H₂O"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "二氧化碳制取",
+      explanation: "CaCO₃ + 2HCl = CaCl₂ + H₂O + CO₂↑，反应物无气体，生成物 CO₂ 标 ↑。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-26"] = {
+  dayNumber: "26",
+  title: "二氧化碳和一氧化碳的性质",
+  duration: "45--60 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "同样是碳的氧化物，为什么性质差别这么大？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "二氧化碳和一氧化碳都是由碳和氧组成的化合物，但性质截然不同。今天对比学习它们的性质。"
+      ]
+    },
+    {
+      title: "二氧化碳的性质",
+      body: [
+        "物理性质：无色无味气体，密度比空气大，能溶于水。",
+        "化学性质：不燃烧也不支持燃烧；能与水反应生成碳酸（CO₂ + H₂O = H₂CO₃）；能与澄清石灰水反应。",
+        "用途：灭火、人工降雨（干冰）、气体肥料、制作碳酸饮料。"
+      ]
+    },
+    {
+      title: "一氧化碳的性质",
+      body: [
+        "物理性质：无色无味气体，密度略小于空气，难溶于水。",
+        "化学性质：可燃性（2CO + O₂ 点燃 2CO₂）；还原性（CO + CuO 加热 Cu + CO₂）；有毒性。",
+        "毒性：CO 与血红蛋白结合能力比氧气强约 200 倍，导致人体缺氧。",
+        { text: "冬天用煤炉取暖要注意通风，防止 CO 中毒。", kind: "note" }
+      ]
+    },
+    {
+      title: "CO 和 CO₂ 的性质对比",
+      body: [
+        "组成：都由碳、氧元素组成，但分子构成不同（CO₂ 比 CO 多一个氧原子）。",
+        "性质差异：CO₂ 不燃烧、不支持燃烧；CO 可燃、有毒。",
+        "相互转化：2CO + O₂ 点燃 2CO₂；CO₂ + C 高温 2CO。",
+        { text: "记住：分子构成不同，化学性质不同。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：CO 和 CO₂ 的性质对比、CO 的毒性及预防、CO 还原氧化铜的实验。",
+        "易错点：混淆 CO 和 CO₂ 的性质，误认为 CO₂ 有毒。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "CO₂：不燃不支持燃、能溶于水、使石灰水变浑浊。CO：可燃、有毒、有还原性。两者性质差异源于分子构成不同。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "二氧化碳和一氧化碳都是由碳元素和氧元素组成的，所以它们的性质相同。",
+        verdict: "错",
+        explanation: "分子构成不同，化学性质不同。CO₂ 不燃烧，CO 可燃。"
+      },
+      {
+        statement: "CO 有毒，是因为它与血红蛋白结合能力强，导致人体缺氧。",
+        verdict: "对",
+        explanation: "CO 与血红蛋白结合能力比 O₂ 强约 200 倍，使血红蛋白失去携氧能力。"
+      },
+      {
+        statement: "CO₂ 能使紫色石蕊试液变红，是因为 CO₂ 本身显酸性。",
+        verdict: "错",
+        explanation: "CO₂ 与水反应生成碳酸，碳酸使石蕊变红，CO₂ 本身不是酸。"
+      },
+      {
+        statement: "CO 还原 CuO 的反应中，CO 是还原剂。",
+        verdict: "对",
+        explanation: "CO 夺取 CuO 中的氧，使 CuO 还原为 Cu，CO 是还原剂。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-26"] = {
+  questions: [
+    {
+      prompt: "下列气体中，有毒的是（　）",
+      options: ["CO₂", "O₂", "CO", "N₂"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "一氧化碳",
+      explanation: "CO 有剧毒，能与血红蛋白结合导致人体缺氧。"
+    },
+    {
+      prompt: "CO 和 CO₂ 性质不同的根本原因是（　）",
+      options: ["组成元素不同", "相对分子质量不同", "分子构成不同", "密度不同"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "CO与CO2",
+      explanation: "CO 和 CO₂ 分子构成不同（CO₂ 多一个氧原子），导致化学性质不同。"
+    },
+    {
+      prompt: "下列性质中，CO 具有而 CO₂ 不具有的是（　）",
+      options: ["可燃性", "密度比空气大", "能使澄清石灰水变浑浊", "能溶于水"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "CO与CO2",
+      explanation: "CO 具有可燃性，CO₂ 不燃烧也不支持燃烧。"
+    },
+    {
+      prompt: "CO 还原 CuO 实验中，观察到的现象是（　）",
+      options: ["黑色粉末变红，生成使澄清石灰水变浑浊的气体", "红色粉末变黑", "产生蓝色火焰", "无明显现象"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "CO与CO2",
+      explanation: "CO 还原 CuO：黑色 CuO 被还原为红色 Cu，生成 CO₂ 使石灰水变浑浊。"
+    },
+    {
+      prompt: "下列处理 CO 的方法正确的是（　）",
+      options: ["直接排放到空气中", "点燃处理", "用水吸收", "用鼻子闻"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "一氧化碳",
+      explanation: "CO 有毒，不能直接排放，可用点燃法将其转化为 CO₂。"
+    },
+    {
+      prompt: "CO₂ 通入紫色石蕊试液中，溶液变红，原因是（　）",
+      options: ["CO₂ 本身是酸", "CO₂ 使石蕊褪色", "CO₂ 与水反应生成碳酸", "石蕊变质"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "CO与CO2",
+      explanation: "CO₂ 与水反应生成碳酸，碳酸使紫色石蕊变红。"
+    },
+    {
+      prompt: "鉴别 CO 和 CO₂ 的方法不包括（　）",
+      options: ["通入澄清石灰水", "点燃", "观察颜色", "通入紫色石蕊试液"],
+      answer: "2",
+      difficulty: "提升",
+      topic: "CO与CO2",
+      explanation: "CO 和 CO₂ 都是无色气体，观察颜色无法鉴别。"
+    },
+    {
+      prompt: "CO 还原 CuO 实验时，操作顺序正确的是（　）",
+      options: ["先加热后通 CO", "先通 CO 后加热", "同时通 CO 和加热", "以上都可以"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "CO与CO2",
+      explanation: "先通 CO 排尽装置内空气，防止加热时 CO 与空气混合爆炸。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-27"] = {
+  dayNumber: "27",
+  title: "单元复习：碳和碳的氧化物",
+  duration: "60--75 分钟",
+  difficulty: "⭐⭐",
+  coreQuestion: "碳单质和碳的氧化物，你能串成一条线吗？",
+  sections: [
+    {
+      title: "今天的任务：串知识",
+      body: [
+        "把 Day24--26 的知识连成一张网：碳单质 → 二氧化碳 → 一氧化碳。每一块都是下一块的基础。"
+      ]
+    },
+    {
+      title: "知识地图",
+      body: [
+        "碳单质：金刚石（最硬）、石墨（导电）、C₆₀。常温下稳定，高温下可燃、可还原金属氧化物。",
+        "CO₂：不燃不支持燃、能溶于水、使石灰水变浑浊。是温室气体。",
+        "CO：可燃、有毒、有还原性。是煤气的主要成分。",
+        { text: "记住这条链：碳单质 → 燃烧/还原 → CO₂/CO → 性质差异源于分子构成。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "易错点集中营",
+      body: [
+        "第一类：混淆 CO 和 CO₂ 的性质。CO₂ 无毒，CO 有毒。",
+        "第二类：实验室制 CO₂ 用稀硫酸（错，应用稀盐酸）。",
+        "第三类：CO₂ 使石蕊变红误认为 CO₂ 是酸（错，是生成的碳酸使石蕊变红）。",
+        "第四类：混淆 CO 还原 CuO 的实验操作顺序（先通 CO 排空气，再加热；实验完毕先停止加热，继续通 CO 至冷却）。"
+      ]
+    },
+    {
+      title: "错题自检",
+      body: [
+        "进入错题复习页，把 Day24--26 的错题全部重做一遍。答对的移出队列，剩下的继续攻克。",
+        { text: "错题是你知识地图上的缺口，补上它，下次就不会再错。", kind: "note" }
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "碳单质常温稳定、高温活泼。CO₂ 不燃不支持燃、使石灰水浑浊。CO 可燃、有毒、有还原性。两者性质差异源于分子构成不同。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：快速判断，检验知识地图",
+    items: [
+      {
+        statement: "金刚石和石墨性质不同，是因为碳原子结构不同。",
+        verdict: "错",
+        explanation: "碳原子结构相同，是碳原子排列方式不同导致性质差异。"
+      },
+      {
+        statement: "CO 和 CO₂ 都能使澄清石灰水变浑浊。",
+        verdict: "错",
+        explanation: "只有 CO₂ 能使澄清石灰水变浑浊，CO 不能。"
+      },
+      {
+        statement: "冬天用煤炉取暖时，在炉子上放一壶水可以防止 CO 中毒。",
+        verdict: "错",
+        explanation: "CO 难溶于水，放水不能吸收 CO，应通风换气。"
+      },
+      {
+        statement: "CO 还原 CuO 实验中，先通 CO 再加热是为了排尽装置内空气。",
+        verdict: "对",
+        explanation: "CO 与空气混合加热可能爆炸，先通 CO 排空气是安全操作。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-27"] = {
+  questions: [
+    {
+      prompt: "下列关于碳单质的说法错误的是（　）",
+      options: ["金刚石和石墨性质相同", "活性炭可吸附色素和异味", "C₆₀ 是由 60 个碳原子构成的分子", "常温下碳的化学性质稳定"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "碳单质",
+      explanation: "金刚石和石墨物理性质差异很大，因为碳原子排列方式不同。"
+    },
+    {
+      prompt: "实验室制取 CO₂ 时，验满的正确操作是（　）",
+      options: ["将燃着的木条伸入瓶内", "将燃着的木条放在瓶口", "通入澄清石灰水看是否浑浊", "用带火星的木条放在瓶口"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "二氧化碳制取",
+      explanation: "验满时将燃着的木条放在集气瓶口，木条熄灭说明已满。"
+    },
+    {
+      prompt: "CO 和 CO₂ 的下列性质中，属于化学性质的是（　）",
+      options: ["CO₂ 密度比空气大", "CO 无色无味", "CO 具有可燃性", "CO₂ 能溶于水"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "CO与CO2",
+      explanation: "可燃性是化学性质，需要通过化学变化才能表现出来。"
+    },
+    {
+      prompt: "下列措施不利于减少温室气体排放的是（　）",
+      options: ["植树造林", "使用太阳能", "大量燃烧化石燃料", "发展公共交通"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "环境保护",
+      explanation: "大量燃烧化石燃料会增加 CO₂ 排放，加剧温室效应。"
+    },
+    {
+      prompt: "CO 还原 CuO 实验中，试管中观察到的现象是（　）",
+      options: ["黑色固体变成红色", "红色固体变成黑色", "产生大量白烟", "无明显变化"],
+      answer: "0",
+      difficulty: "提升",
+      topic: "CO与CO2",
+      explanation: "黑色 CuO 被 CO 还原为红色的 Cu。"
+    },
+    {
+      prompt: "关于碳单质和碳的氧化物，下列说法正确的是（　）",
+      options: ["CO 和 CO₂ 都能燃烧", "金刚石和石墨都是良导体", "C₆₀ 是一种新型的碳化合物", "常温下碳的化学性质不活泼"],
+      answer: "3",
+      difficulty: "提升",
+      topic: "碳单质",
+      explanation: "常温下碳的化学性质稳定。CO 可燃、CO₂ 不可燃；金刚石不导电；C₆₀ 是单质不是化合物。"
+    },
+    {
+      prompt: "检验混合气体中是否含有 CO₂，应选用的试剂是（　）",
+      options: ["燃着的木条", "带火星的木条", "澄清石灰水", "紫色石蕊试液"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "二氧化碳制取",
+      explanation: "澄清石灰水变浑浊是检验 CO₂ 的特征反应。"
+    },
+    {
+      prompt: "CO 作为燃料的优点不包括（　）",
+      options: ["燃烧产物无污染", "热值较高", "来源广泛", "无毒安全"],
+      answer: "3",
+      difficulty: "提升",
+      topic: "CO与CO2",
+      explanation: "CO 有剧毒，不安全，这是它作为燃料的主要缺点。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-28"] = {
+  dayNumber: "28",
+  title: "燃烧和灭火",
+  duration: "45--60 分钟",
+  difficulty: "⭐",
+  coreQuestion: "燃烧需要什么条件？如何灭火？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "燃烧给人类带来光明和能量，但不当的燃烧也会造成灾害。今天学习燃烧条件和灭火原理。"
+      ]
+    },
+    {
+      title: "燃烧的条件",
+      body: [
+        "条件一：可燃物。不是所有物质都能燃烧。",
+        "条件二：氧气（或空气）。没有氧气燃烧无法进行。",
+        "条件三：温度达到着火点。不同物质着火点不同。",
+        { text: "三个条件必须同时满足，缺一不可。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "灭火的原理",
+      body: [
+        "灭火就是破坏燃烧的条件，使燃烧反应停止。",
+        "方法一：清除或隔离可燃物（如关闭燃气阀门）。",
+        "方法二：隔绝氧气（如用锅盖盖灭油锅）。",
+        "方法三：降温至着火点以下（如用水灭火）。",
+        "注意：着火点是物质的固有属性，一般不能降低，只能降温。"
+      ]
+    },
+    {
+      title: "生活中的灭火实例",
+      body: [
+        "消防队员用水灭火：降低温度至着火点以下。",
+        "油锅着火用锅盖盖灭：隔绝氧气。",
+        "森林着火设置隔离带：清除可燃物。",
+        "用二氧化碳灭火器灭火：隔绝氧气 + 降温。"
+      ]
+    },
+    {
+      title: "燃烧与爆炸",
+      body: [
+        "可燃物在有限空间内急速燃烧，短时间内聚集大量热，使气体体积迅速膨胀，引起爆炸。",
+        "面粉厂、加油站、煤矿矿井等场所要严禁烟火。",
+        { text: "记住：燃烧不一定会爆炸，爆炸不一定是化学变化（如气球爆炸）。", kind: "note" }
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：燃烧三条件、灭火原理的应用、易燃易爆安全标志识别。",
+        "易错点：混淆灭火原理与燃烧条件，误认为可以降低着火点。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "燃烧三条件：可燃物、氧气、温度达着火点。灭火三原理：清除可燃物、隔绝氧气、降温至着火点以下。着火点是固有属性，不能降低。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "燃烧需要同时满足三个条件，缺一不可。",
+        verdict: "对",
+        explanation: "可燃物、氧气（或空气）、温度达到着火点，三者缺一不可。"
+      },
+      {
+        statement: "用水灭火可以降低可燃物的着火点。",
+        verdict: "错",
+        explanation: "着火点是物质的固有属性，不能降低。用水灭火是降温至着火点以下。"
+      },
+      {
+        statement: "炒菜的油锅着火，可以用锅盖盖灭。",
+        verdict: "对",
+        explanation: "锅盖隔绝氧气，使燃烧停止。"
+      },
+      {
+        statement: "所有爆炸都是化学变化。",
+        verdict: "错",
+        explanation: "气球爆炸、轮胎爆炸是物理变化，只有可燃物在有限空间内急速燃烧引起的爆炸才是化学变化。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-28"] = {
+  questions: [
+    {
+      prompt: "燃烧需要的条件是（　）①可燃物 ②氧气 ③温度达到着火点",
+      options: ["①②", "①③", "②③", "①②③"],
+      answer: "3",
+      difficulty: "基础",
+      topic: "燃烧条件",
+      explanation: "燃烧三条件：可燃物、氧气（或空气）、温度达到着火点，缺一不可。"
+    },
+    {
+      prompt: "下列灭火方法中，原理是隔绝氧气的是（　）",
+      options: ["用扇子扇灭蜡烛", "用二氧化碳灭火器灭火", "森林着火设置隔离带", "用水浇灭柴火"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "灭火原理",
+      explanation: "二氧化碳灭火器通过隔绝氧气和降温灭火。"
+    },
+    {
+      prompt: "用水灭火的主要原理是（　）",
+      options: ["隔绝氧气", "降低着火点", "降温至着火点以下", "清除可燃物"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "灭火原理",
+      explanation: "水蒸发吸热，使温度降低至可燃物着火点以下。"
+    },
+    {
+      prompt: "下列关于着火点的说法正确的是（　）",
+      options: ["着火点可以降低", "着火点是物质的固有属性", "所有物质的着火点相同", "着火点随温度变化"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "燃烧条件",
+      explanation: "着火点是物质的固有属性，一般不能改变，只能降温至着火点以下。"
+    },
+    {
+      prompt: "油锅着火最好的灭火方法是（　）",
+      options: ["用水浇", "用锅盖盖灭", "用扇子扇", "移走油锅"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "灭火原理",
+      explanation: "锅盖盖灭油锅火灾，原理是隔绝氧气，安全有效。"
+    },
+    {
+      prompt: "下列场所需要张贴严禁烟火标志的是（　）",
+      options: ["图书馆", "加油站", "教室", "实验室"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "燃烧条件",
+      explanation: "加油站有易燃的汽油蒸气，必须严禁烟火。"
+    },
+    {
+      prompt: "炒菜时油锅着火，不能用水浇灭，原因是（　）",
+      options: ["水能使油燃烧更旺", "油密度比水小，浇水会使油飞溅", "水会与油反应", "水不能降温"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "灭火原理",
+      explanation: "油密度比水小，浇水后油浮在水面继续燃烧，且热水会使油飞溅扩大火势。"
+    },
+    {
+      prompt: "篝火晚会时，通常把木柴架空，目的是（　）",
+      options: ["方便观看", "增大木柴与氧气的接触面积", "降低木柴着火点", "减少木柴用量"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "燃烧条件",
+      explanation: "架空木柴增大与氧气接触面积，使燃烧更充分。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-29"] = {
+  dayNumber: "29",
+  title: "燃料、能源与环境",
+  duration: "45--60 分钟",
+  difficulty: "⭐",
+  coreQuestion: "我们使用的能源来自哪里？对环境有什么影响？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "燃料为人类社会发展提供了巨大动力，但也带来环境问题。今天认识常见燃料及其对环境的影响。"
+      ]
+    },
+    {
+      title: "三大化石燃料",
+      body: [
+        "煤：主要含碳元素，燃烧产生 CO₂、SO₂、粉尘等污染物。",
+        "石油：主要含碳、氢元素，炼制得到汽油、柴油等产品。",
+        "天然气：主要成分是甲烷（CH₄），燃烧产物是 CO₂ 和 H₂O，相对清洁。",
+        { text: "化石燃料是不可再生能源，储量有限，要节约使用。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "甲烷：最简单的有机物",
+      body: [
+        "甲烷（CH₄）是无色无味的气体，密度比空气小，难溶于水。",
+        "甲烷燃烧：CH₄ + 2O₂ 点燃 CO₂ + 2H₂O。",
+        "检验方法：点燃后在火焰上方罩干冷烧杯，有水珠出现；迅速倒转烧杯，加入澄清石灰水，变浑浊。",
+        "注意事项：点燃前必须验纯，防止爆炸。"
+      ]
+    },
+    {
+      title: "乙醇：可再生能源",
+      body: [
+        "乙醇（C₂H₅OH）俗称酒精，可由高粱、玉米等发酵制得，是可再生能源。",
+        "乙醇燃烧：C₂H₅OH + 3O₂ 点燃 2CO₂ + 3H₂O。",
+        "用途：作燃料、消毒剂（75% 乙醇溶液）、化工原料。"
+      ]
+    },
+    {
+      title: "新能源开发",
+      body: [
+        "为了解决化石燃料枯竭和环境问题，正在开发新能源：氢能、太阳能、风能、地热能、潮汐能、核能等。",
+        "氢能是最理想的燃料：燃烧产物是水，无污染；热值高；原料来源广泛。",
+        { text: "注意：氢能目前成本高、储存运输困难，尚未大规模应用。", kind: "note" }
+      ]
+    },
+    {
+      title: "环境保护",
+      body: [
+        "化石燃料燃烧产生的主要污染物：CO、SO₂、NO₂、粉尘等。",
+        "SO₂ 和 NO₂ 是形成酸雨的主要原因；CO₂ 过量排放导致温室效应增强。",
+        "保护措施：使用清洁能源、汽车尾气净化、工业废气处理、植树造林。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "中考常考：化石燃料的组成与燃烧、甲烷的性质与检验、新能源类型、环境保护措施。",
+        "易错点：混淆温室气体与空气污染物的概念。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "三大化石燃料：煤、石油、天然气（不可再生）。甲烷是最简单的有机物，燃烧产物是 CO₂ 和 H₂O。乙醇是可再生燃料。新能源：氢、太阳、风、核等。保护能源与环境：使用清洁能源、减少污染物排放。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "化石燃料包括煤、石油和天然气，它们都是可再生能源。",
+        verdict: "错",
+        explanation: "化石燃料是不可再生能源，形成需要数百万年。"
+      },
+      {
+        statement: "甲烷燃烧的化学方程式是 CH₄ + 2O₂ 点燃 CO₂ + 2H₂O。",
+        verdict: "对",
+        explanation: "甲烷完全燃烧生成二氧化碳和水，方程式配平正确。"
+      },
+      {
+        statement: "乙醇燃烧产物是 CO₂ 和 H₂O，所以乙醇是完全清洁的燃料。",
+        verdict: "对",
+        explanation: "乙醇燃烧只生成 CO₂ 和 H₂O，不产生污染物，是清洁燃料。"
+      },
+      {
+        statement: "CO₂ 是空气污染物，会造成温室效应。",
+        verdict: "错",
+        explanation: "CO₂ 不是污染物，它是空气的组成成分之一。CO₂ 过量排放导致温室效应增强，但它本身不算污染物。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-29"] = {
+  questions: [
+    {
+      prompt: "三大化石燃料不包括（　）",
+      options: ["煤", "石油", "天然气", "氢气"],
+      answer: "3",
+      difficulty: "基础",
+      topic: "化石燃料",
+      explanation: "三大化石燃料是煤、石油、天然气。氢气是新能源。"
+    },
+    {
+      prompt: "天然气的主要成分是（　）",
+      options: ["氢气", "一氧化碳", "甲烷", "乙烷"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "化石燃料",
+      explanation: "天然气主要成分是甲烷（CH₄）。"
+    },
+    {
+      prompt: "甲烷燃烧的化学方程式是（　）",
+      options: ["CH₄ + O₂ = CO₂ + H₂O", "CH₄ + 2O₂ 点燃 CO₂ + 2H₂O", "2CH₄ + 3O₂ 点燃 2CO + 4H₂O", "CH₄ + O₂ 点燃 C + 2H₂O"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "甲烷",
+      explanation: "甲烷完全燃烧：CH₄ + 2O₂ 点燃 CO₂ + 2H₂O。"
+    },
+    {
+      prompt: "下列属于可再生能源的是（　）",
+      options: ["煤", "石油", "天然气", "乙醇"],
+      answer: "3",
+      difficulty: "基础",
+      topic: "新能源",
+      explanation: "乙醇可由植物发酵制得，是可再生能源。"
+    },
+    {
+      prompt: "形成酸雨的主要物质是（　）",
+      options: ["CO₂ 和 CO", "SO₂ 和 NO₂", "CO₂ 和 SO₂", "N₂ 和 O₂"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "环境保护",
+      explanation: "SO₂ 和 NO₂ 是形成酸雨的主要气体。"
+    },
+    {
+      prompt: "氢气作为理想燃料的原因不包括（　）",
+      options: ["燃烧产物是水，无污染", "热值高", "原料来源广泛", "储存和运输方便"],
+      answer: "3",
+      difficulty: "提升",
+      topic: "新能源",
+      explanation: "氢气密度小、易液化困难，储存和运输目前还有技术难题。"
+    },
+    {
+      prompt: "乙醇（C₂H₅OH）完全燃烧的化学方程式是（　）",
+      options: ["C₂H₅OH + O₂ 点燃 CO₂ + H₂O", "C₂H₅OH + 3O₂ 点燃 2CO₂ + 3H₂O", "C₂H₅OH + 2O₂ 点燃 2CO + 3H₂O", "2C₂H₅OH + 3O₂ 点燃 4CO + 6H₂O"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "乙醇",
+      explanation: "C₂H₅OH + 3O₂ 点燃 2CO₂ + 3H₂O。"
+    },
+    {
+      prompt: "下列做法不利于环境保护的是（　）",
+      options: ["使用清洁能源", "汽车尾气净化", "大量使用化石燃料", "植树造林"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "环境保护",
+      explanation: "大量使用化石燃料会产生大量污染物，不利于环境保护。"
+    }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-30"] = {
+  dayNumber: "30",
+  title: "综合提升：全册知识网络",
+  duration: "60--75 分钟",
+  difficulty: "⭐⭐⭐",
+  coreQuestion: "30 天的知识，你能串成一张完整的网吗？",
+  sections: [
+    {
+      title: "今天的任务：画知识网",
+      body: [
+        "今天不学新知识，而是把 30 天学到的内容串成一张知识网络图，并基于错题记录进行自我诊断。"
+      ]
+    },
+    {
+      title: "知识网络总览",
+      body: [
+        "第一模块：化学变化与空气（Day01-08）——判断变化、认识空气、制取氧气。",
+        "第二模块：物质构成的奥秘（Day09-15）——分子原子、离子、元素、周期表、化学式与计算。",
+        "第三模块：自然界的水（Day16-18）——水的组成、净化、保护。",
+        "第四模块：化学方程式（Day19-23）——质量守恒、方程式书写与计算。",
+        "第五模块：碳和碳的氧化物（Day24-27）——碳单质、CO₂ 和 CO 的性质与制取。",
+        "第六模块：燃料与能源（Day28-29）——燃烧灭火、化石燃料、新能源。",
+        { text: "记住：每一模块都是后续学习的基础，薄弱模块要重点复习。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "核心概念网络",
+      body: [
+        "宏观：元素 → 物质 → 变化 → 反应（方程式表达）。",
+        "微观：分子 → 原子 → 离子 → 元素。",
+        "符号：元素符号 → 化学式 → 离子符号 → 化学方程式。",
+        "计算：相对分子质量 → 元素质量比 → 质量分数 → 方程式计算。",
+        { text: "宏观与微观的桥梁是元素概念，符号是表达工具，计算是定量方法。", kind: "note" }
+      ]
+    },
+    {
+      title: "易错点总复习",
+      body: [
+        "易错点一：混淆宏观与微观描述。如【水由氢分子和氧分子构成】是错的。",
+        "易错点二：质量守恒定律适用范围。只适用于化学反应。",
+        "易错点三：化学方程式配平。未配平就进行计算是常见错误。",
+        "易错点四：CO 和 CO₂ 性质混淆。CO₂ 无毒，CO 有毒。",
+        "易错点五：燃烧条件与灭火原理对应关系。"
+      ]
+    },
+    {
+      title: "自我诊断",
+      body: [
+        "进入错题复习页，查看全册错题清单。标注以下问题：",
+        "①哪个模块的错题最多？这是你的薄弱模块。",
+        "②哪类题目反复出错？这是你的知识盲区。",
+        "③哪些概念总混淆？这是你需要重点强化的地方。",
+        { text: "错题清单是你开学后复习的最强指南。", kind: "takeaway" }
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: [
+        "全册知识网络：宏观物质 → 微观粒子 → 符号表达 → 定量计算。六个模块环环相扣，基础决定上限。反复刷错题，开学不慌。"
+      ]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：综合判断，检验全册掌握度",
+    items: [
+      {
+        statement: "分子是保持物质化学性质的唯一微粒。",
+        verdict: "错",
+        explanation: "分子、原子、离子都能保持物质的化学性质，如铁由铁原子保持化学性质。"
+      },
+      {
+        statement: "化学变化中分子可分，原子不可分。",
+        verdict: "对",
+        explanation: "化学变化中分子分裂成原子，原子重新组合，原子是化学变化中的最小粒子。"
+      },
+      {
+        statement: "CO 和 CO₂ 都能使澄清石灰水变浑浊。",
+        verdict: "错",
+        explanation: "只有 CO₂ 能使澄清石灰水变浑浊，CO 不能。"
+      },
+      {
+        statement: "燃烧必须同时满足三个条件，灭火只要破坏其中一个条件即可。",
+        verdict: "对",
+        explanation: "燃烧三条件缺一不可，灭火只需破坏其中任一条件。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-30"] = {
+  questions: [
+    {
+      prompt: "下列关于分子和原子的说法正确的是（　）",
+      options: ["分子大原子小", "分子可分原子不可分", "分子是保持物质化学性质的微粒", "原子不能直接构成物质"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "分子原子",
+      explanation: "分子是保持物质化学性质的最小微粒。原子也可以直接构成物质（如铁）。"
+    },
+    {
+      prompt: "下列各组微粒中，化学性质相似的是（　）",
+      options: ["最外层电子数相同的原子", "质子数相同的原子", "电子数相同的原子", "中子数相同的原子"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "原子结构",
+      explanation: "最外层电子数相同的原子，化学性质相似。"
+    },
+    {
+      prompt: "下列实验操作正确的是（　）",
+      options: ["用燃着的酒精灯引燃另一盏酒精灯", "给试管加热时试管口朝向自己", "用排水法收集 O₂ 时，先撤导管再熄灭酒精灯", "实验完毕将废液直接倒入下水道"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "实验操作",
+      explanation: "排水法收集氧气时，先撤导管防止水倒吸炸裂试管。"
+    },
+    {
+      prompt: "化学方程式 2H₂ + O₂ 点燃 2H₂O 中，H₂ 与 O₂ 的质量比是（　）",
+      options: ["2:1", "1:8", "4:32", "2:32"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学方程式",
+      explanation: "质量比 = (2×2) : 32 = 4:32 = 1:8。"
+    },
+    {
+      prompt: "下列关于碳单质的说法错误的是（　）",
+      options: ["金刚石和石墨性质相同", "活性炭有吸附性", "常温下碳化学性质稳定", "C₆₀ 是由 60 个碳原子构成的分子"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "碳单质",
+      explanation: "金刚石和石墨物理性质差异很大，因为碳原子排列方式不同。"
+    },
+    {
+      prompt: "实验室制取 CO₂ 时，长颈漏斗下端必须伸入液面以下，目的是（　）",
+      options: ["防止气体从长颈漏斗逸出", "加快反应速率", "防止液体飞溅", "增加反应物接触面积"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "二氧化碳制取",
+      explanation: "伸入液面以下形成液封，防止生成的 CO₂ 从漏斗逸出。"
+    },
+    {
+      prompt: "下列关于燃烧和灭火的说法正确的是（　）",
+      options: ["着火点可以降低", "燃烧必须有氧气参与", "所有爆炸都是化学变化", "灭火只需隔绝氧气"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "燃烧灭火",
+      explanation: "燃烧三条件缺一不可：可燃物、氧气、温度达着火点。着火点不能降低，爆炸不一定是化学变化。"
+    },
+    {
+      prompt: "下列物质中，属于氧化物的是（　）",
+      options: ["O₃", "KMnO₄", "H₂O", "NaCl"],
+      answer: "2",
+      difficulty: "基础",
+      topic: "物质分类",
+      explanation: "氧化物是由两种元素组成且其中一种是氧元素的化合物，H₂O 符合定义。"
+    }
+  ]
+};
+</script>
 <script>(function () {
   "use strict";
 
@@ -2575,7 +5719,14 @@ window.ChemLabQuiz["day-10"] = {
       "cylinder-reading": figCylinderReading,   // 量筒读数视角对比（可切换）
       "airtight-test": figAirtightTest,          // 检查装置气密性（气泡动画）
       "graduated-cylinder": figGraduatedCylinder, // 量筒静态示意
-      "air-composition": figAirComposition       // 空气成分环形图
+      "air-composition": figAirComposition,      // 空气成分环形图
+      "candle-burn": figCandleBurn,          // 蜡烛燃烧动画 + 物化变化判断
+      "change-judge": figChangeJudge,        // 物质变化类型判断器
+      "science-inquiry": figScienceInquiry,  // 科学探究步骤拖拽排序
+      "red-phosphorus": figRedPhosphorus,    // 红磷燃烧测氧气含量
+      "oxygen-combustion": figOxygenCombustion, // 三种物质在氧气中燃烧
+      "kmno4-setup": figKmno4Setup,          // 高锰酸钾制氧装置图
+      "molecule-motion": figMoleculeMotion   // 分子运动模拟
     };
     var fn = renderers[fig.type];
     if (!fn) return "";
@@ -2752,6 +5903,287 @@ window.ChemLabQuiz["day-10"] = {
         '<div class="air-legend-box" role="list" aria-label="空气成分">' + legend + "</div>" +
       "</div>"
     );
+  }
+
+  // ---------- 蜡烛燃烧动画：点燃/熄灭，展示熔化和燃烧两个过程 ----------
+  function figCandleBurn(fig) {
+    var id = "cnd-" + uid();
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-action="light">点燃</button>' +
+      '<button type="button" class="fig-pill" data-action="extinguish">熄灭</button>' +
+      '</div>';
+    var svgId = id + "-svg";
+    var defs =
+      '<defs>' +
+        '<linearGradient id="' + id + '-flame" x1="0" y1="1" x2="0" y2="0">' +
+          '<stop offset="0" stop-color="#f5a623"/><stop offset="60%" stop-color="#f7c948"/>' +
+          '<stop offset="100%" stop-color="#fff4b8" stop-opacity="0.6"/>' +
+        '</linearGradient>' +
+        '<filter id="' + id + '-glow"><feGaussianBlur stdDeviation="3" result="blur"/>' +
+          '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+      '</defs>';
+    var candleBody =
+      '<rect x="68" y="100" width="24" height="60" rx="3" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1.5"/>' +
+      '<rect x="72" y="100" width="4" height="60" rx="2" fill="#fff8e8" opacity="0.5"/>';
+    var wick = '<line x1="80" y1="100" x2="80" y2="88" stroke="#5a4a32" stroke-width="2" stroke-linecap="round"/>';
+    var flame = '<g class="candle-flame" data-flame opacity="0" filter="url(#' + id + '-glow)">' +
+      '<ellipse cx="80" cy="74" rx="8" ry="16" fill="url(#' + id + '-flame)"/>' +
+      '<ellipse cx="80" cy="78" rx="4" ry="10" fill="#fff4b8" opacity="0.7"/>' +
+    '</g>';
+    var smoke = '<g class="candle-smoke" data-smoke opacity="0">' +
+      '<circle cx="76" cy="58" r="4" fill="#b0c4c1" opacity="0.4"/>' +
+      '<circle cx="84" cy="52" r="5" fill="#b0c4c1" opacity="0.3"/>' +
+      '<circle cx="80" cy="44" r="6" fill="#b0c4c1" opacity="0.2"/>' +
+    '</g>';
+    var waxDrip = '<path class="candle-wax" data-wax opacity="0" d="M92 105 Q96 115 93 125 Q91 130 94 132 L94 158 L90 158 L90 132 Q87 128 89 124 Q92 114 89 105 Z" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1"/>';
+    var products = '<g class="candle-products" data-products opacity="0">' +
+      '<text x="118" y="55" fill="#146c6e" font-size="11" font-weight="600">CO₂ + H₂O</text>' +
+      '<text x="118" y="70" fill="#587073" font-size="9">新物质生成 → 化学变化</text>' +
+      '<line x1="110" y1="60" x2="90" y2="68" stroke="#587073" stroke-width="1" opacity="0.5"/>' +
+    '</g>';
+    var meltNote = '<g class="candle-melt" data-melt opacity="0">' +
+      '<text x="48" y="130" fill="#e67b32" font-size="9" font-weight="600">熔化 → 物理变化</text>' +
+      '<text x="48" y="142" fill="#587073" font-size="8">状态改变，无新物质</text>' +
+    '</g>';
+    var svgInner = defs +
+      '<rect x="60" y="155" width="40" height="4" rx="2" fill="#d9e8e5" stroke="#b0c4c1" stroke-width="1"/>' +
+      candleBody + wick + flame + smoke + waxDrip + products + meltNote;
+    var html =
+      '<div class="fig-candle" data-candle>' +
+        pills +
+        figSvg(160, 170, svgInner) +
+        '<p class="candle-hint" data-hint>点击「点燃」观察蜡烛燃烧过程。</p>' +
+      '</div>';
+    return html;
+  }
+
+  // ---------- 物质变化类型判断器：给出描述，判断物理/化学变化 ----------
+  function figChangeJudge(fig) {
+    var items = [
+      { text: "冰融化成水", type: "物理", note: "状态改变，没有新物质。" },
+      { text: "铁钉生锈", type: "化学", note: "铁变成了铁锈（新物质）。" },
+      { text: "玻璃破碎", type: "物理", note: "形状改变，没有新物质。" },
+      { text: "食物腐败", type: "化学", note: "产生了新物质，有异味和变色。" }
+    ];
+    var pills = items.map(function (item, i) {
+      return '<button type="button" class="fig-pill judge-btn" data-idx="' + i + '">' + item.text + "</button>";
+    }).join("");
+    var resultArea = '<div class="judge-result" data-result>点击上方卡片开始判断。</div>';
+    return '<div class="fig-judge" data-judge>' +
+      '<div class="fig-ctrl judge-grid">' + pills + '</div>' +
+      resultArea +
+    '</div>';
+  }
+
+  // ---------- 科学探究步骤拖拽排序 ----------
+  function figScienceInquiry(fig) {
+    var steps = [
+      { id: "ask", text: "提出问题", correct: 0 },
+      { id: "hypo", text: "猜想与假设", correct: 1 },
+      { id: "plan", text: "制定计划", correct: 2 },
+      { id: "experiment", text: "进行实验", correct: 3 },
+      { id: "evidence", text: "收集证据", correct: 4 },
+      { id: "conclude", text: "得出结论", correct: 5 }
+    ];
+    var initialOrder = [3, 0, 4, 1, 5, 2];
+    var slots = steps.map(function (_, i) {
+      return '<div class="inq-slot" data-index="' + i + '"><span class="slot-num">' + (i + 1) + '</span><span class="slot-hint">拖放步骤到此处</span></div>';
+    }).join("");
+    var draggables = initialOrder.map(function (si) {
+      return '<div class="inq-drag" data-id="' + steps[si].id + '" draggable="true">' + steps[si].text + '</div>';
+    }).join("");
+    var resetBtn = '<button type="button" class="fig-pill" id="inq-reset">重置</button>';
+    var checkBtn = '<button type="button" class="fig-pill" id="inq-check">检查顺序</button>';
+    var resultDiv = '<div class="inq-result" data-inqresult></div>';
+    return '<div class="fig-inquiry" data-inquiry>' +
+      '<p class="inq-instruct">将下列步骤拖放到正确位置（科学探究顺序）：</p>' +
+      '<div class="inq-slots">' + slots + '</div>' +
+      '<div class="inq-draggables" data-inqdrag>' + draggables + '</div>' +
+      '<div class="fig-ctrl inq-ctrl">' + checkBtn + resetBtn + '</div>' +
+      resultDiv +
+    '</div>';
+  }
+
+  // ---------- 红磷燃烧测定氧气含量 ----------
+  function figRedPhosphorus(fig) {
+    var id = "rp-" + uid();
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-stage="setup">实验前</button>' +
+      '<button type="button" class="fig-pill" data-stage="burn">燃烧中</button>' +
+      '<button type="button" class="fig-pill" data-stage="result">冷却后</button>' +
+      '</div>';
+    var defs =
+      '<defs>' +
+        '<linearGradient id="' + id + '-water" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="#bfe9e4"/><stop offset="1" stop-color="#7cc7bf"/>' +
+        '</linearGradient>' +
+      '</defs>';
+    // Stage: setup
+    var setupG =
+      '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+      '<path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/>' +
+      '<rect x="46" y="56" width="8" height="10" rx="2" fill="#e67b32" opacity="0.8"/>' +
+      '<text x="60" y="140" fill="#587073" font-size="9" text-anchor="middle">钟罩</text>' +
+      '<rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/>' +
+      '<text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽（水）</text>' +
+      '<text x="60" y="120" fill="#146c6e" font-size="9" text-anchor="middle" data-rp-note>红磷在密闭容器内</text>';
+    // Stage: burning
+    var burnG =
+      '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+      '<path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/>' +
+      '<ellipse cx="60" cy="58" rx="6" ry="8" fill="#e67b32" opacity="0.9" class="rp-flame"/>' +
+      '<ellipse cx="60" cy="54" rx="3" ry="5" fill="#f7c948" opacity="0.8"/>' +
+      '<circle cx="55" cy="45" r="2" fill="#b0c4c1" opacity="0.5" class="rp-smoke1"/>' +
+      '<circle cx="65" cy="42" r="2.5" fill="#b0c4c1" opacity="0.4" class="rp-smoke2"/>' +
+      '<text x="60" y="120" fill="#c2534f" font-size="9" text-anchor="middle" data-rp-note">红磷燃烧，产生大量白烟</text>' +
+      '<rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/>' +
+      '<text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽</text>';
+    // Stage: result
+    var resultG =
+      '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+      '<path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/>' +
+      '<rect x="32" y="120" width="56" height="48" fill="url(#' + id + '-water)"/>' +
+      '<text x="60" y="150" fill="#146c6e" font-size="10" text-anchor="middle" font-weight="600" data-rp-note>水面上升约 1/5</text>' +
+      '<text x="60" y="112" fill="#587073" font-size="8" text-anchor="middle">剩余气体（主要是氮气）</text>' +
+      '<rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/>' +
+      '<text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽</text>';
+    var stageMap = { setup: setupG, burn: burnG, result: resultG };
+    var svgInner = defs +
+      '<g class="rp-stage" data-rp-stage>' + setupG + '</g>';
+    var html =
+      '<div class="fig-rp" data-rp>' +
+        pills +
+        figSvg(160, 185, svgInner) +
+        '<p class="rp-hint" data-rphint>点击按钮切换实验阶段。</p>' +
+      '</div>';
+    return html;
+  }
+
+  // ---------- 三种物质在氧气中燃烧 ----------
+  function figOxygenCombustion(fig) {
+    var subs = [
+      { name: "木炭", color: "#f5f5f5", effect: "发出白光，放热", product: "CO₂（使石灰水变浑浊）", detail: "碳 + 氧气 → 二氧化碳" },
+      { name: "硫", color: "#e67b32", effect: "蓝紫色火焰", product: "SO₂（刺激性气味）", detail: "硫 + 氧气 → 二氧化硫" },
+      { name: "铁丝", color: "#587073", effect: "火星四射，黑色固体", product: "Fe₃O₄", detail: "铁 + 氧气 → 四氧化三铁" }
+    ];
+    var pills = subs.map(function (s, i) {
+      return '<button type="button" class="fig-pill" data-sub="' + i + '">' + s.name + '</button>';
+    }).join("");
+    var id = "oc-" + uid();
+    var defs =
+      '<defs>' +
+        '<radialGradient id="' + id + '-glow"><stop offset="0" stop-color="#f7c948" stop-opacity="0.6"/>' +
+          '<stop offset="1" stop-color="#f7c948" stop-opacity="0"/></radialGradient>' +
+      '</defs>';
+    var svgId = id;
+    var inner = defs +
+      '<rect x="10" y="10" width="140" height="90" rx="6" fill="rgba(20,108,110,.06)" stroke="#146c6e" stroke-width="1.5"/>' +
+      '<text x="80" y="26" fill="#146c6e" font-size="9" text-anchor="middle" font-weight="600">集气瓶（充满氧气）</text>' +
+      '<line x1="30" y1="30" x2="130" y2="30" stroke="#d9e8e5" stroke-width="1"/>' +
+      '<text x="80" y="78" fill="#587073" font-size="9" text-anchor="middle" data-oc-effect>点击上方按钮观察现象</text>' +
+      '<text x="80" y="92" fill="#146c6e" font-size="9" text-anchor="middle" font-weight="600" data-oc-product></text>';
+    var resultArea =
+      '<div class="oc-result" data-ocresult>' +
+        '<p class="oc-name" data-ocname></p>' +
+        '<p class="oc-detail" data-ocdetail></p>' +
+      '</div>';
+    return '<div class="fig-oc" data-oc>' +
+      '<div class="fig-ctrl">' + pills + '</div>' +
+      figSvg(160, 108, inner) +
+      resultArea +
+    '</div>';
+  }
+
+  // ---------- 高锰酸钾制氧气装置（可点击标注） ----------
+  function figKmno4Setup(fig) {
+    var highlights = [
+      { key: "tube", label: "试管（口略向下倾斜）", note: "防止冷凝水回流炸裂试管" },
+      { key: "cotton", label: "棉花", note: "防止高锰酸钾粉末进入导管" },
+      { key: "酒精灯", label: "酒精灯", note: "加热提供反应所需温度" },
+      { key: "收集", label: "排水法收集", note: "氧气不易溶于水，可用排水法" }
+    ];
+    var pills = highlights.map(function (h) {
+      return '<button type="button" class="fig-pill" data-part="' + h.key + '">' + h.label + '</button>';
+    }).join("");
+    var id = "km-" + uid();
+    var svgInner =
+      '<defs>' +
+        '<linearGradient id="' + id + '-flame" x1="0" y1="1" x2="0" y2="0">' +
+          '<stop offset="0" stop-color="#e67b32"/><stop offset="1" stop-color="#f7c948"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      // 试管（略向下倾斜）
+      '<g class="km-tube" data-part="tube">' +
+        '<rect x="20" y="30" width="80" height="18" rx="3" fill="rgba(255,255,255,.6)" stroke="#587073" stroke-width="2" transform="rotate(-5 60 39)"/>' +
+        '<rect x="22" y="32" width="12" height="14" rx="1" fill="#6b5ba8" opacity="0.7" transform="rotate(-5 60 39)"/>' +
+        '<text x="28" y="43" fill="#fff" font-size="6" transform="rotate(-5 60 39)">KMnO₄</text>' +
+      '</g>' +
+      // 棉花
+      '<g class="km-cotton" data-part="cotton">' +
+        '<ellipse cx="100" cy="28" rx="5" ry="3" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1"/>' +
+      '</g>' +
+      // 导管
+      '<path d="M104 28 L120 28 L120 55 L145 55" fill="none" stroke="#587073" stroke-width="2" stroke-linejoin="round"/>' +
+      // 酒精灯
+      '<g class="km-heat" data-part="heat">' +
+        '<path d="M30 85 L50 85 L48 100 L32 100 Z" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1.5"/>' +
+        '<ellipse cx="40" cy="82" rx="6" ry="10" fill="url(#' + id + '-flame)" class="km-flame"/>' +
+      '</g>' +
+      // 铁架台
+      '<line x1="15" y1="100" x2="15" y2="50" stroke="#587073" stroke-width="3" stroke-linecap="round"/>' +
+      '<rect x="8" y="55" width="14" height="4" rx="2" fill="#587073"/>' +
+      // 集气瓶（排水法）
+      '<g class="km-collect" data-part="收集">' +
+        '<rect x="130" y="30" width="30" height="50" rx="4" fill="rgba(191,233,228,.3)" stroke="#587073" stroke-width="2"/>' +
+        '<rect x="132" y="45" width="26" height="33" rx="2" fill="rgba(191,233,228,.5)"/>' +
+        '<text x="145" y="65" fill="#146c6e" font-size="7" text-anchor="middle">O₂</text>' +
+      '</g>' +
+      '<text x="80" y="120" fill="#587073" font-size="8" text-anchor="middle" data-kmnote>点击按钮查看各部件作用</text>';
+    var resultBox = '<div class="km-result" data-kmresult></div>';
+    return '<div class="fig-km" data-km>' +
+      '<div class="fig-ctrl">' + pills + '</div>' +
+      figSvg(170, 135, svgInner) +
+      resultBox +
+    '</div>';
+  }
+
+  // ---------- 分子运动模拟：气体/液体/固体 + 温度控制 ----------
+  function figMoleculeMotion(fig) {
+    var states = [
+      { key: "solid", label: "固态", color: "#4aa7a0", spacing: "紧密", motion: "振动", n: 16 },
+      { key: "liquid", label: "液态", color: "#2f9aa8", spacing: "较近", motion: "滑动", n: 16 },
+      { key: "gas", label: "气态", color: "#e67b32", spacing: "远", motion: "快速无规则", n: 16 }
+    ];
+    var pills = states.map(function (s) {
+      return '<button type="button" class="fig-pill" data-state="' + s.key + '">' + s.label + '</button>';
+    }).join("");
+    var particles = states.map(function (s) {
+      var cx = 40, cy = 40, r = 5, spacing = s.key === "solid" ? 12 : (s.key === "liquid" ? 14 : 28);
+      var cols = s.key === "solid" ? 4 : (s.key === "liquid" ? 4 : 3);
+      var dots = "";
+      for (var i = 0; i < s.n; i++) {
+        var col = i % cols, row = Math.floor(i / cols);
+        var x = cx + col * spacing + (s.key === "liquid" ? Math.sin(i * 1.3) * 3 : 0);
+        var y = cy + row * spacing + (s.key === "gas" ? (Math.random() - 0.5) * 10 : 0);
+        dots += '<circle class="mol-particle" data-state="' + s.key + '" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4" fill="' + s.color + '" opacity="0.85"/>';
+      }
+      return dots;
+    }).join("");
+    var svgInner =
+      '<g class="mol-solid" data-mol="solid">' + particles.split('data-state="gas"')[0].split('data-state="liquid"')[0] + '</g>' +
+      '<line x1="10" y1="72" x2="110" y2="72" stroke="#d9e8e5" stroke-width="1" stroke-dasharray="4,3"/>' +
+      '<g class="mol-liquid" data-mol="liquid">' + particles.split('data-state="gas"')[0].split('data-state="liquid"')[1] + '</g>' +
+      '<line x1="10" y1="120" x2="110" y2="120" stroke="#d9e8e5" stroke-width="1" stroke-dasharray="4,3"/>' +
+      '<g class="mol-gas" data-mol="gas">' + particles.split('data-state="gas"')[1] + '</g>';
+    var descBox = '<div class="mol-desc" data-moldesc>' +
+      '<p class="mol-state-name" data-molname>固态</p>' +
+      '<p class="mol-desc-text" data-moldtxt>分子排列紧密，只能在固定位置振动。</p>' +
+    '</div>';
+    return '<div class="fig-mol" data-molfig>' +
+      '<div class="fig-ctrl">' + pills + '</div>' +
+      figSvg(120, 155, svgInner) +
+      descBox +
+    '</div>';
   }
 
   // ---------- 加载并渲染某一天 ----------
@@ -2959,6 +6391,290 @@ window.ChemLabQuiz["day-10"] = {
         pill.addEventListener("click", function () { applyAir(pill.dataset.air); });
       });
       applyAir("ok");
+    });
+
+    // 蜡烛燃烧交互
+    document.querySelectorAll("[data-candle]").forEach(function (box) {
+      var flame = box.querySelector("[data-flame]");
+      var smoke = box.querySelector("[data-smoke]");
+      var wax = box.querySelector("[data-wax]");
+      var products = box.querySelector("[data-products]");
+      var melt = box.querySelector("[data-melt]");
+      var hint = box.querySelector("[data-hint]");
+      function setLit(on) {
+        if (flame) flame.style.opacity = on ? "1" : "0";
+        if (smoke) smoke.style.opacity = on ? "0" : "0.8";
+        if (wax) wax.style.opacity = on ? "0.9" : "0";
+        if (products) products.style.opacity = on ? "1" : "0";
+        if (melt) melt.style.opacity = on ? "1" : "0";
+        if (hint) hint.textContent = on
+          ? "蜡烛燃烧：熔化（物理变化）+ 生成 CO₂/H₂O（化学变化），两者同时发生。"
+          : "点击「点燃」观察蜡烛燃烧过程。";
+      }
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          setLit(pill.dataset.action === "light");
+        });
+      });
+    });
+
+    // 物质变化判断器
+    document.querySelectorAll("[data-judge]").forEach(function (box) {
+      var items = [
+        { type: "物理", note: "状态改变，没有新物质。" },
+        { type: "化学", note: "铁变成了铁锈（新物质）。" },
+        { type: "物理", note: "形状改变，没有新物质。" },
+        { type: "化学", note: "产生了新物质，有异味和变色。" }
+      ];
+      box.querySelectorAll(".judge-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var idx = parseInt(btn.dataset.idx);
+          var item = items[idx];
+          var result = box.querySelector("[data-result]");
+          btn.classList.add("is-active");
+          box.querySelectorAll(".judge-btn").forEach(function (b) {
+            if (b !== btn) b.classList.remove("is-active");
+          });
+          if (result) {
+            result.innerHTML =
+              '<strong>' + escapeHtml(item.type) + "变化</strong>： " +
+              escapeHtml(item.note) +
+              '<br><span class="hint">判断依据：是否有新物质生成。</span>';
+          }
+        });
+      });
+    });
+
+    // 科学探究步骤拖拽排序
+    document.querySelectorAll("[data-inquiry]").forEach(function (box) {
+      var steps = [
+        { id: "ask", text: "提出问题" },
+        { id: "hypo", text: "猜想与假设" },
+        { id: "plan", text: "制定计划" },
+        { id: "experiment", text: "进行实验" },
+        { id: "evidence", text: "收集证据" },
+        { id: "conclude", text: "得出结论" }
+      ];
+      var correctOrder = steps.map(function (s) { return s.id; });
+      var initialOrder = [3, 0, 4, 1, 5, 2];
+      var currentOrder = initialOrder.slice();
+      var slots = box.querySelectorAll(".inq-slot");
+      var draggables = box.querySelectorAll(".inq-drag");
+      var resultDiv = box.querySelector("[data-inqresult]");
+      var checkBtn = box.querySelector("#inq-check");
+      var resetBtn = box.querySelector("#inq-reset");
+
+      // 将 draggable 元素放入初始位置
+      draggables.forEach(function (el, i) {
+        slots[i].appendChild(el);
+        el.addEventListener("dragstart", function (e) {
+          e.dataTransfer.setData("text/plain", el.dataset.id);
+          el.classList.add("is-dragging");
+        });
+        el.addEventListener("dragend", function () {
+          el.classList.remove("is-dragging");
+        });
+      });
+
+      slots.forEach(function (slot) {
+        slot.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          slot.classList.add("is-drop-target");
+        });
+        slot.addEventListener("dragleave", function () {
+          slot.classList.remove("is-drop-target");
+        });
+        slot.addEventListener("drop", function (e) {
+          e.preventDefault();
+          slot.classList.remove("is-drop-target");
+          var id = e.dataTransfer.getData("text/plain");
+          var el = box.querySelector("[data-id='" + id + "']");
+          if (!el) return;
+          // 如果目标 slot 已有元素，交换
+          if (slot.querySelector(".inq-drag")) {
+            var existing = slot.querySelector(".inq-drag");
+            var placeholder = slot.querySelector(".slot-hint");
+            var parent = existing.parentNode;
+            if (parent === slot) {
+              parent.appendChild(existing);
+            }
+            slot.appendChild(existing);
+          }
+          slot.appendChild(el);
+          // 更新 currentOrder
+          var newOrder = [];
+          slots.forEach(function (s) {
+            var d = s.querySelector(".inq-drag");
+            newOrder.push(d ? d.dataset.id : null);
+          });
+          currentOrder = newOrder;
+        });
+      });
+
+      // 将 slot-hint 放入空 slot
+      function refreshSlots() {
+        slots.forEach(function (slot) {
+          if (!slot.querySelector(".inq-drag")) {
+            var hint = document.createElement("span");
+            hint.className = "slot-hint";
+            hint.textContent = "拖放步骤到此处";
+            slot.appendChild(hint);
+          }
+        });
+      }
+
+      if (checkBtn) {
+        checkBtn.addEventListener("click", function () {
+          var placed = currentOrder.filter(Boolean);
+          if (placed.length !== steps.length) {
+            if (resultDiv) resultDiv.innerHTML = '<span class="hint fb-ko">请把全部步骤拖放到槽位中。</span>';
+            return;
+          }
+          var isCorrect = placed.every(function (id, i) { return id === correctOrder[i]; });
+          if (resultDiv) {
+            resultDiv.innerHTML = isCorrect
+              ? '<span class="hint fb-ok">✔ 正确！科学探究顺序：提出问题 → 猜想与假设 → 制定计划 → 进行实验 → 收集证据 → 得出结论。</span>'
+              : '<span class="hint fb-ko">✘ 顺序有误，再想想。提示：先有问题和猜想，才能设计实验。</span>';
+          }
+        });
+      }
+      if (resetBtn) {
+        resetBtn.addEventListener("click", function () {
+          currentOrder = initialOrder.slice();
+          slots.forEach(function (slot) { slot.innerHTML = ''; });
+          draggables.forEach(function (el, i) {
+            slots[i].appendChild(el);
+          });
+          refreshSlots();
+          if (resultDiv) resultDiv.innerHTML = "";
+        });
+      }
+      refreshSlots();
+    });
+
+    // 红磷燃烧阶段切换
+    document.querySelectorAll("[data-rp]").forEach(function (box) {
+      var stageMap = {
+        setup: 'setup', burn: 'burn', result: 'result'
+      };
+      function applyStage(key) {
+        var stage = box.querySelector("[data-rp-stage]");
+        if (!stage) return;
+        // 重建 stage 内容（简单方式：隐藏所有，显示当前）
+        var svgEl = box.querySelector(".chem-svg");
+        if (!svgEl) return;
+        var ns = "http://www.w3.org/2000/svg";
+        // 保留 defs
+        var defs = svgEl.querySelector("defs");
+        // 清除 stage group
+        var existing = svgEl.querySelector(".rp-stage");
+        if (existing) existing.remove();
+        var g = document.createElementNS(ns, "g");
+        g.setAttribute("class", "rp-stage");
+        g.setAttribute("data-rp-stage", "");
+        var content = key === "setup"
+          ? '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/><path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/><rect x="46" y="56" width="8" height="10" rx="2" fill="#e67b32" opacity="0.8"/><text x="60" y="140" fill="#587073" font-size="9" text-anchor="middle">钟罩</text><rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/><text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽（水）</text><text x="60" y="120" fill="#146c6e" font-size="9" text-anchor="middle" data-rp-note>红磷在密闭容器内</text>'
+          : (key === "burn"
+            ? '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/><path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/><ellipse cx="60" cy="58" rx="6" ry="8" fill="#e67b32" opacity="0.9" class="rp-flame"/><ellipse cx="60" cy="54" rx="3" ry="5" fill="#f7c948" opacity="0.8"/><circle cx="55" cy="45" r="2" fill="#b0c4c1" opacity="0.5" class="rp-smoke1"/><circle cx="65" cy="42" r="2.5" fill="#b0c4c1" opacity="0.4" class="rp-smoke2"/><text x="60" y="120" fill="#c2534f" font-size="9" text-anchor="middle" data-rp-note>红磷燃烧，产生大量白烟</text><rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/><text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽</text>'
+            : '<rect x="30" y="100" width="60" height="70" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/><path d="M50 100 L50 70 Q50 60 60 60 L80 60 Q90 60 90 70 L90 100" fill="none" stroke="#587073" stroke-width="2"/><rect x="32" y="120" width="56" height="48" fill="url(#' + (box.querySelector(".chem-svg") && box.querySelector(".chem-svg").querySelector("defs") ? box.querySelector(".chem-svg").querySelector("defs").getAttribute("id").replace("rp-", "") + '-water' : '') + ')"/><text x="60" y="150" fill="#146c6e" font-size="10" text-anchor="middle" font-weight="600" data-rp-note>水面上升约 1/5</text><text x="60" y="112" fill="#587073" font-size="8" text-anchor="middle">剩余气体（主要是氮气）</text><rect x="15" y="155" width="130" height="20" rx="3" fill="rgba(191,233,228,.4)" stroke="#587073" stroke-width="1.5"/><text x="80" y="169" fill="#587073" font-size="8" text-anchor="middle">水槽</text>');
+        g.innerHTML = content;
+        svgEl.appendChild(g);
+        box.querySelectorAll(".fig-pill").forEach(function (pill) {
+          var active = pill.dataset.stage === key;
+          pill.classList.toggle("is-active", active);
+          pill.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        var hint = box.querySelector("[data-rphint]");
+        if (hint) {
+          hint.textContent = key === "setup"
+            ? "实验前：钟罩内充满空气，红磷未点燃。"
+            : (key === "burn"
+              ? "燃烧中：红磷与氧气反应生成五氧化二磷白烟，消耗氧气。"
+              : "冷却后：水面上升约 1/5，证明氧气约占空气体积的 1/5。");
+        }
+      }
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () { applyStage(pill.dataset.stage); });
+      });
+      applyStage("setup");
+    });
+
+    // 氧气助燃实验
+    document.querySelectorAll("[data-oc]").forEach(function (box) {
+      var subs = [
+        { name: "木炭", effect: "发出白光，放热", product: "CO₂（使石灰水变浑浊）", detail: "C + O₂ → CO₂" },
+        { name: "硫", effect: "蓝紫色火焰，放热", product: "SO₂（刺激性气味）", detail: "S + O₂ → SO₂" },
+        { name: "铁丝", effect: "火星四射，生成黑色固体", product: "Fe₃O₄", detail: "3Fe + 2O₂ → Fe₃O₄" }
+      ];
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var idx = parseInt(pill.dataset.sub);
+          var s = subs[idx];
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          var effectEl = box.querySelector("[data-oc-effect]");
+          var productEl = box.querySelector("[data-oc-product]");
+          var nameEl = box.querySelector("[data-ocname]");
+          var detailEl = box.querySelector("[data-ocdetail]");
+          if (effectEl) effectEl.textContent = s.effect;
+          if (productEl) productEl.textContent = s.product;
+          if (nameEl) nameEl.textContent = s.name + "在氧气中燃烧";
+          if (detailEl) detailEl.textContent = s.detail;
+        });
+      });
+    });
+
+    // 高锰酸钾制氧装置
+    document.querySelectorAll("[data-km]").forEach(function (box) {
+      var parts = {
+        tube: { note: "试管口略向下倾斜，防止冷凝水回流炸裂试管。" },
+        cotton: { note: "试管口放一小团棉花，防止高锰酸钾粉末进入导管堵塞导管。" },
+        heat: { note: "酒精灯加热，使高锰酸钾达到分解温度。" },
+        "收集": { note: "氧气不易溶于水，用排水法收集，气体较纯净。" }
+      };
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var key = pill.dataset.part;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          var result = box.querySelector("[data-kmresult]");
+          if (result) {
+            var p = parts[key];
+            result.innerHTML = '<strong>' + escapeHtml(pill.textContent) + '</strong><br><span class="hint">' + escapeHtml(p.note) + '</span>';
+          }
+          var note = box.querySelector("[data-kmnote]");
+          if (note) note.textContent = p ? p.note : "";
+        });
+      });
+    });
+
+    // 分子运动状态切换
+    document.querySelectorAll("[data-molfig]").forEach(function (box) {
+      var stateInfo = {
+        solid: { name: "固态", text: "分子排列紧密，只能在固定位置振动，有固定形状和体积。" },
+        liquid: { name: "液态", text: "分子较近，可相对滑动，有固定体积但无固定形状。" },
+        gas: { name: "气态", text: "分子间隔很大，快速无规则运动，无固定形状和体积，易压缩。" }
+      };
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var key = pill.dataset.state;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          // 切换粒子动画
+          box.querySelectorAll(".mol-particle").forEach(function (circle) {
+            var st = circle.dataset.state;
+            circle.classList.toggle("is-active", st === key);
+          });
+          var info = stateInfo[key];
+          var nameEl = box.querySelector("[data-molname]");
+          var txtEl = box.querySelector("[data-moldtxt]");
+          if (nameEl) nameEl.textContent = info.name;
+          if (txtEl) txtEl.textContent = info.text;
+        });
+      });
     });
 
     document.querySelector("#quiz-form").addEventListener("submit", function (event) {

@@ -253,6 +253,73 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 .air-legend { display: flex; align-items: center; gap: 8px; }
 .air-legend .swatch { width: 14px; height: 14px; border-radius: 4px; flex: none; }
 
+/* 蜡烛燃烧 */
+.fig-candle { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.candle-hint { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+.candle-flame { transition: opacity .5s ease; }
+.candle-smoke { transition: opacity .5s ease; }
+.candle-wax { transition: opacity .5s ease; }
+.candle-products { transition: opacity .5s ease; }
+.candle-melt { transition: opacity .5s ease; }
+
+/* 物质变化判断器 */
+.fig-judge { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.judge-grid { gap: 8px; }
+.judge-btn.is-active { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+.judge-result { font-size: .9rem; line-height: 1.6; text-align: left; width: 100%; padding: 10px 12px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); }
+
+/* 科学探究排序 */
+.fig-inquiry { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+.inq-instruct { font-size: .88rem; color: var(--muted); margin: 0; }
+.inq-slots { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 320px; }
+.inq-slot { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 10px; border: 2px dashed var(--line); border-radius: 8px; background: var(--paper); transition: border-color .2s, background .2s; }
+.inq-slot.is-drop-target { border-color: var(--brand); background: var(--brand-soft); }
+.slot-num { font-weight: 700; color: var(--brand); font-size: .9rem; min-width: 18px; }
+.slot-hint { color: var(--muted); font-size: .82rem; }
+.inq-drag { display: inline-flex; align-items: center; padding: 6px 12px; background: var(--surface); border: 1px solid var(--brand); border-radius: 6px; font-size: .85rem; font-weight: 600; color: var(--brand); cursor: grab; user-select: none; transition: opacity .2s; }
+.inq-drag:active { cursor: grabbing; }
+.inq-drag.is-dragging { opacity: .5; }
+.inq-ctrl { display: flex; gap: 8px; }
+.inq-result { font-size: .88rem; width: 100%; text-align: center; }
+
+/* 红磷燃烧 */
+.fig-rp { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.rp-hint { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+.rp-flame { animation: rpFlame 0.4s ease-in-out infinite alternate; }
+@keyframes rpFlame { from { opacity: .8; } to { opacity: 1; } }
+.rp-smoke1, .rp-smoke2 { animation: rpSmoke 2s ease-out infinite; }
+.rp-smoke2 { animation-delay: 0.6s; }
+@keyframes rpSmoke { 0% { opacity: 0.6; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-12px); } }
+
+/* 氧气燃烧 */
+.fig-oc { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.oc-result { font-size: .88rem; text-align: left; width: 100%; padding: 10px 12px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); }
+.oc-name { margin: 0 0 4px; font-weight: 700; color: var(--brand); }
+.oc-detail { margin: 0; color: var(--muted); font-family: monospace; font-size: .85rem; }
+
+/* 高锰酸钾装置 */
+.fig-km { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.km-result { font-size: .88rem; width: 100%; text-align: left; padding: 8px 10px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); margin-top: 4px; }
+.km-flame { animation: kmFlame 0.3s ease-in-out infinite alternate; }
+@keyframes kmFlame { from { transform: scaleY(0.9); } to { transform: scaleY(1.05); } }
+
+/* 分子运动 */
+.fig-mol { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.mol-desc { font-size: .88rem; text-align: left; width: 100%; padding: 8px 10px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); }
+.mol-state-name { margin: 0 0 2px; font-weight: 700; color: var(--brand); }
+.mol-desc-text { margin: 0; color: var(--muted); }
+.mol-particle { transition: opacity .3s ease; }
+.mol-particle.is-active { animation: molBounce 0.6s ease-in-out infinite; }
+@keyframes molBounce { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, -1px); } }
+.mol-gas .mol-particle.is-active { animation: molGasMove 1.2s ease-in-out infinite; }
+@keyframes molGasMove {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(3px, -2px); }
+  50% { transform: translate(-1px, 3px); }
+  75% { transform: translate(-3px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
 
 /* ---------- 暗色模式 ---------- */
