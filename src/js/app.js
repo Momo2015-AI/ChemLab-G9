@@ -772,6 +772,7 @@
           "</form>" +
           '<p id="result" class="result" tabindex="-1" aria-live="polite"></p>' +
         "</section>" +
+        '<p class="back-home"><a href="?">← 返回首页</a></p>' +
       "</div>";
 
     bindOptionSelection();
@@ -1027,6 +1028,7 @@
           '<button class="primary" type="submit">提交复习</button>' +
         "</form>" +
         '<p id="review-result" class="result" tabindex="-1" aria-live="polite"></p>' +
+        '<p class="back-home"><a href="?">← 返回首页</a></p>' +
       "</div>";
 
     bindOptionSelection();
