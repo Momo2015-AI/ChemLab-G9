@@ -1,4 +1,522 @@
-(function () {
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#146c6e" />
+    <title>ChemLab-G9｜九年级化学</title>
+    <style>
+:root {
+  color-scheme: light;
+  --ink: #173033;
+  --muted: #587073;
+  --paper: #f6fbfa;
+  --surface: #ffffff;
+  --line: #d9e8e5;
+  --brand: #146c6e;
+  --brand-soft: #e2f4f1;
+  --accent: #e67b32;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-size: 17px; line-height: 1.75; }
+button { min-height: 44px; font: inherit; cursor: pointer; }
+.page { width: min(920px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 56px; }
+.hero, .section, .quiz { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: clamp(20px, 4vw, 36px); margin-top: 18px; }
+.eyebrow { color: var(--brand); font-weight: 800; letter-spacing: .08em; margin: 0; }
+h1 { font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.15; margin: 8px 0; }
+h2 { font-size: 1.35rem; line-height: 1.3; margin-top: 0; }
+.meta, .hint { color: var(--muted); }
+.question { border-top: 1px solid var(--line); padding-top: 20px; margin-top: 20px; }
+.option { display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; margin: 10px 0; }
+.option:has(input:checked), .option.selected { border-color: var(--brand); background: var(--brand-soft); }
+.primary { background: var(--brand); color: white; border: 0; border-radius: 12px; padding: 8px 18px; margin-top: 10px; }
+.result { font-weight: 700; margin: 16px 0 0; outline: none; }
+.warning { color: var(--accent); font-weight: 700; }
+.breadcrumb { margin: 0; }
+.breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 700; }
+
+/* 首页：进度条 */
+.progress-bar { height: 10px; border-radius: 999px; background: var(--brand-soft); overflow: hidden; margin-top: 12px; }
+.progress-bar-fill { height: 100%; background: var(--brand); border-radius: 999px; transition: width .3s ease; }
+
+/* 首页：学习日网格 */
+.day-grid { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.day-card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.day-card-link { display: flex; flex-direction: column; gap: 4px; padding: 14px; min-height: 44px; text-decoration: none; color: inherit; }
+.day-card.is-done { border-color: var(--brand); background: var(--brand-soft); }
+.day-card.is-locked { opacity: .55; }
+.day-card-link.is-disabled { cursor: not-allowed; }
+.day-num { font-weight: 800; color: var(--brand); letter-spacing: .05em; }
+.day-title { font-weight: 600; }
+.day-status { color: var(--muted); font-size: .9rem; }
+
+/* 首页：模块进度环形图 */
+.mod-row { display: flex; align-items: center; gap: 12px; padding: 10px 2px; border-bottom: 1px dashed var(--line); }
+.mod-row:last-child { border-bottom: 0; }
+.mod-ring { width: 40px; height: 40px; flex: none; }
+.ring-bg { fill: none; stroke: var(--line); stroke-width: 5; }
+.ring-fg { fill: none; stroke: var(--brand); stroke-width: 5; stroke-linecap: round; transition: stroke-dasharray .4s ease; }
+.mod-name { font-weight: 600; flex: 1; }
+.mod-count { color: var(--muted); font-size: .9rem; }
+
+/* 实验安全徽章 */
+.badge { display: inline-block; font-size: .8rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; vertical-align: middle; }
+.badge-safety { background: #fdecd9; color: #a4560b; }
+
+/* 情境自测（details/summary，原生可访问，无需额外脚本） */
+.checkpoint-item { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 10px 0; }
+.checkpoint-item summary { cursor: pointer; font-weight: 600; }
+.checkpoint-item p { margin: 10px 0 0; color: var(--muted); }
+
+/* 内容配图（内建 SVG 渲染） */
+.chem-fig { margin: 18px auto 6px; text-align: center; max-width: 520px; }
+.chem-svg { width: 100%; height: auto; display: block; margin: 0 auto; }
+.fig-cap { margin-top: 10px; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+
+/* 量筒读数交互控件 */
+.fig-cyl { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.fig-ctrl { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.fig-pill { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; min-height: 44px; font-weight: 600; color: var(--ink); }
+.fig-pill.is-active, .fig-pill:active { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+.fig-cyl .cyl-note { font-weight: 600; }
+
+/* 量筒读数：眼睛、视线、读数标记 */
+.cyl-eye-body { transform-origin: center; transition: all .3s ease; }
+.cyl-pupil { transform-origin: center; transition: cx .3s ease, cy .3s ease; }
+.cyl-sight line { stroke-linecap: round; }
+.cyl-read { r: 5; transition: cx .3s ease, cy .3s ease; }
+.cyl-read.is-wrong { fill: #e67b32; animation: pulse-wrong .8s ease; transform-box: fill-box; transform-origin: center; }
+@keyframes pulse-wrong { 0% { transform: scale(1); } 50% { transform: scale(1.5); } 100% { transform: scale(1); } }
+
+/* 气密性：手、导管、漏气状态 */
+.air-hand { transform-origin: 50% 50%; animation: handPress 2s ease-in-out infinite; }
+@keyframes handPress { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+.air-pipe { transition: opacity .3s ease; }
+.air-bubbles.is-leak .bub { animation: leakBubbles 3s linear infinite; }
+.air-water.is-leak { opacity: .35; }
+@keyframes leakBubbles {
+  0% { opacity: 0; transform: translate(0, 14px) scale(.5); }
+  10% { opacity: .3; }
+  100% { opacity: 0; transform: translate(0, -18px) scale(1); }
+}
+
+/* 气密性交互控件 */
+.fig-air { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.fig-air .fig-pill { min-width: 110px; }
+
+/* 题目难度标签 */
+.q-diff { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; vertical-align: middle; margin-right: 6px; }
+.q-diff[data-diff="基础"] { background: var(--brand-soft); color: var(--brand); }
+.q-diff[data-diff="提升"] { background: #fdecd9; color: #a4560b; }
+.q-diff[data-diff="挑战"] { background: #f6d9d0; color: #b0400f; }
+
+/* 反馈提示：复用 .hint，带 role=status 时读屏播报 */
+.feedback { margin-top: 10px; font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+
+/* 暗色模式：夜间学习不刺眼 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --ink: #d9e9e7;
+    --muted: #8faaa7;
+    --paper: #0f2225;
+    --surface: #163033;
+    --line: #265053;
+    --brand: #5cc4bc;
+    --brand-soft: #1d3f42;
+    --accent: #f09a5b;
+  }
+  .badge-safety { background: #4a3417; color: #f5b971; }
+  .q-diff[data-diff="提升"] { background: #4a3417; color: #f5b971; }
+  .q-diff[data-diff="挑战"] { background: #55281f; color: #f39c7e; }
+  .air-tube line { stroke: #d9e9e7; }
+  .cyl-scale { stroke: #8faaa7; }
+}
+
+</style>
+  </head>
+  <body>
+    <main id="app" tabindex="-1">
+      <p class="loading">正在准备今天的化学课……</p>
+    </main>
+    <noscript>请启用 JavaScript 后学习 ChemLab-G9。</noscript>
+    
+    
+  <script>window.ChemLabManifest = (function () {
+  "use strict";
+
+  // 模块划分与天数区间，来自 docs/CHEMISTRY_CURRICULUM.md 的教学地图。
+  const modules = [
+    { name: "开启化学之门", range: [1, 3] },
+    { name: "我们周围的空气", range: [4, 8] },
+    { name: "物质构成的奥秘", range: [9, 15] },
+    { name: "自然界的水", range: [16, 18] },
+    { name: "化学方程式", range: [19, 23] },
+    { name: "碳和碳的氧化物", range: [24, 27] },
+    { name: "燃料及其利用", range: [28, 29] },
+    { name: "综合提升", range: [30, 30] }
+  ];
+
+  // 仅收录课程地图中已明确的单日主题；其余天数在内容产出前不编造具体标题。
+  const knownTitles = {
+    "01": "化学就在我们身边",
+    "02": "化学实验室探秘",
+    "03": "科学探究方法"
+  };
+
+  // 已完成内容开发、可以学习的天数。
+  const readyDays = ["01", "02"];
+
+  function pad(n) {
+    return String(n).padStart(2, "0");
+  }
+
+  function moduleFor(dayNum) {
+    return modules.find((m) => dayNum >= m.range[0] && dayNum <= m.range[1]);
+  }
+
+  const days = [];
+  for (let i = 1; i <= 30; i += 1) {
+    const key = pad(i);
+    const mod = moduleFor(i);
+    const title = knownTitles[key] || (mod ? `${mod.name} · 待发布` : "待发布");
+    days.push({ day: key, title: title, module: mod ? mod.name : "", ready: readyDays.indexOf(key) !== -1 });
+  }
+
+  return { modules: modules, days: days };
+}());
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-01"] = {
+  dayNumber: "01",
+  title: "化学就在我们身边",
+  duration: "45--60 分钟",
+  difficulty: "⭐",
+  coreQuestion: "为什么铁会生锈，而黄金通常不会？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: ["化学研究物质的组成、结构、性质、变化和用途。学习化学，不是只记住物质名称，而是学会从现象中发现问题。"]
+    },
+    {
+      title: "生活观察：蜡烛燃烧",
+      body: [
+        "点燃蜡烛时，你能看到火焰、蜡烛逐渐变短、烛泪熔化。请先把这些如实记录为现象，不急着下结论。",
+        "其中，蜡烛熔化只是状态改变，没有产生新物质；蜡烛燃烧会生成新物质，属于化学变化。一次过程里可以同时发生两类变化。"
+      ]
+    },
+    {
+      title: "怎样判断是否发生了化学变化？",
+      body: [
+        "关键不是有没有冒泡、变色或发光，而是有没有生成新物质。冒泡可能是沸腾，也可能是反应；要结合证据判断。",
+        "物理变化通常只改变形状、状态或位置；化学变化会生成与原来不同的新物质。",
+        "换句话说，看到的“现象”只是线索，不是答案——同一个现象背后可能有完全不同的原因，需要继续追问、继续验证。"
+      ]
+    },
+    {
+      title: "证据够不够？——从现象到结论的距离",
+      body: [
+        "只看到“冒烟”“变黑”“变热”，还不能直接断定发生了化学变化，需要追问：变化前后，物质到底有没有变成别的东西？",
+        "同一个现象也可能对应不同原因。比如“烧杯壁出现水雾”，单看这一个现象无法确定原因，需要结合“烧杯本来是干燥且冰冷的”这个条件一起分析，才能推出蜡烛燃烧生成了水。"
+      ]
+    },
+    {
+      title: "实验探究：观察蜡烛燃烧",
+      safety: "supervised",
+      body: [
+        "目的：用观察区分蜡烛熔化和燃烧。用品：蜡烛、火柴（或点火器）、干冷烧杯；须在成人或教师监护下操作。",
+        "步骤：先观察未点燃蜡烛；点燃后观察火焰和蜡烛状态；将干冷烧杯短暂罩在火焰上方，再移开。现象：烧杯内壁出现水雾。结论：蜡烛燃烧不是简单的熔化，燃烧过程有新物质生成。",
+        "注意：烧杯不要长时间罩住火焰；不用手接触热玻璃；实验后确认火焰完全熄灭。"
+      ]
+    },
+    {
+      title: "教师提醒",
+      body: [
+        "“看到火焰”不等于已经完整证明了生成新物质。现象是证据，结论要由足够的证据支持。",
+        "很多同学把“冒泡”直接等同于化学变化。这是常见误区：水沸腾也会冒泡，却没有生成新物质。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "常见题型会把冰融化、蜡烛燃烧、食物腐败、铁钉生锈等情境放在一起，要求用“是否生成新物质”作为判断依据，而不是凭现象猜测。",
+        "解题时可以练习这样的思路：先把每个情境里“看到的现象”和“物质是否变了”分开写出来，再逐一判断，避免被“冒泡”“变色”“发光”这些表面特征带偏。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: ["化学研究物质及其变化。判断化学变化的根本依据：是否生成新物质。观察时先记录事实，再提出解释。"]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些说法哪些对？",
+    items: [
+      {
+        statement: "铁钉生锈，只是颜色变了，没有生成新物质。",
+        verdict: "错",
+        explanation: "铁生锈后表面生成的锈，主要成分与铁本身不同，是新物质，所以生锈属于化学变化。"
+      },
+      {
+        statement: "冰化成水、水又结成冰，这个过程中物质本质没有变化。",
+        verdict: "对",
+        explanation: "冰和水只是状态不同，本质上都是水，没有生成新物质，属于物理变化。"
+      },
+      {
+        statement: "只要看到冒泡，就一定发生了化学变化。",
+        verdict: "错",
+        explanation: "冒泡可能来自沸腾、气体逸出等物理过程，也可能来自化学反应，必须结合是否生成新物质来判断，不能只看这一个现象。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-01"] = {
+  questions: [
+    { prompt: "下列过程属于化学变化的是？", options: ["冰块融化", "蜡烛燃烧", "玻璃破碎", "水沸腾"], answer: "1", difficulty: "基础", explanation: "蜡烛燃烧会生成新物质；其余主要没有生成新物质。" },
+    { prompt: "判断化学变化最根本的依据是？", options: ["是否发光", "是否冒泡", "是否生成新物质", "是否温度升高"], answer: "2", difficulty: "基础", explanation: "发光、冒泡和温度变化都可能只是现象，生成新物质才是根本依据。" },
+    { prompt: "水加热沸腾时有气泡产生，因此一定发生化学变化。这个说法？", options: ["正确，因为有气泡", "错误，因为水沸腾主要是状态变化", "正确，因为温度升高", "无法判断"], answer: "1", difficulty: "提升", explanation: "沸腾时形成的是水蒸气，仍是水，没有生成新物质。" }
+  ]
+};
+</script>
+<script>window.ChemLabContent = window.ChemLabContent || {};
+window.ChemLabContent["day-02"] = {
+  dayNumber: "02",
+  title: "化学实验室探秘",
+  duration: "45--60 分钟",
+  difficulty: "⭐",
+  coreQuestion: "走进实验室，为什么有些操作必须慢、必须先做某一步，而不是图快？",
+  sections: [
+    {
+      title: "今天解决什么问题？",
+      body: [
+        "化学是一门以实验为基础的科学。想真正学好化学，就得会进实验室。但实验室不是游乐场，里面有试剂、火焰和玻璃仪器，安全永远是第一位的。",
+        "今天我们不急着做惊天动地的实验，而是先学会认识常用仪器、掌握取用试剂和加热的基本操作。规则看起来琐碎，其实每一条都对应着「防止事故」或「保证准确」的具体原因。"
+      ]
+    },
+    {
+      title: "认识常用仪器：它们各是干什么的？",
+      body: [
+        "先把几种最常见的仪器「认熟」。烧杯用来盛放和加热较多量液体；试管用来盛放少量试剂或做少量反应；集气瓶用来收集或储存少量气体；量筒用来量取一定体积的液体；胶头滴管用来滴加少量液体；试管夹用来夹持试管；酒精灯是实验室主要的加热工具。",
+        "注意：量筒只能用来量取液体，不能用来加热或作反应容器。能直接加热的仪器通常有试管、蒸发皿、燃烧匙；烧杯、锥形瓶这类下面要垫陶土网才能加热，因为它们的底部受热不均容易炸裂。",
+        "这些名称要写准确，比如「长颈漏斗」「坩埚钳」，不能凭印象写成错别字。"
+      ]
+    },
+    {
+      title: "试剂的取用：一条「少而安全」的原则",
+      body: [
+        "取用化学试剂讲究「节约」与「安全」。没有说明用量时，液体按最少量取用，一般 1--2 mL；固体只需铺满试管底部即可，不必装满。",
+        "更重要的是安全三不：不能用手直接接触试剂，不要把鼻孔凑到容器口闻气味（尤其气体），不能尝任何试剂的味道。取用固体时，密度大的块状用镊子夹取、试管要「一横二放三慢竖」；粉末状用药匙或纸槽送进试管底部。",
+        "倒液体时也有口诀可记：瓶塞倒放、标签朝向手心、瓶口紧挨试管口。标签朝向手心，是为了防止流出的液体顺着瓶壁流下来腐蚀标签。"
+      ],
+      figure: { type: "cylinder-reading", caption: "量筒读数：点击切换平视 / 俯视 / 仰视，观察视线与读数关系。" }
+    },
+    {
+      title: "加热：用对酒精灯，也要用对方法",
+      safety: "supervised",
+      body: [
+        "酒精灯使用有硬性规定：绝对禁止向燃着的酒精灯里添加酒精；绝对禁止用酒精灯去引燃另一盏酒精灯；不可用嘴吹灭，必须用灯帽盖灭；万一洒出的酒精在桌上燃烧，要用湿抹布扑盖，不能浇水。",
+        "用酒精灯加热试管里的液体时：试管口不要对着自己或他人；液体体积不要超过试管容积的三分之一；先给试管底部均匀预热，再用外焰固定加热。外焰的温度最高，所以要用外焰。",
+        "加热规则要在成人或教师监护下进行，不能独自操作。"
+      ]
+    },
+    {
+      title: "连接仪器与检查气密性",
+      body: [
+        "连接玻璃导管和橡胶塞、乳胶管时，先用水把导管口润湿，再稍稍用力转动插入，可以减小摩擦、避免弄破玻璃。",
+        "检查装置气密性有一套标准动作：连接好装置后，先把导管的一端伸入水中，再用手紧握容器外壁。如果导管口有气泡冒出，松开手掌后导管内会有一段水柱升起且不回落，就说明装置不漏气。",
+        "这里的道理是：手掌温度使瓶内气体受热膨胀，气体往外跑形成气泡；手松开后温度下降、气压变小，外面的水被压进导管，形成水柱。"
+      ],
+      figure: { type: "airtight-test", caption: "检查装置气密性：导管口有气泡冒出，说明装置不漏气。" }
+    },
+    {
+      title: "玻璃仪器的洗涤",
+      body: [
+        "实验结束后要把仪器洗干净。判断干净的标准不是「看上去不脏」，而是：内壁附着的水既不聚成水滴，也不成股流下。换句话说，水要均匀地铺在内壁上。",
+        "洗涤时可以用试管刷，但不要用力过猛，以免戳破试管。刚加热过的仪器不能立刻用冷水冲洗，因为骤冷骤热容易使玻璃炸裂。"
+      ]
+    },
+    {
+      title: "危险化学品标志",
+      body: [
+        "很多试剂带有危险性，它们的容器上会贴标志，比如：易燃液体、腐蚀品、有毒气体、爆炸品等。看到这些标志，就要格外小心。",
+        "学会「先看标志再动手」——这是安全的第一道防线。浓氨水、浓硫酸这类有腐蚀性的液体，对应的就是腐蚀品标志。"
+      ]
+    },
+    {
+      title: "教师提醒",
+      body: [
+        "很多同学觉得「直接用手拿」「直接闻气味」更快更省事。但这正是事故的源头，实验操作没有捷径，慢就是快。",
+        "常见误区：把量筒当反应容器或加热容器；向燃着的酒精灯里加酒精；倾倒液体时标签没朝向手心。这些错误各有各的后果，今天要全部记住。"
+      ]
+    },
+    {
+      title: "中考链接",
+      body: [
+        "实验操作是中考的常考内容，常见题型是判断「下列操作正确的是」，比如取用固体、量取液体、点燃酒精灯、检查气密性、倾倒液体等。",
+        "解题时可以把每个选项的画面在脑海里过一遍，对照安全三不、量筒读数视线（凹液面最低处）等规则逐一排除。量筒读数还有一处容易设陷阱：俯视读数偏大，仰视读数偏小。"
+      ]
+    },
+    {
+      title: "今日知识卡片",
+      body: ["实验安全第一，操作守规则：取用试剂讲「少而安全」，加热用酒精灯外焰且不向燃着的灯里加酒精，量筒只量不加热，检查气密性「导管入水、手握外壁看气泡」，洗净的标准是水既不聚成滴也不成股流下。"]
+    }
+  ],
+  checkpoint: {
+    title: "情境自测：这些做法对吗？",
+    items: [
+      {
+        statement: "为了节省时间，可以直接用手把粉末状试剂抓进试管里。",
+        verdict: "错",
+        explanation: "不能用手直接接触试剂，取用粉末状固体要用钥匙或纸槽送到试管底部。"
+      },
+      {
+        statement: "量筒可以用来量取液体，也可以直接放在酒精灯上加热。",
+        verdict: "错",
+        explanation: "量筒只能用来量取液体，不能加热，也不能作反应容器，否则会因受热不均而损坏。"
+      },
+      {
+        statement: "倾倒液体时，试剂瓶的标签要朝向手心。",
+        verdict: "对",
+        explanation: "标签朝向手心，可以防止流出的液体沿瓶壁流下腐蚀标签。"
+      },
+      {
+        statement: "检查装置气密性时，先把导管伸入水中，再用手紧握容器外壁，看到气泡冒出说明不漏气。",
+        verdict: "对",
+        explanation: "手握外壁使气体受热膨胀逸出，产生气泡；松手后水柱不回落，说明装置不漏气。"
+      },
+      {
+        statement: "量筒读数时俯视，读出的数值比实际偏小。",
+        verdict: "错",
+        explanation: "俯视读数偏大，仰视读数偏小。读数时视线要与凹液面最低处保持水平。"
+      }
+    ]
+  }
+};
+</script>
+<script>window.ChemLabQuiz = window.ChemLabQuiz || {};
+window.ChemLabQuiz["day-02"] = {
+  questions: [
+    {
+      prompt: "量取一定体积的液体时，应选用的仪器是（　）",
+      options: ["烧杯", "量筒", "试管", "集气瓶"],
+      answer: "1",
+      difficulty: "基础",
+      explanation: "量筒用来量取一定体积的液体；烧杯用于盛放和加热较多量液体，试管用于少量试剂。"
+    },
+    {
+      prompt: "取用液体试剂时，如果没有说明用量，一般应该取（　）",
+      options: ["5 mL", "1--2 mL", "填满容器", "越多越好"],
+      answer: "1",
+      difficulty: "基础",
+      explanation: "按最少量取用，液体一般取 1--2 mL，固体只需铺满试管底部。"
+    },
+    {
+      prompt: "下列做法符合实验室安全规范的是（　）",
+      options: ["用手直接接触化学试剂", "把鼻孔凑到容器口闻气体气味", "穿实验服、戴护目镜做实验", "在实验室里吃零食"],
+      answer: "2",
+      difficulty: "基础",
+      explanation: "做实验应穿实验服、戴护目镜；不能用手接触试剂、把鼻孔凑到容器口闻气味，也不能在实验室吃东西。"
+    },
+    {
+      prompt: "使用酒精灯时，下列操作正确的是（　）",
+      options: ["用嘴吹灭酒精灯", "向燃着的酒精灯里添加酒精", "用灯帽盖灭酒精灯", "用酒精灯去引燃另一盏酒精灯"],
+      answer: "2",
+      difficulty: "基础",
+      explanation: "熄灭酒精灯必须用灯帽盖灭，不可用嘴吹灭，也绝不可向燃着的灯里加酒精或用它引燃另一盏灯。"
+    },
+    {
+      prompt: "量取 8 mL 液体，读数时小明采用了仰视的方法，结果量取的液体体积（　）",
+      options: ["大于 8 mL", "小于 8 mL", "等于 8 mL", "无法确定"],
+      answer: "0",
+      difficulty: "提升",
+      explanation: "仰视读数偏小，会使实际量取的液体体积偏大，即大于 8 mL。"
+    },
+    {
+      prompt: "倾倒液体试剂时，试剂瓶的标签应朝向（　）",
+      options: ["外侧", "手心", "上方", "任意方向都可以"],
+      answer: "1",
+      difficulty: "基础",
+      explanation: "标签朝向手心，防止流出的液体沿瓶壁流下腐蚀标签。"
+    },
+    {
+      prompt: "检查装置气密性的正确操作是（　）",
+      options: ["先用手紧握容器外壁，再把导管伸入水中", "先把导管一端伸入水中，再用手紧握容器外壁，观察是否有气泡冒出", "直接加热容器观察", "往容器里倒水观察是否漏水"],
+      answer: "1",
+      difficulty: "基础",
+      explanation: "标准做法：先把导管伸入水中，再用手紧握容器外壁，若导管口有气泡冒出且松手后水柱不回落，则装置不漏气。"
+    },
+    {
+      prompt: "下列仪器中，不能直接放在酒精灯上加热的是（　）",
+      options: ["试管", "蒸发皿", "燃烧匙", "量筒"],
+      answer: "3",
+      difficulty: "基础",
+      explanation: "量筒只能量取液体，不能加热；试管、蒸发皿、燃烧匙可直接加热。"
+    },
+    {
+      prompt: "用酒精灯加热试管里的液体时，试管口（　）",
+      options: ["可以对着自己", "可以对着旁边的人", "不要对着自己或他人", "朝向无所谓"],
+      answer: "2",
+      difficulty: "基础",
+      explanation: "加热液体时试管口不能对着自己或他人，以免液体沸腾喷出伤人。"
+    },
+    {
+      prompt: "玻璃仪器洗净的标准是内壁附着的水（　）",
+      options: ["聚成水滴", "成股流下", "既不聚成水滴，也不成股流下", "完全蒸发干"],
+      answer: "2",
+      difficulty: "基础",
+      explanation: "洗干净的标准是内壁附着的水既不聚成水滴，也不成股流下。"
+    },
+    {
+      prompt: "盛放浓氨水的试剂瓶上，应张贴的危险化学品标志是（　）",
+      options: ["爆炸品", "腐蚀品", "易燃气体", "放射性物品"],
+      answer: "1",
+      difficulty: "提升",
+      explanation: "浓氨水具有腐蚀性，对应的危险化学品标志是腐蚀品。"
+    },
+    {
+      prompt: "连接玻璃导管和乳胶管时，正确的做法是（　）",
+      options: ["直接把导管用力塞进去", "先把导管口用水润湿，再稍稍用力转动插入", "用酒精灯把导管加热变软后再插入", "把乳胶管剪短一点再套上"],
+      answer: "1",
+      difficulty: "基础",
+      explanation: "先用水润湿导管口，再稍稍用力转动插入，可以减小摩擦、防止玻璃管破裂。"
+    },
+    {
+      prompt: "刚加热过的试管，下列处理正确的是（　）",
+      options: ["立即用冷水冲洗", "用试管刷用力刷洗", "待冷却后再洗涤", "随手扔进垃圾桶"],
+      answer: "2",
+      difficulty: "基础",
+      explanation: "刚加热过的试管不能立即用冷水冲洗，骤冷骤热容易使玻璃炸裂，应待其冷却后再洗涤。"
+    },
+    {
+      prompt: "给试管里的固体加热时，试管口应（　）",
+      options: ["向上", "略向下倾斜", "水平", "朝向自己"],
+      answer: "1",
+      difficulty: "提升",
+      explanation: "加热固体时试管口略向下倾斜，防止固体受热时生成的水回流到试管底部使试管炸裂。"
+    },
+    {
+      prompt: "某同学在取用粉末状固体时，把试剂送入试管底部的正确操作是（　）",
+      options: ["用药匙把粉末直接倒进直立试管", "用镊子夹取", "把试管横放，用药匙或纸槽将粉末送到试管底部，再慢慢竖起试管", "用手把粉末塞进试管"],
+      answer: "2",
+      difficulty: "提升",
+      explanation: "取用粉末状固体要「一横二送三直立」：试管横放，用药匙或纸槽把粉末送到试管底部，再慢慢竖起来。"
+    },
+    {
+      prompt: "下列实验操作中，「先」与「后」的顺序不正确的是（　）",
+      options: ["给试管加热时，先均匀预热，后固定加热", "量取液体时，先倾倒到接近所需体积，后用胶头滴管滴加", "连接导管与乳胶管时，先把导管口润湿，后用力插入", "使用胶头滴管吸液时，先把滴管伸入液体中，后挤压橡胶帽"],
+      answer: "3",
+      difficulty: "挑战",
+      explanation: "使用胶头滴管时应先挤压橡胶帽排出空气，再伸入液体中松手吸取，不能先伸入液体再挤压。"
+    }
+  ]
+};
+</script>
+<script>(function () {
   "use strict";
 
   var app = document.querySelector("#app");
@@ -834,3 +1352,6 @@
     renderHome();
   }
 }());
+</script>
+  </body>
+</html>
