@@ -220,7 +220,8 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 .fig-ctrl { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .fig-pill { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; min-height: 44px; font-weight: 600; color: var(--ink); }
 .fig-pill.is-active, .fig-pill:active { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
-.fig-cyl .cyl-note { font-weight: 600; }
+.fig-cyl .cyl-note { font-weight: 600; margin: 4px 0 0; font-size: .9rem; line-height: 1.6; max-width: 300px; }
+.fig-air .air-result { margin: 4px 0 0; font-size: .88rem; line-height: 1.6; color: var(--ink); max-width: 340px; }
 
 /* 量筒读数：眼睛、视线、读数标记 */
 .cyl-eye-body { transform-origin: center; transition: all .3s ease; }

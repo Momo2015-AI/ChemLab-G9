@@ -635,13 +635,13 @@
           '<g class="cyl-eye" data-eye></g>' +
           '<g class="cyl-sight" data-sight></g>' +
           '<circle class="cyl-read" data-read r="5" fill="#e67b32" stroke="#fff" stroke-width="1.5"/>' +
-          '<text class="cyl-note" data-note x="' + cx + '" y="' + (bottom + 26) + '" fill="#173033" font-size="13" text-anchor="middle"></text>' +
         "</g>" +
       "</g>";
     var html =
       '<div class="fig-cyl">' +
         '<div class="fig-ctrl" role="group" aria-label="切换读数视角">' + pills + "</div>" +
         figSvg(220, 200, inner) +
+        '<p class="cyl-note" data-note role="status"></p>' +
       "</div>";
     return html;
   }
@@ -686,13 +686,14 @@
           '<g class="air-bubbles" data-bubbles>' + svgParts.bubbles(152, 196, 3) + "</g>" +
         "</g>" +
         '<clipPath id="' + svgId + '-waterclip"><rect x="126" y="176" width="84" height="40"/></clipPath>' +
-        // 结果说明
-        '<text class="air-result" data-airnote x="166" y="228" fill="#173033" font-size="12.5" text-anchor="middle"></text>' +
+        // 结果说明（SVG 外，HTML 可换行）
+        "" +
       "</g>";
     var html =
       '<div class="fig-air">' +
         pills +
-        figSvg(250, 240, inner) +
+        figSvg(250, 214, inner) +
+        '<p class="air-result" data-airnote role="status"></p>' +
       "</div>";
     return html;
   }
@@ -764,9 +765,9 @@
     '</g>';
     var waxDrip = '<path class="candle-wax" data-wax opacity="0" d="M92 105 Q96 115 93 125 Q91 130 94 132 L94 158 L90 158 L90 132 Q87 128 89 124 Q92 114 89 105 Z" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1"/>';
     var products = '<g class="candle-products" data-products opacity="0">' +
-      '<text x="118" y="55" fill="#146c6e" font-size="11" font-weight="600">CO₂ + H₂O</text>' +
-      '<text x="118" y="70" fill="#587073" font-size="9">新物质生成 → 化学变化</text>' +
-      '<line x1="110" y1="60" x2="90" y2="68" stroke="#587073" stroke-width="1" opacity="0.5"/>' +
+      '<text x="148" y="55" fill="#146c6e" font-size="10" font-weight="600" text-anchor="end">CO₂ + H₂O</text>' +
+      '<text x="148" y="68" fill="#587073" font-size="8" text-anchor="end">新物质生成 → 化学变化</text>' +
+      '<line x1="140" y1="58" x2="92" y2="68" stroke="#587073" stroke-width="1" opacity="0.5"/>' +
     '</g>';
     var meltNote = '<g class="candle-melt" data-melt opacity="0">' +
       '<text x="48" y="130" fill="#e67b32" font-size="9" font-weight="600">熔化 → 物理变化</text>' +
@@ -1608,10 +1609,10 @@
 
       function shellSvg(shells) {
         var cx = 100, cy = 100;
-        var radius = 30;
+        var radius = 24;
         var s = "";
         shells.forEach(function (count, idx) {
-          radius += 22;
+          radius += 18;
           s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + radius + '" fill="none" stroke="#b0c4c1" stroke-width="1.5" stroke-dasharray="4,3"/>';
           // 把电子摆在这层圆周上
           for (var i = 0; i < count; i += 1) {
@@ -1624,7 +1625,7 @@
             '</g>';
           }
           // 层数标注
-          s += '<text x="' + cx + '" y="' + (cy + radius + 12) + '" fill="#587073" font-size="9" text-anchor="middle">第' + (idx + 1) + '层</text>';
+          s += '<text x="' + cx + '" y="' + (cy + radius + 10) + '" fill="#587073" font-size="9" text-anchor="middle">第' + (idx + 1) + '层</text>';
         });
         return s;
       }
