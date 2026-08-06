@@ -93,6 +93,17 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 .breadcrumb { margin: 0; }
 .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 700; }
 
+/* 底部返回首页按钮 */
+.back-home { margin: 24px auto 8px; text-align: center; }
+.back-home a {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--brand); color: #fff; text-decoration: none;
+  font-weight: 700; font-size: 1rem; padding: 14px 32px;
+  border-radius: 14px; box-shadow: var(--shadow-sm);
+  transition: background .2s, transform .15s;
+}
+.back-home a:hover, .back-home a:active { background: var(--brand-strong); transform: translateY(-1px); }
+
 /* 练习区：题号进度条 */
 .quiz-progress { display: flex; align-items: center; gap: 12px; margin: 10px 0 4px; }
 .quiz-progress .qp-bar { flex: 1; height: 8px; border-radius: 999px; background: var(--brand-soft); overflow: hidden; }
