@@ -114,7 +114,7 @@ setSearch("?day=01");
 runApp();
 let page = appEl.innerHTML;
 assert(page.includes("今日练习") && page.includes("提交并查看解析"), "渲染练习表单");
-assert(questionCount(page) === 3, "Day01 渲染 3 道题");
+assert(questionCount(page) === 10, "Day01 渲染 10 道题");
 assert(page.includes("情境自测"), "渲染情境自测");
 assert(page.includes("今日知识卡片"), "渲染今日知识卡片");
 
