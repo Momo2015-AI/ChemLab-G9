@@ -290,6 +290,85 @@
         s += '<circle class="bub' + (i ? " b" + (i + 1) : "") + '" cx="' + cx + '" cy="' + (baseY - i * 8) + '" r="' + r.toFixed(1) + '" fill="#fff" opacity=".9"/>';
       }
       return s;
+    },
+    // 分子球（原子/离子示意）：cx, cy, r, fill, 可选 label 与描边
+    ball: function (cx, cy, r, fill, label, extra) {
+      var s = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + fill + '" stroke="#173033" stroke-width="1.5"' + (extra || "") + "/>";
+      if (label) s += '<text x="' + cx + '" y="' + (cy + 3.5) + '" fill="#fff" font-size="' + Math.round(r * 0.7) + '" text-anchor="middle" font-weight="600">' + label + "</text>";
+      return s;
+    },
+    // 原子核：一个带正电荷标记的实心球
+    nucleus: function (cx, cy, r) {
+      return (
+        '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="#c2534f" stroke="#8a3b38" stroke-width="1.5"/>' +
+        '<text x="' + cx + '" y="' + (cy + 3.5) + '" fill="#fff" font-size="' + Math.round(r * 0.7) + '" text-anchor="middle" font-weight="600">+</text>'
+      );
+    },
+    // 电子轨道（圆形虚线）
+    orbit: function (cx, cy, r, extra) {
+      return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#b0c4c1" stroke-width="1.5" stroke-dasharray="4,3"' + (extra || "") + "/>";
+    },
+    // 电子：带负号的小球
+    electron: function (cx, cy, r) {
+      r = r || 3;
+      return (
+        '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="#4aa7a0" stroke="#2f7d76" stroke-width="1"/>' +
+        '<text x="' + cx + '" y="' + (cy + r * 0.7) + '" fill="#fff" font-size="' + Math.round(r * 0.9) + '" text-anchor="middle">-</text>'
+      );
+    },
+    // 试管（带开口）：x,y 为左上角，w 宽，h 高，可选旋转
+    testTube: function (x, y, w, h, opts) {
+      opts = opts || {};
+      var rot = opts.rotate ? ' transform="rotate(' + opts.rotate + " " + (x + w / 2) + " " + (y + h / 2) + ')"' : "";
+      var fill = opts.fill || "rgba(255,255,255,.6)";
+      return (
+        '<g' + rot + ">" +
+          '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (w / 2) + '" fill="' + fill + '" stroke="#587073" stroke-width="2"/>' +
+          '<path d="M' + x + " " + y + " L" + (x + w) + " " + y + '" stroke="#587073" stroke-width="2" fill="none"/>' +
+        "</g>"
+      );
+    },
+    // 酒精灯：底部 x,y，宽 w 高 h
+    alcoholBurner: function (x, y, w, h, flame) {
+      var cx = x + w / 2;
+      var s =
+        '<path d="M' + x + " " + y + " L" + (x + w) + " " + y + " L" + (x + w - 3) + " " + (y + h) + " L" + (x + 3) + " " + (y + h) + ' Z" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1.5"/>' +
+        '<ellipse cx="' + cx + '" cy="' + (y - 2) + '" rx="' + (w / 2 - 2) + '" ry="3" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1"/>' +
+        '<line x1="' + cx + '" y1="' + (y - 2) + '" x2="' + cx + '" y2="' + (y - 8) + '" stroke="#5a4a32" stroke-width="1.5"/>';
+      if (flame) {
+        s += '<g class="flame-glow" filter="url(#' + (flame.filterId || "") + ')">' +
+          '<ellipse cx="' + cx + '" cy="' + (y - 16) + '" rx="4" ry="9" fill="url(#' + flame.gradId + ')"/>' +
+          '<ellipse cx="' + cx + '" cy="' + (y - 13) + '" rx="2" ry="5" fill="#fff4b8" opacity="0.7"/>' +
+        "</g>";
+      }
+      return s;
+    },
+    // 漏斗
+    funnel: function (x, y, w, h) {
+      var cx = x + w / 2;
+      return (
+        '<path d="M' + cx + " " + y + " L" + (x + w) + " " + (y + h * 0.45) + " L" + (x + w - 4) + " " + (y + h * 0.45) + " L" + (x + w / 2 + 2) + " " + (y + h) + " L" + (x + w / 2 - 2) + " " + (y + h) + " L" + (x + 4) + " " + (y + h * 0.45) + " L" + x + " " + (y + h * 0.45) + ' Z" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+        '<line x1="' + cx + '" y1="' + (y + h * 0.45) + '" x2="' + cx + '" y2="' + (y + h - 2) + '" stroke="#587073" stroke-width="2"/>'
+      );
+    },
+    // 滴管
+    dropper: function (x, y, w, h) {
+      return (
+        '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h * 0.3 + '" rx="' + (w / 2) + '" fill="#e67b32" stroke="#a4560b" stroke-width="1.5"/>' +
+        '<line x1="' + (x + w / 2) + '" y1="' + (y + h * 0.3) + '" x2="' + (x + w / 2) + '" y2="' + (y + h) + '" stroke="#587073" stroke-width="2"/>'
+      );
+    },
+    // 单行箭头标注：从 x1,y1 指向 x2,y2 的虚线箭头
+    arrow: function (x1, y1, x2, y2, color) {
+      var a = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+      var len = 8;
+      var a1 = (a + 160) * Math.PI / 180, a2 = (a - 160) * Math.PI / 180;
+      var p1x = x2 + len * Math.cos(a1), p1y = y2 + len * Math.sin(a1);
+      var p2x = x2 + len * Math.cos(a2), p2y = y2 + len * Math.sin(a2);
+      return (
+        '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + (color || "#587073") + '" stroke-width="1.5" stroke-dasharray="5,3"/>' +
+        '<path d="M' + x2 + " " + y2 + " L" + p1x.toFixed(1) + " " + p1y.toFixed(1) + " L" + p2x.toFixed(1) + " " + p2y.toFixed(1) + ' Z" fill="' + (color || "#587073") + '"/>'
+      );
     }
   };
 
@@ -472,7 +551,9 @@
       "red-phosphorus": figRedPhosphorus,    // 红磷燃烧测氧气含量
       "oxygen-combustion": figOxygenCombustion, // 三种物质在氧气中燃烧
       "kmno4-setup": figKmno4Setup,          // 高锰酸钾制氧装置图
-      "molecule-motion": figMoleculeMotion   // 分子运动模拟
+      "molecule-motion": figMoleculeMotion,  // 分子运动模拟
+      "atom-model": figAtomModel,            // 原子结构模型
+      "element-card": figElementCard         // 元素周期表格子
     };
     var fn = renderers[fig.type];
     if (!fn) return "";
@@ -929,6 +1010,90 @@
       '<div class="fig-ctrl">' + pills + '</div>' +
       figSvg(120, 155, svgInner) +
       descBox +
+    '</div>';
+  }
+
+  // ---------- 原子结构模型：切换氢/氧/钠，查看质子·中子·电子与结构示意图 ----------
+  function figAtomModel(fig) {
+    var atoms = [
+      {
+        key: "h", symbol: "H", name: "氢", protons: 1, neutrons: 0,
+        shells: [1],
+        tip: "氢原子只有 1 个质子、1 个核外电子，无中子，最简单。"
+      },
+      {
+        key: "o", symbol: "O", name: "氧", protons: 8, neutrons: 8,
+        shells: [2, 6],
+        tip: "氧原子：质子数 8 = 核外电子数 8，两层电子排布 2、6。"
+      },
+      {
+        key: "na", symbol: "Na", name: "钠", protons: 11, neutrons: 12,
+        shells: [2, 8, 1],
+        tip: "钠原子：质子数 11 = 核外电子数 11，三层排布 2、8、1。"
+      }
+    ];
+    var pills = atoms.map(function (a) {
+      return '<button type="button" class="fig-pill" data-atom="' + a.key + '">' + a.name + " " + a.symbol + "</button>";
+    }).join("");
+
+    var nucleusInfo = '<g class="atom-nucleus" data-nucleus></g>';
+    var shellsGroup = '<g class="atom-shells" data-shells></g>';
+    var labels = '<g class="atom-labels" data-alabels></g>';
+
+    var infoBox =
+      '<div class="atom-info">' +
+        '<p class="atom-tip" data-atip></p>' +
+        '<table class="atom-table">' +
+          "<tbody>" +
+            '<tr><td>质子数</td><td data-ap=""></td></tr>' +
+            '<tr><td>中子数</td><td data-an=""></td></tr>' +
+            '<tr><td>核外电子数</td><td data-ae=""></td></tr>' +
+            '<tr><td>相对原子质量</td><td data-am=""></td></tr>' +
+            '<tr><td>电性</td><td data-acharge=""></td></tr>' +
+          "</tbody>" +
+        "</table>" +
+      "</div>";
+
+    return '<div class="fig-atom" data-atomfig>' +
+      '<div class="fig-ctrl">' + pills + '</div>' +
+      figSvg(200, 200, '<defs></defs>' + nucleusInfo + shellsGroup + labels) +
+      infoBox +
+    '</div>';
+  }
+
+  // ---------- 元素周期表格子：切换元素，解读格子里的四项信息 ----------
+  function figElementCard(fig) {
+    var elements = [
+      { symbol: "H", name: "氢", num: 1, mass: "1.008", tip: "原子序数 1 = 质子数 1，位于周期表第一格。" },
+      { symbol: "He", name: "氦", num: 2, mass: "4.003", tip: "原子序数 2 = 质子数 2，惰性气体，最外层 2 个电子。" },
+      { symbol: "O", name: "氧", num: 8, mass: "16.00", tip: "原子序数 8 = 质子数 8，地壳中含量最多的元素。" },
+      { symbol: "Na", name: "钠", num: 11, mass: "22.99", tip: "原子序数 11 = 质子数 11，金属元素，易失电子。" },
+      { symbol: "Fe", name: "铁", num: 26, mass: "55.85", tip: "原子序数 26 = 质子数 26，生活中常见金属。" }
+    ];
+    var pills = elements.map(function (el, i) {
+      return '<button type="button" class="fig-pill" data-element="' + i + '">' + el.symbol + "</button>";
+    }).join("");
+
+    var card =
+      '<div class="element-cell" data-ecell>' +
+        '<span class="el-num" data-ecell-num>1</span>' +
+        '<span class="el-symbol" data-ecell-symbol>H</span>' +
+        '<span class="el-name" data-ecell-name>氢</span>' +
+        '<span class="el-mass" data-ecell-mass>1.008</span>' +
+      "</div>";
+    var legend =
+      '<div class="el-legend">' +
+        '<span class="el-legend-num">原子序数<br>= 质子数</span>' +
+        '<span class="el-legend-symbol">元素符号</span>' +
+        '<span class="el-legend-name">元素名称</span>' +
+        '<span class="el-legend-mass">相对原子质量</span>' +
+      "</div>";
+    var tip = '<p class="el-tip" data-etip></p>';
+
+    return '<div class="fig-element" data-elfig>' +
+      '<div class="fig-ctrl">' + pills + '</div>' +
+      '<div class="el-wrap">' + card + legend + '</div>' +
+      tip +
     '</div>';
   }
 
@@ -1421,6 +1586,126 @@
           if (txtEl) txtEl.textContent = info.text;
         });
       });
+    });
+
+    // 原子结构模型切换
+    document.querySelectorAll("[data-atomfig]").forEach(function (box) {
+      var atoms = [
+        { key: "h", symbol: "H", name: "氢", protons: 1, neutrons: 0, shells: [1], tip: "氢原子只有 1 个质子、1 个核外电子，无中子，最简单。" },
+        { key: "o", symbol: "O", name: "氧", protons: 8, neutrons: 8, shells: [2, 6], tip: "氧原子：质子数 8 = 核外电子数 8，两层电子排布 2、6。" },
+        { key: "na", symbol: "Na", name: "钠", protons: 11, neutrons: 12, shells: [2, 8, 1], tip: "钠原子：质子数 11 = 核外电子数 11，三层排布 2、8、1。" }
+      ];
+      var svg = box.querySelector(".chem-svg");
+      var nucleusEl = box.querySelector("[data-nucleus]");
+      var shellsEl = box.querySelector("[data-shells]");
+      var labelsEl = box.querySelector("[data-alabels]");
+      var tipEl = box.querySelector("[data-atip]");
+      var apEl = box.querySelector("[data-ap]");
+      var anEl = box.querySelector("[data-an]");
+      var aeEl = box.querySelector("[data-ae]");
+      var amEl = box.querySelector("[data-am]");
+      var achargeEl = box.querySelector("[data-acharge]");
+
+      function shellSvg(shells) {
+        var cx = 100, cy = 100;
+        var radius = 30;
+        var s = "";
+        shells.forEach(function (count, idx) {
+          radius += 22;
+          s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + radius + '" fill="none" stroke="#b0c4c1" stroke-width="1.5" stroke-dasharray="4,3"/>';
+          // 把电子摆在这层圆周上
+          for (var i = 0; i < count; i += 1) {
+            var angle = (360 / count) * i * Math.PI / 180;
+            var ex = cx + radius * Math.cos(angle);
+            var ey = cy + radius * Math.sin(angle);
+            s += '<g class="atom-electron">' +
+              '<circle cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="5" fill="#4aa7a0" stroke="#2f7d76" stroke-width="1"/>' +
+              '<text x="' + ex.toFixed(1) + '" y="' + (ey + 3).toFixed(1) + '" fill="#fff" font-size="8" text-anchor="middle">-</text>' +
+            '</g>';
+          }
+          // 层数标注
+          s += '<text x="' + cx + '" y="' + (cy + radius + 12) + '" fill="#587073" font-size="9" text-anchor="middle">第' + (idx + 1) + '层</text>';
+        });
+        return s;
+      }
+
+      function applyAtom(key) {
+        var a = null;
+        for (var i = 0; i < atoms.length; i += 1) if (atoms[i].key === key) a = atoms[i];
+        if (!a) return;
+        box.querySelectorAll(".fig-pill").forEach(function (p) {
+          var active = p.dataset.atom === key;
+          p.classList.toggle("is-active", active);
+          p.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        if (nucleusEl) {
+          var p = a.protons, n = a.neutrons;
+          var np = "";
+          for (var pi = 0; pi < p; pi += 1) {
+            np += '<circle class="nuc-p" cx="' + (88 + (pi % 2) * 8) + '" cy="' + (96 + Math.floor(pi / 2) * 8) + '" r="4" fill="#c2534f"/>';
+          }
+          for (var ni = 0; ni < n; ni += 1) {
+            np += '<circle class="nuc-n" cx="' + (104 + (ni % 2) * 8) + '" cy="' + (96 + Math.floor(ni / 2) * 8) + '" r="4" fill="#7a9bb5"/>';
+          }
+          nucleusEl.innerHTML =
+            '<circle cx="100" cy="100" r="24" fill="#e8b7b4" stroke="#c2534f" stroke-width="2"/>' +
+            '<text x="100" y="104" fill="#8a3b38" font-size="10" text-anchor="middle" font-weight="700">原子核</text>' +
+            np;
+        }
+        if (shellsEl) shellsEl.innerHTML = shellSvg(a.shells);
+        if (labelsEl) {
+          var protonsLabel = '<text x="52" y="24" fill="#587073" font-size="9" text-anchor="middle">p⁺ ' + a.protons + "</text>";
+          var neutronsLabel = '<text x="148" y="24" fill="#587073" font-size="9" text-anchor="middle">n⁰ ' + a.neutrons + "</text>";
+          labelsEl.innerHTML = protonsLabel + neutronsLabel;
+        }
+        if (tipEl) tipEl.textContent = a.tip;
+        var protons = a.protons;
+        if (apEl) apEl.textContent = protons;
+        if (anEl) anEl.textContent = a.neutrons;
+        if (aeEl) aeEl.textContent = a.shells.reduce(function (s2, c2) { return s2 + c2; }, 0);
+        if (amEl) amEl.textContent = protons + a.neutrons;
+        if (achargeEl) achargeEl.textContent = "不显电性（正负电荷相等）";
+      }
+
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () { applyAtom(pill.dataset.atom); });
+      });
+      applyAtom("h");
+    });
+
+    // 元素周期表格子切换
+    document.querySelectorAll("[data-elfig]").forEach(function (box) {
+      var elements = [
+        { symbol: "H", name: "氢", num: 1, mass: "1.008", tip: "原子序数 1 = 质子数 1，位于周期表第一格。" },
+        { symbol: "He", name: "氦", num: 2, mass: "4.003", tip: "原子序数 2 = 质子数 2，惰性气体，最外层 2 个电子。" },
+        { symbol: "O", name: "氧", num: 8, mass: "16.00", tip: "原子序数 8 = 质子数 8，地壳中含量最多的元素。" },
+        { symbol: "Na", name: "钠", num: 11, mass: "22.99", tip: "原子序数 11 = 质子数 11，金属元素，易失电子。" },
+        { symbol: "Fe", name: "铁", num: 26, mass: "55.85", tip: "原子序数 26 = 质子数 26，生活中常见金属。" }
+      ];
+      var numEl = box.querySelector("[data-ecell-num]");
+      var symbolEl = box.querySelector("[data-ecell-symbol]");
+      var nameEl = box.querySelector("[data-ecell-name]");
+      var massEl = box.querySelector("[data-ecell-mass]");
+      var tipEl = box.querySelector("[data-etip]");
+
+      function applyElement(idx) {
+        var el = elements[idx];
+        box.querySelectorAll(".fig-pill").forEach(function (p) {
+          var active = p.dataset.element === String(idx);
+          p.classList.toggle("is-active", active);
+          p.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        if (numEl) numEl.textContent = el.num;
+        if (symbolEl) symbolEl.textContent = el.symbol;
+        if (nameEl) nameEl.textContent = el.name;
+        if (massEl) massEl.textContent = el.mass;
+        if (tipEl) tipEl.textContent = el.tip;
+      }
+
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () { applyElement(parseInt(pill.dataset.element, 10)); });
+      });
+      applyElement(0);
     });
 
     document.querySelector("#quiz-form").addEventListener("submit", function (event) {

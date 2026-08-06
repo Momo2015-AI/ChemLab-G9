@@ -320,6 +320,41 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
   100% { transform: translate(0, 0); }
 }
 
+/* 原子结构模型 */
+.fig-atom { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.atom-info { font-size: .88rem; width: 100%; max-width: 320px; text-align: left; padding: 10px 12px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); }
+.atom-tip { margin: 0 0 8px; color: var(--muted); line-height: 1.6; }
+.atom-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.atom-table td { padding: 3px 6px; border-bottom: 1px dashed var(--line); }
+.atom-table td:first-child { color: var(--muted); width: 55%; }
+.atom-table td:last-child { font-weight: 600; text-align: right; }
+.atom-table tr:last-child td { border-bottom: none; }
+.atom-electron { animation: atomSpin 6s linear infinite; transform-box: fill-box; transform-origin: center; }
+.atom-electron circle { transition: r .3s ease; }
+@keyframes atomSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.nuc-p, .nuc-n { opacity: .9; }
+.nuc-p { animation: nucPulse 1.2s ease-in-out infinite; }
+.nuc-n { animation: nucPulse 1.8s ease-in-out infinite; }
+@keyframes nucPulse { 0%, 100% { opacity: .7; } 50% { opacity: 1; } }
+
+/* 元素周期表格子 */
+.fig-element { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.el-wrap { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; }
+.element-cell {
+  position: relative; width: 130px; height: 150px; flex: none;
+  background: var(--surface); border: 3px solid var(--brand); border-radius: 12px;
+  display: grid; grid-template-columns: 1fr; grid-template-rows: 26px 1fr 26px 26px;
+  padding: 8px; box-shadow: var(--shadow-sm);
+}
+.element-cell .el-num { font-size: 1rem; font-weight: 700; color: var(--brand); text-align: left; }
+.element-cell .el-symbol { font-size: 2.4rem; font-weight: 800; color: var(--ink); text-align: center; line-height: 1.15; }
+.element-cell .el-name { font-size: 1rem; font-weight: 600; color: var(--muted); text-align: center; }
+.element-cell .el-mass { font-size: .9rem; color: var(--muted); text-align: right; padding-right: 2px; }
+.el-legend { display: flex; flex-direction: column; gap: 8px; font-size: .85rem; color: var(--muted); text-align: left; }
+.el-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.el-legend span::before { content: ""; width: 12px; height: 12px; border: 2px solid var(--brand); border-radius: 3px; flex: none; }
+.el-tip { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
 
 /* ---------- 暗色模式 ---------- */

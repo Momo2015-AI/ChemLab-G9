@@ -148,6 +148,18 @@ Object.keys(expected).forEach((key) => {
   assert(page.includes("情境自测"), "Day" + key + " 渲染情境自测");
 });
 
+console.log("\n[Day09-10 配图渲染]");
+setSearch("?day=09");
+runApp();
+page = appEl.innerHTML;
+assert(page.includes("fig-atom") && page.includes("原子核"), "Day09 渲染原子结构模型图");
+assert(page.includes("data-atomfig"), "Day09 原子模型绑定钩子");
+setSearch("?day=10");
+runApp();
+page = appEl.innerHTML;
+assert(page.includes("fig-element") && page.includes("element-cell"), "Day10 渲染元素周期表格子图");
+assert(page.includes("data-elfig"), "Day10 元素格子绑定钩子");
+
 console.log("\n[Day11-18 学习页]");
 const expected11to18 = { "11": 8, "12": 6, "13": 7, "14": 7, "15": 8, "16": 8, "17": 7, "18": 6 };
 Object.keys(expected11to18).forEach((key) => {
