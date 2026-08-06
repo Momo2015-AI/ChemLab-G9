@@ -102,8 +102,7 @@ setSearch("");
 runApp();
 const home = appEl.innerHTML;
 assert(home.includes("30 天自学计划"), "渲染 30 天学习计划标题");
-assert((home.match(/<li class="day-card/g) || []).length === 30, "渲染 30 张学习日卡片");
-assert(home.includes("已完成 0 / 30 天"), "初始进度为 0/30");
+assert((home.match(/<li class="day-card/g) || []).length === 30, "渲染 30 张学习日卡片");assert(home.includes("已完成 0 / 30 天"), "初始进度为 0/30");
 assert(home.includes('class="stats-strip"'), "渲染统计条（连续天数/最高连对/待复习）");
 assert(home.includes("成就徽章") && home.includes("badge-wall"), "渲染成就徽章墙");
 assert(home.includes("模块进度") && home.includes("mod-block"), "渲染可展开模块进度");
@@ -149,11 +148,15 @@ Object.keys(expected).forEach((key) => {
   assert(page.includes("情境自测"), "Day" + key + " 渲染情境自测");
 });
 
-console.log("\n[未开发的天]");
-setSearch("?day=11");
-runApp();
-page = appEl.innerHTML;
-assert(page.includes("还在开发中"), "未开发天显示开发中提示");
+console.log("\n[Day11-18 学习页]");
+const expected11to18 = { "11": 8, "12": 6, "13": 7, "14": 7, "15": 8, "16": 8, "17": 7, "18": 6 };
+Object.keys(expected11to18).forEach((key) => {
+  setSearch("?day=" + key);
+  runApp();
+  page = appEl.innerHTML;
+  assert(questionCount(page) === expected11to18[key], "Day" + key + " 渲染 " + expected11to18[key] + " 道题");
+  assert(page.includes("情境自测"), "Day" + key + " 渲染情境自测");
+});
 
 console.log("\n[错题复习空状态]");
 setSearch("?view=review");
