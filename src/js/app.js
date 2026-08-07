@@ -2228,7 +2228,6 @@ app.innerHTML =
 
     app.innerHTML =
       '<div class="page">' +
-        '<p class="breadcrumb"><a href="?">← 返回首页</a></p>' +
         dayNavHtml() +
         '<header class="hero">' +
           '<p class="eyebrow">DAY ' + escapeHtml(day.dayNumber) + "</p>" +
