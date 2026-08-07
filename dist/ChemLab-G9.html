@@ -6960,9 +6960,8 @@ app.innerHTML =
           '<ellipse cx="120" cy="62" rx="6" ry="4" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1" transform="rotate(3 92 58.5)"/>' +
         '</g>' +
       '</g>' +
-      // 橡皮塞（试管口右端）+ 导管（弯曲伸入水槽水中）
+      // 橡皮塞（试管口右端）
       '<rect x="137" y="54" width="7" height="15" rx="2" fill="#e8b7b4" stroke="#c2534f" stroke-width="1"/>' +
-      '<path d="M142 62 L160 62 L160 132 L170 132" fill="none" stroke="#5bb7ae" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>' +
       // 酒精灯（火焰朝上，正对试管底部）
       '<g class="km-heat" data-part="heat">' +
         '<path d="M58 106 L84 106 L81 126 L61 126 Z" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1.5"/>' +
@@ -6973,23 +6972,25 @@ app.innerHTML =
         '</g>' +
       '</g>' +
       // 水槽（盛水）
-      '<rect x="160" y="112" width="54" height="52" rx="4" fill="rgba(230,244,241,.5)" stroke="#587073" stroke-width="3"/>' +
-      '<line x1="162" y1="124" x2="212" y2="124" stroke="#8fb6b0" stroke-width="2"/>' +
-      '<rect x="162" y="126" width="50" height="36" rx="2" fill="url(#' + id + '-water)" opacity="0.85"/>' +
-      '<text x="187" y="158" fill="#146c6e" font-size="7" text-anchor="middle">H₂O</text>' +
-      // 集气瓶（倒扣于水中，排水法收集）
+      '<rect x="158" y="112" width="56" height="52" rx="4" fill="rgba(230,244,241,.5)" stroke="#587073" stroke-width="3"/>' +
+      '<line x1="160" y1="124" x2="212" y2="124" stroke="#8fb6b0" stroke-width="2"/>' +
+      '<rect x="160" y="126" width="52" height="36" rx="2" fill="url(#' + id + '-water)" opacity="0.85"/>' +
+      '<text x="206" y="158" fill="#146c6e" font-size="7" text-anchor="middle">H₂O</text>' +
+      // 集气瓶（倒扣于水中，瓶口朝下浸水，圆底封闭在上，排水法收集）
       '<g class="km-collect" data-part="收集">' +
-        '<rect x="176" y="96" width="30" height="48" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
-        '<rect x="178" y="98" width="26" height="30" rx="2" fill="rgba(191,233,228,.5)"/>' +
-        '<text x="191" y="112" fill="#146c6e" font-size="9" text-anchor="middle" font-weight="600">O₂</text>' +
+        '<path d="M174 150 L174 106 Q174 96 184 96 L194 96 Q204 96 204 106 L204 150" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+        '<rect x="176" y="98" width="26" height="26" fill="rgba(191,233,228,.5)"/>' +
+        '<text x="189" y="113" fill="#146c6e" font-size="9" text-anchor="middle" font-weight="600">O₂</text>' +
+        '<rect x="176" y="126" width="26" height="22" fill="url(#' + id + '-water)" opacity="0.7"/>' +
       '</g>' +
-      // 气泡（导管口 + 集气瓶口）
+      // 导管（从试管口折入集气瓶瓶口内）+ 气泡（瓶内上升）
+      '<path d="M142 62 L158 62 L158 156 L182 156 L182 134" fill="none" stroke="#5bb7ae" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>' +
       '<g class="km-bubbles" data-bubbles>' +
-        '<circle cx="170" cy="132" r="2" fill="#fff" opacity="0.8"/>' +
-        '<circle cx="170" cy="124" r="1.6" fill="#fff" opacity="0.7"/>' +
-        '<circle cx="173" cy="138" r="1.8" fill="#fff" opacity="0.75"/>' +
-        '<circle cx="186" cy="140" r="1.5" fill="#fff" opacity="0.7"/>' +
-        '<circle cx="196" cy="134" r="1.7" fill="#fff" opacity="0.75"/>' +
+        '<circle cx="182" cy="138" r="2" fill="#fff" opacity="0.8"/>' +
+        '<circle cx="182" cy="130" r="1.6" fill="#fff" opacity="0.7"/>' +
+        '<circle cx="185" cy="134" r="1.8" fill="#fff" opacity="0.75"/>' +
+        '<circle cx="188" cy="126" r="1.5" fill="#fff" opacity="0.7"/>' +
+        '<circle cx="193" cy="120" r="1.7" fill="#fff" opacity="0.75"/>' +
       '</g>' +
       '<text x="110" y="174" fill="#587073" font-size="8" text-anchor="middle" data-kmnote>点击按钮查看各部件作用</text>';
     var resultBox = '<div class="km-result" data-kmresult></div>';
