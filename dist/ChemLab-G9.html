@@ -6919,7 +6919,7 @@ app.innerHTML =
     var highlights = [
       { key: "tube", label: "试管（口略向下倾斜）", note: "防止冷凝水回流炸裂试管" },
       { key: "cotton", label: "棉花", note: "防止高锰酸钾粉末进入导管" },
-      { key: "酒精灯", label: "酒精灯", note: "加热提供反应所需温度" },
+      { key: "heat", label: "酒精灯", note: "加热提供反应所需温度" },
       { key: "收集", label: "排水法收集", note: "氧气不易溶于水，可用排水法" }
     ];
     var pills = highlights.map(function (h) {
@@ -8389,8 +8389,8 @@ app.innerHTML =
             p.classList.toggle("is-active", p === pill);
           });
           var result = box.querySelector("[data-kmresult]");
-          if (result) {
-            var p = parts[key];
+          var p = parts[key];
+          if (result && p) {
             result.innerHTML = '<strong>' + escapeHtml(pill.textContent) + '</strong><br><span class="hint">' + escapeHtml(p.note) + '</span>';
           }
           var note = box.querySelector("[data-kmnote]");
