@@ -303,8 +303,19 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 /* 高锰酸钾装置 */
 .fig-km { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .km-result { font-size: .88rem; width: 100%; text-align: left; padding: 8px 10px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); margin-top: 4px; }
-.km-flame { animation: kmFlame 0.3s ease-in-out infinite alternate; }
-@keyframes kmFlame { from { transform: scaleY(0.9); } to { transform: scaleY(1.05); } }
+.km-flame { animation: kmFlame 0.3s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center bottom; }
+@keyframes kmFlame { from { transform: scaleY(0.88); } to { transform: scaleY(1.1); } }
+.km-tube.is-hot, .km-cotton.is-hot, .km-heat.is-hot, .km-collect.is-hot { filter: drop-shadow(0 0 4px rgba(230,123,50,.75)); }
+.km-bubbles circle { animation: kmBubble 1.1s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.km-bubbles circle:nth-child(2) { animation-delay: .25s; }
+.km-bubbles circle:nth-child(3) { animation-delay: .5s; }
+.km-bubbles circle:nth-child(4) { animation-delay: .7s; }
+.km-bubbles circle:nth-child(5) { animation-delay: .35s; }
+@keyframes kmBubble {
+  0% { opacity: 0; transform: translateY(5px) scale(.8); }
+  30% { opacity: .9; }
+  100% { opacity: 0; transform: translateY(-6px) scale(1.1); }
+}
 
 /* 分子运动 */
 .fig-mol { display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -6931,38 +6942,60 @@ app.innerHTML =
         '<linearGradient id="' + id + '-flame" x1="0" y1="1" x2="0" y2="0">' +
           '<stop offset="0" stop-color="#e67b32"/><stop offset="1" stop-color="#f7c948"/>' +
         '</linearGradient>' +
+        '<linearGradient id="' + id + '-water" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="#d4f1f0"/><stop offset="1" stop-color="#7cc7bf"/>' +
+        '</linearGradient>' +
       '</defs>' +
-      // 试管（略向下倾斜）
+      // 铁架台：底座 + 立杆 + 铁夹
+      '<line x1="17" y1="28" x2="17" y2="162" stroke="#587073" stroke-width="5" stroke-linecap="round"/>' +
+      '<rect x="4" y="162" width="26" height="7" rx="2" fill="#587073"/>' +
+      '<line x1="17" y1="62" x2="42" y2="62" stroke="#587073" stroke-width="4" stroke-linecap="round"/>' +
+      '<rect x="40" y="57" width="11" height="9" rx="2" fill="#8a9ba8" stroke="#587073" stroke-width="1"/>' +
+      // 试管（口朝右下略向下倾斜，左端圆底封闭）
       '<g class="km-tube" data-part="tube">' +
-        '<rect x="20" y="30" width="80" height="18" rx="3" fill="rgba(255,255,255,.6)" stroke="#587073" stroke-width="2" transform="rotate(-5 60 39)"/>' +
-        '<rect x="22" y="32" width="30" height="14" rx="1" fill="#6b5ba8" opacity="0.7" transform="rotate(-5 60 39)"/>' +
-        '<text x="37" y="43" fill="#fff" font-size="6.5" text-anchor="middle" transform="rotate(-5 60 39)">KMnO₄</text>' +
+        '<rect x="46" y="50" width="92" height="17" rx="8" fill="rgba(255,255,255,.6)" stroke="#587073" stroke-width="2" transform="rotate(3 92 58.5)"/>' +
+        '<rect x="50" y="54" width="30" height="9" rx="2" fill="#6b5ba8" opacity="0.75" transform="rotate(3 92 58.5)"/>' +
+        '<text x="65" y="61.5" fill="#fff" font-size="6.5" text-anchor="middle" transform="rotate(3 92 58.5)">KMnO₄</text>' +
+        '<g class="km-cotton" data-part="cotton">' +
+          '<ellipse cx="120" cy="62" rx="6" ry="4" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1" transform="rotate(3 92 58.5)"/>' +
+        '</g>' +
       '</g>' +
-      // 棉花
-      '<g class="km-cotton" data-part="cotton">' +
-        '<ellipse cx="100" cy="28" rx="5" ry="3" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1"/>' +
-      '</g>' +
-      // 导管
-      '<path d="M104 28 L120 28 L120 55 L145 55" fill="none" stroke="#587073" stroke-width="2" stroke-linejoin="round"/>' +
-      // 酒精灯
+      // 橡皮塞（试管口右端）+ 导管（弯曲伸入水槽水中）
+      '<rect x="137" y="54" width="7" height="15" rx="2" fill="#e8b7b4" stroke="#c2534f" stroke-width="1"/>' +
+      '<path d="M142 62 L160 62 L160 132 L170 132" fill="none" stroke="#5bb7ae" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      // 酒精灯（火焰朝上，正对试管底部）
       '<g class="km-heat" data-part="heat">' +
-        '<path d="M30 85 L50 85 L48 100 L32 100 Z" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1.5"/>' +
-        '<ellipse cx="40" cy="82" rx="6" ry="10" fill="url(#' + id + '-flame)" class="km-flame"/>' +
+        '<path d="M58 106 L84 106 L81 126 L61 126 Z" fill="#f5e6ca" stroke="#c9a96e" stroke-width="1.5"/>' +
+        '<line x1="71" y1="106" x2="71" y2="100" stroke="#5a4a32" stroke-width="2" stroke-linecap="round"/>' +
+        '<g class="km-flame">' +
+          '<ellipse cx="71" cy="82" rx="7" ry="18" fill="url(#' + id + '-flame)" opacity="0.9"/>' +
+          '<ellipse cx="71" cy="86" rx="3.5" ry="11" fill="#fff4b8" opacity="0.7"/>' +
+        '</g>' +
       '</g>' +
-      // 铁架台
-      '<line x1="15" y1="100" x2="15" y2="50" stroke="#587073" stroke-width="3" stroke-linecap="round"/>' +
-      '<rect x="8" y="55" width="14" height="4" rx="2" fill="#587073"/>' +
-      // 集气瓶（排水法）
+      // 水槽（盛水）
+      '<rect x="160" y="112" width="54" height="52" rx="4" fill="rgba(230,244,241,.5)" stroke="#587073" stroke-width="3"/>' +
+      '<line x1="162" y1="124" x2="212" y2="124" stroke="#8fb6b0" stroke-width="2"/>' +
+      '<rect x="162" y="126" width="50" height="36" rx="2" fill="url(#' + id + '-water)" opacity="0.85"/>' +
+      '<text x="187" y="158" fill="#146c6e" font-size="7" text-anchor="middle">H₂O</text>' +
+      // 集气瓶（倒扣于水中，排水法收集）
       '<g class="km-collect" data-part="收集">' +
-        '<rect x="130" y="30" width="30" height="50" rx="4" fill="rgba(191,233,228,.3)" stroke="#587073" stroke-width="2"/>' +
-        '<rect x="132" y="45" width="26" height="33" rx="2" fill="rgba(191,233,228,.5)"/>' +
-        '<text x="145" y="65" fill="#146c6e" font-size="7" text-anchor="middle">O₂</text>' +
+        '<rect x="176" y="96" width="30" height="48" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+        '<rect x="178" y="98" width="26" height="30" rx="2" fill="rgba(191,233,228,.5)"/>' +
+        '<text x="191" y="112" fill="#146c6e" font-size="9" text-anchor="middle" font-weight="600">O₂</text>' +
       '</g>' +
-      '<text x="80" y="120" fill="#587073" font-size="8" text-anchor="middle" data-kmnote>点击按钮查看各部件作用</text>';
+      // 气泡（导管口 + 集气瓶口）
+      '<g class="km-bubbles" data-bubbles>' +
+        '<circle cx="170" cy="132" r="2" fill="#fff" opacity="0.8"/>' +
+        '<circle cx="170" cy="124" r="1.6" fill="#fff" opacity="0.7"/>' +
+        '<circle cx="173" cy="138" r="1.8" fill="#fff" opacity="0.75"/>' +
+        '<circle cx="186" cy="140" r="1.5" fill="#fff" opacity="0.7"/>' +
+        '<circle cx="196" cy="134" r="1.7" fill="#fff" opacity="0.75"/>' +
+      '</g>' +
+      '<text x="110" y="174" fill="#587073" font-size="8" text-anchor="middle" data-kmnote>点击按钮查看各部件作用</text>';
     var resultBox = '<div class="km-result" data-kmresult></div>';
     return '<div class="fig-km" data-km>' +
       '<div class="fig-ctrl">' + pills + '</div>' +
-      figSvg(170, 135, svgInner) +
+      figSvg(220, 180, svgInner) +
       resultBox +
     '</div>';
   }
@@ -8387,6 +8420,9 @@ app.innerHTML =
           var key = pill.dataset.part;
           box.querySelectorAll(".fig-pill").forEach(function (p) {
             p.classList.toggle("is-active", p === pill);
+          });
+          box.querySelectorAll("[data-part]").forEach(function (el) {
+            el.classList.toggle("is-hot", el.dataset.part === key);
           });
           var result = box.querySelector("[data-kmresult]");
           var p = parts[key];
