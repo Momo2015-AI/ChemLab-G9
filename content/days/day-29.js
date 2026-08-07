@@ -84,8 +84,8 @@ window.ChemLabContent["day-29"] = {
       },
       {
         statement: "乙醇燃烧产物是 CO₂ 和 H₂O，所以乙醇是完全清洁的燃料。",
-        verdict: "对",
-        explanation: "乙醇燃烧只生成 CO₂ 和 H₂O，不产生污染物，是清洁燃料。"
+        verdict: "错",
+        explanation: "乙醇燃烧不产生 SO₂、颗粒物等传统污染物，比化石燃料清洁，但燃烧仍会产生 CO₂（温室气体），且生产乙醇的整个过程（种植、发酵、运输）也会消耗能源，并非完全零排放。"
       },
       {
         statement: "CO₂ 是空气污染物，会造成温室效应。",

@@ -58,8 +58,8 @@ window.ChemLabContent["day-12"] = {
     items: [
       {
         statement: "元素周期表共有 7 个周期、18 个族。",
-        verdict: "对",
-        explanation: "周期表有 7 个横行即 7 个周期，18 个纵列但分为 16 个族（7 主族、7 副族、1 0 族、1 Ⅷ族）。"
+        verdict: "错",
+        explanation: "周期表有 7 个横行即 7 个周期，但有 18 个纵列分为 16 个族（7 个主族、7 个副族、1 个 0 族、1 个第 VIII 族），不是 18 个族。"
       },
       {
         statement: "原子序数=11 的元素是金属元素。",
