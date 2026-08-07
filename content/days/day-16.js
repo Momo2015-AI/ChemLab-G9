@@ -15,6 +15,7 @@ window.ChemLabContent["day-16"] = {
     {
       title: "电解水实验",
       safety: "supervised",
+      figure: { type: "water-electrolysis", caption: "点击「通电」观察两极气泡产生，注意氢气与氧气的体积比。" },
       body: [
         "实验装置：直流电源、电解器、电极。",
         "现象：通电后两极都有气泡产生；正极产生氧气，负极产生氢气；氢气与氧气的体积比约为 2 : 1。",

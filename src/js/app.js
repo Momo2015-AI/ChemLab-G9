@@ -734,7 +734,12 @@ app.innerHTML =
       "kmno4-setup": figKmno4Setup,          // 高锰酸钾制氧装置图
       "molecule-motion": figMoleculeMotion,  // 分子运动模拟
       "atom-model": figAtomModel,            // 原子结构模型
-      "element-card": figElementCard         // 元素周期表格子
+      "element-card": figElementCard,         // 元素周期表格子
+      "water-electrolysis": figWaterElectrolysis, // 电解水实验
+      "mass-conservation": figMassConservation,   // 质量守恒白磷燃烧实验
+      "water-purification": figWaterPurification, // 水的净化/过滤
+      "co2-setup": figCo2Setup,                  // 二氧化碳制取装置
+      "ion-form": figIonForm                     // 离子形成过程
     };
     var fn = renderers[fig.type];
     if (!fn) return "";
@@ -1338,6 +1343,268 @@ app.innerHTML =
       '<div class="el-wrap">' + card + legend + '</div>' +
       tip +
     '</div>';
+  }
+
+  // ---------- 电解水实验动画：正氧负氢，氢二氧一 ----------
+  function figWaterElectrolysis(fig) {
+    var id = "ele-" + uid();
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-stage="off">通电前</button>' +
+      '<button type="button" class="fig-pill" data-stage="on" aria-pressed="true">通电</button>' +
+      '</div>';
+    var defs =
+      '<defs>' +
+        '<linearGradient id="' + id + '-h2" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="#bfe9e4"/><stop offset="1" stop-color="#7cc7bf"/>' +
+        '</linearGradient>' +
+        '<linearGradient id="' + id + '-water" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="#d4f1f0"/><stop offset="1" stop-color="#a7dcd5"/>' +
+        '</linearGradient>' +
+      '</defs>';
+    var uShape =
+      '<path d="M40 40 L40 120 Q40 150 70 150 L110 150 Q140 150 140 120 L140 40" fill="none" stroke="#587073" stroke-width="6" stroke-linecap="round"/>' +
+      '<rect x="36" y="30" width="108" height="16" rx="4" fill="rgba(255,255,255,.6)" stroke="#587073" stroke-width="2"/>';
+    var liquid =
+      '<rect x="44" y="60" width="92" height="86" rx="2" fill="url(#' + id + '-water)" opacity="0.7"/>';
+    var leftGas =
+      '<rect class="ele-left-gas" data-stage-gas x="44" y="60" width="42" height="28" rx="2" fill="#bfe9e4" opacity="0.6"/>' +
+      '<text x="65" y="78" fill="#146c6e" font-size="9" text-anchor="middle" data-left-label>H₂</text>';
+    var rightGas =
+      '<rect class="ele-right-gas" data-stage-gas x="86" y="60" width="50" height="14" rx="2" fill="#fdecd9" opacity="0.6"/>' +
+      '<text x="111" y="72" fill="#a4560b" font-size="9" text-anchor="middle" data-right-label>O₂</text>';
+    var electrodes =
+      '<rect x="50" y="100" width="8" height="40" rx="2" fill="#8a9ba8" stroke="#587073" stroke-width="1"/>' +
+      '<rect x="92" y="100" width="8" height="40" rx="2" fill="#8a9ba8" stroke="#587073" stroke-width="1"/>' +
+      '<line x1="54" y1="140" x2="54" y2="160" stroke="#8a9ba8" stroke-width="2"/>' +
+      '<line x1="96" y1="140" x2="96" y2="160" stroke="#8a9ba8" stroke-width="2"/>' +
+      '<line x1="30" y1="160" x2="150" y2="160" stroke="#587073" stroke-width="2"/>';
+    var bubbles =
+      '<g class="ele-bubbles" data-bubbles opacity="0">' +
+        '<circle cx="54" cy="130" r="2.5" fill="#fff" opacity="0.8"/>' +
+        '<circle cx="54" cy="110" r="2" fill="#fff" opacity="0.7"/>' +
+        '<circle cx="96" cy="128" r="2" fill="#fff" opacity="0.8"/>' +
+        '<circle cx="96" cy="108" r="1.8" fill="#fff" opacity="0.7"/>' +
+      '</g>';
+    var labels =
+      '<text x="54" y="175" fill="#146c6e" font-size="8" text-anchor="middle" font-weight="600">负极</text>' +
+      '<text x="96" y="175" fill="#a4560b" font-size="8" text-anchor="middle" font-weight="600">正极</text>' +
+      '<text x="65" y="200" fill="#587073" font-size="9" text-anchor="middle">体积比 H₂:O₂ ≈ 2:1</text>';
+    var html =
+      '<div class="fig-ele" data-ele>' +
+        pills +
+        figSvg(160, 214, defs + uShape + liquid + leftGas + rightGas + electrodes + bubbles + labels) +
+        '<p class="ele-hint" data-eleh>点击「通电」观察两极气泡产生。</p>' +
+      '</div>';
+    return html;
+  }
+
+  // ---------- 质量守恒定律：白磷燃烧实验 ----------
+  function figMassConservation(fig) {
+    var id = "mc-" + uid();
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-mc-stage="before">反应前</button>' +
+      '<button type="button" class="fig-pill" data-mc-stage="during">燃烧中</button>' +
+      '<button type="button" class="fig-pill" data-mc-stage="after">反应后</button>' +
+      '</div>';
+    var defs =
+      '<defs>' +
+        '<linearGradient id="' + id + '-smoke" x1="0" y1="1" x2="0" y2="0">' +
+          '<stop offset="0" stop-color="#d4f1f0"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>' +
+        '</linearGradient>' +
+      '</defs>';
+    var flask =
+      '<path d="M60 160 L60 110 L30 50 Q28 40 38 38 L82 38 Q92 40 90 50 L60 110" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M38 38 L82 38" stroke="#587073" stroke-width="3" stroke-linecap="round"/>' +
+      '<rect x="34" y="30" width="52" height="10" rx="3" fill="rgba(232,246,243,.8)" stroke="#587073" stroke-width="2"/>';
+    var sand =
+      '<path d="M48 155 Q65 148 82 155" fill="#d9e8e5" stroke="#b0c4c1" stroke-width="1"/>';
+    var whiteP =
+      '<ellipse cx="65" cy="152" rx="8" ry="4" fill="#fff8e8" stroke="#c9a96e" stroke-width="1"/>' +
+      '<text x="65" y="145" fill="#587073" font-size="7" text-anchor="middle">白磷</text>';
+    var balloon =
+      '<ellipse class="mc-balloon" data-balloon cx="60" cy="20" rx="12" ry="16" fill="rgba(232,244,241,.7)" stroke="#587073" stroke-width="2"/>';
+    var balance =
+      '<line x1="10" y1="178" x2="110" y2="178" stroke="#587073" stroke-width="3"/>' +
+      '<path d="M55 178 L55 190 L65 190" stroke="#587073" stroke-width="2" fill="none"/>' +
+      '<rect x="20" y="172" width="20" height="6" rx="2" fill="#d9e8e5" stroke="#b0c4c1" stroke-width="1"/>' +
+      '<rect x="80" y="172" width="20" height="6" rx="2" fill="#d9e8e5" stroke="#b0c4c1" stroke-width="1"/>' +
+      '<text x="30" y="198" fill="#587073" font-size="7" text-anchor="middle">反应前</text>' +
+      '<text x="90" y="198" fill="#587073" font-size="7" text-anchor="middle">反应后</text>';
+    var smoke =
+      '<g class="mc-smoke" data-smoke opacity="0">' +
+        '<circle cx="55" cy="80" r="6" fill="#d4f1f0" opacity="0.4"/>' +
+        '<circle cx="70" cy="70" r="8" fill="#d4f1f0" opacity="0.3"/>' +
+        '<circle cx="62" cy="90" r="5" fill="#d4f1f0" opacity="0.35"/>' +
+      '</g>';
+    var flame =
+      '<g class="mc-flame" data-flame opacity="0">' +
+        '<ellipse cx="65" cy="140" rx="6" ry="10" fill="#f5a623" opacity="0.6"/>' +
+        '<ellipse cx="65" cy="142" rx="3" ry="6" fill="#f7c948" opacity="0.7"/>' +
+      '</g>';
+    var resultText =
+      '<text class="mc-result" data-mcresult x="60" y="60" fill="#146c6e" font-size="9" text-anchor="middle" font-weight="600"></text>';
+    var html =
+      '<div class="fig-mc" data-mc>' +
+        pills +
+        figSvg(120, 210, defs + flask + sand + whiteP + balloon + smoke + flame + balance + resultText) +
+        '<p class="mc-hint" data-mch>点击「燃烧中」观察白磷燃烧，点击「反应后」查看质量关系。</p>' +
+      '</div>';
+    return html;
+  }
+
+  // ---------- 水的净化：过滤操作示意 ----------
+  function figWaterPurification(fig) {
+    var id = "wp-" + uid();
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-purify-stage="mix">浑浊水</button>' +
+      '<button type="button" class="fig-pill" data-purify-stage="filter">过滤</button>' +
+      '<button type="button" class="fig-pill" data-purify-stage="clear">过滤后</button>' +
+      '</div>';
+    var defs =
+      '<defs>' +
+        '<linearGradient id="' + id + '-clear" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="#d4f1f0"/><stop offset="1" stop-color="#a7dcd5"/>' +
+        '</linearGradient>' +
+        '<linearGradient id="' + id + '-dirty" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="#c9b896"/><stop offset="1" stop-color="#a08060"/>' +
+        '</linearGradient>' +
+      '</defs>';
+    var beaker1 =
+      svgParts.beaker(8, 50, 50, 40) +
+      '<rect x="10" y="58" width="46" height="28" rx="2" fill="url(#' + id + '-dirty)" opacity="0.8" data-dirty-water/>' +
+      '<circle cx="20" cy="70" r="2" fill="#8b7355" opacity="0.6"/>' +
+      '<circle cx="35" cy="65" r="1.5" fill="#8b7355" opacity="0.5"/>' +
+      '<circle cx="45" cy="75" r="2" fill="#8b7355" opacity="0.6"/>' +
+      '<text x="33" y="96" fill="#587073" font-size="7" text-anchor="middle">浑浊水</text>';
+    var funnel =
+      '<path d="M70 40 L90 40 L90 70 L80 100 L74 100 L64 70 L64 40 Z" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+      '<rect x="66" y="100" width="8" height="16" rx="2" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+      '<line x1="70" y1="44" x2="86" y2="44" stroke="#587073" stroke-width="1.5"/>';
+    var filterPaper =
+      '<path d="M67 42 L83 42 L83 72 L73 98 L63 72 Z" fill="rgba(255,255,240,.7)" stroke="#c9a96e" stroke-width="1.5"/>';
+    var glassRod =
+      '<line x1="55" y1="30" x2="72" y2="50" stroke="#587073" stroke-width="3" stroke-linecap="round"/>';
+    var beaker2 =
+      svgParts.beaker(88, 110, 50, 36) +
+      '<rect x="90" y="118" width="46" height="22" rx="2" fill="url(#' + id + '-clear)" opacity="0" data-clear-water/>' +
+      '<text x="113" y="148" fill="#587073" font-size="7" text-anchor="middle">滤液</text>';
+    var stand =
+      '<rect x="5" y="130" width="8" height="40" fill="#8a9ba8" stroke="#587073" stroke-width="1"/>' +
+      '<rect x="2" y="168" width="14" height="6" rx="2" fill="#8a9ba8" stroke="#587073" stroke-width="1"/>' +
+      '<line x1="13" y1="55" x2="64" y2="55" stroke="#8a9ba8" stroke-width="2"/>';
+    var note =
+      '<text class="wp-note" data-wpn x="60" y="195" fill="#146c6e" font-size="8" text-anchor="middle" font-weight="600"></text>';
+    var html =
+      '<div class="fig-wp" data-wp>' +
+        pills +
+        figSvg(145, 210, defs + beaker1 + stand + funnel + filterPaper + glassRod + beaker2 + note) +
+        '<p class="wp-hint" data-wph>点击「过滤」观察过滤过程，注意「一贴二低三靠」。</p>' +
+      '</div>';
+    return html;
+  }
+
+  // ---------- 二氧化碳制取装置 ----------
+  function figCo2Setup(fig) {
+    var id = "co2-" + uid();
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-co2-part="setup">装置</button>' +
+      '<button type="button" class="fig-pill" data-co2-part="collection">收集</button>' +
+      '<button type="button" class="fig-pill" data-co2-part="check">验满</button>' +
+      '</div>';
+    var defs =
+      '<defs>' +
+        '<linearGradient id="' + id + '-co2" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="#d4f1f0"/><stop offset="1" stop-color="#a7dcd5"/>' +
+        '</linearGradient>' +
+      '</defs>';
+    var flask =
+      '<path d="M40 120 L40 80 L25 55 Q22 48 30 46 L70 46 Q78 48 75 55 L60 80 L60 120 Q60 135 45 135 L45 135 Q30 135 30 120 Z" fill="rgba(255,255,255,.6)" stroke="#587073" stroke-width="2"/>' +
+      '<rect x="36" y="40" width="28" height="8" rx="3" fill="rgba(232,246,243,.8)" stroke="#587073" stroke-width="2"/>';
+    var marble =
+      '<ellipse cx="48" cy="118" rx="6" ry="4" fill="#c9c9c9" stroke="#8a9ba8" stroke-width="1"/>' +
+      '<ellipse cx="58" cy="116" rx="5" ry="3" fill="#d9d9d9" stroke="#8a9ba8" stroke-width="1"/>' +
+      '<text x="53" y="132" fill="#587073" font-size="7" text-anchor="middle">大理石</text>';
+    var thistle =
+      '<path d="M50 35 L50 70 L46 70 L46 105" stroke="#587073" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+      '<ellipse cx="50" cy="30" rx="8" ry="4" fill="rgba(255,255,255,.6)" stroke="#587073" stroke-width="2"/>' +
+      '<text x="72" y="55" fill="#587073" font-size="7">长颈漏斗</text>';
+    var liquid =
+      '<rect x="47" y="72" width="6" height="30" rx="2" fill="url(#' + id + '-co2)" opacity="0.7"/>';
+    var tube =
+      '<path d="M60 50 L90 50 L90 85" stroke="#587073" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+      '<path d="M88 85 L100 85" stroke="#587073" stroke-width="4" fill="none" stroke-linecap="round"/>';
+    var gasJar =
+      '<rect x="100" y="45" width="40" height="60" rx="4" fill="rgba(255,255,255,.5)" stroke="#587073" stroke-width="2"/>' +
+      '<text x="120" y="115" fill="#587073" font-size="7" text-anchor="middle">集气瓶</text>';
+    var bubbles =
+      '<g class="co2-bubbles" data-bubbles>' +
+        '<circle cx="48" cy="110" r="2" fill="#bfe9e4" opacity="0.7"/>' +
+        '<circle cx="56" cy="105" r="1.8" fill="#bfe9e4" opacity="0.6"/>' +
+        '<circle cx="50" cy="95" r="2.2" fill="#bfe9e4" opacity="0.5"/>' +
+      '</g>';
+    var match =
+      '<g class="co2-match" data-match opacity="0">' +
+        '<line x1="115" y1="40" x2="135" y2="35" stroke="#c9a96e" stroke-width="3" stroke-linecap="round"/>' +
+        '<ellipse cx="137" cy="33" rx="4" ry="6" fill="#e67b32" opacity="0.7"/>' +
+      '</g>';
+    var result =
+      '<text class="co2-result" data-co2r x="72" y="160" fill="#146c6e" font-size="8" text-anchor="middle" font-weight="600"></text>';
+    var html =
+      '<div class="fig-co2" data-co2>' +
+        pills +
+        figSvg(150, 175, defs + flask + marble + thistle + liquid + tube + gasJar + bubbles + match + result) +
+        '<p class="co2-hint" data-co2h>查看装置各部分：固液常温型发生装置 + 向上排空气法收集。</p>' +
+      '</div>';
+    return html;
+  }
+
+  // ---------- 离子形成过程：钠原子 → 钠离子 ----------
+  function figIonForm(fig) {
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-ion-type="na">Na → Na⁺</button>' +
+      '<button type="button" class="fig-pill" data-ion-type="cl">Cl → Cl⁻</button>' +
+      '</div>';
+    var infoBox =
+      '<div class="ion-info">' +
+        '<table class="ion-table">' +
+          '<thead><tr><th></th><th>原子</th><th>离子</th></tr></thead>' +
+          '<tbody>' +
+            '<tr><td>质子数</td><td data-i-p1></td><td data-i-p2></td></tr>' +
+            '<tr><td>电子数</td><td data-i-e1></td><td data-i-e2></td></tr>' +
+            '<tr><td>最外层</td><td data-i-o1></td><td data-i-o2></td></tr>' +
+            '<tr><td>电性</td><td data-i-c1></td><td data-i-c2></td></tr>' +
+          '</tbody>' +
+        '</table>' +
+        '<p class="ion-tip" data-ition></p>' +
+      '</div>';
+    return '<div class="fig-ion" data-ionfig>' +
+      pills +
+      figSvg(200, 170, '<defs></defs><g></g>') +
+      infoBox +
+    '</div>';
+  }
+
+  // ---------- 知识网络图 ----------
+  function figKnowledgeNetwork(fig) {
+    var modules = [
+      { name: "化学变化与空气", color: "#146c6e", days: "Day01-08" },
+      { name: "物质构成的奥秘", color: "#2a7ab5", days: "Day09-15" },
+      { name: "自然界的水", color: "#2f9aa8", days: "Day16-18" },
+      { name: "化学方程式", color: "#6b5ba8", days: "Day19-23" },
+      { name: "碳和碳的氧化物", color: "#d9762b", days: "Day24-27" },
+      { name: "燃料与能源", color: "#c2534f", days: "Day28-29" }
+    ];
+    var cards = modules.map(function (m, i) {
+      return '<div class="kn-card" data-kn-module="' + i + '">' +
+        '<div class="kn-header" style="background:' + m.color + '">' + m.name + '</div>' +
+        '<div class="kn-body"><span class="kn-days">' + m.days + '</span></div>' +
+      '</div>';
+    }).join("");
+    var html = '<div class="fig-kn" data-knfig>' +
+      cards +
+      '<p class="kn-hint">六个模块环环相扣，基础决定上限。反复刷错题，开学不慌。</p>' +
+    '</div>';
+    return html;
   }
 
   // ---------- 加载并渲染某一天 ----------
@@ -2068,6 +2335,166 @@ app.innerHTML =
         pill.addEventListener("click", function () { applyElement(parseInt(pill.dataset.element, 10)); });
       });
       applyElement(0);
+    });
+
+    // 电解水实验
+    document.querySelectorAll("[data-ele]").forEach(function (box) {
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var stage = pill.dataset.stage;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          var gasRects = box.querySelectorAll("[data-stage-gas]");
+          var bubblesG = box.querySelector("[data-bubbles]");
+          if (gasRects[0]) {
+            gasRects[0].setAttribute("height", stage === "on" ? "42" : "28");
+            gasRects[0].setAttribute("y", stage === "on" ? "46" : "60");
+          }
+          if (gasRects[1]) {
+            gasRects[1].setAttribute("height", stage === "on" ? "20" : "14");
+            gasRects[1].setAttribute("y", stage === "on" ? "46" : "60");
+          }
+          if (bubblesG) bubblesG.setAttribute("opacity", stage === "on" ? "1" : "0");
+        });
+      });
+    });
+
+    // 质量守恒实验
+    document.querySelectorAll("[data-mc]").forEach(function (box) {
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var stage = pill.dataset.mcStage;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          var balloon = box.querySelector("[data-balloon]");
+          var smoke = box.querySelector("[data-smoke]");
+          var flame = box.querySelector("[data-flame]");
+          var resultText = box.querySelector("[data-mcresult]");
+          if (balloon) balloon.setAttribute("rx", stage === "during" ? "16" : "12");
+          if (smoke) smoke.setAttribute("opacity", stage === "during" ? "1" : "0");
+          if (flame) flame.setAttribute("opacity", stage === "during" ? "1" : "0");
+          if (resultText) {
+            if (stage === "before") resultText.textContent = "反应前总质量 = m(锥形瓶) + m(白磷) + m(空气)";
+            else if (stage === "during") resultText.textContent = "白磷燃烧，产生大量白烟，气球膨胀";
+            else resultText.textContent = "反应后总质量 = 反应前总质量（质量守恒）";
+          }
+        });
+      });
+    });
+
+    // 水的净化（过滤）
+    document.querySelectorAll("[data-wp]").forEach(function (box) {
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var stage = pill.dataset.purifyStage;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          var dirtyWater = box.querySelector("[data-dirty-water]");
+          var clearWater = box.querySelector("[data-clear-water]");
+          var note = box.querySelector("[data-wpn]");
+          if (dirtyWater) dirtyWater.setAttribute("opacity", stage === "filter" || stage === "clear" ? "0.3" : "0.8");
+          if (clearWater) clearWater.setAttribute("opacity", stage === "filter" || stage === "clear" ? "0.9" : "0");
+          if (note) {
+            if (stage === "mix") note.textContent = "浑浊水含不溶性杂质，颜色发黄";
+            else if (stage === "filter") note.textContent = "过滤后：一贴二低三靠，除去不溶性杂质";
+            else note.textContent = "滤液澄清透明，但仍含可溶性杂质";
+          }
+        });
+      });
+    });
+
+    // 二氧化碳制取装置
+    document.querySelectorAll("[data-co2]").forEach(function (box) {
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var part = pill.dataset.co2Part;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          var match = box.querySelector("[data-match]");
+          var bubbles = box.querySelector("[data-bubbles]");
+          var result = box.querySelector("[data-co2r]");
+          if (part === "setup") {
+            if (match) match.setAttribute("opacity", "0");
+            if (bubbles) bubbles.style.opacity = "1";
+            if (result) result.textContent = "固液常温型：大理石 + 稀盐酸 → CO₂";
+          } else if (part === "collection") {
+            if (match) match.setAttribute("opacity", "0");
+            if (bubbles) bubbles.style.opacity = "1";
+            if (result) result.textContent = "向上排空气法：CO₂ 密度比空气大";
+          } else {
+            if (match) match.setAttribute("opacity", "1");
+            if (bubbles) bubbles.style.opacity = "0.3";
+            if (result) result.textContent = "燃着木条放在瓶口 → 熄灭说明已满";
+          }
+        });
+      });
+    });
+
+    // 离子形成
+    document.querySelectorAll("[data-ionfig]").forEach(function (box) {
+      var ionData = {
+        na: {
+          p1: "11", e1: "11", o1: "1", c1: "电中性",
+          p2: "11", e2: "10", o2: "8（稳定）", c2: "+1 正电荷",
+          tip: "钠原子失去最外层 1 个电子 → 钠离子 Na⁺，达到 8 电子稳定结构。"
+        },
+        cl: {
+          p1: "17", e1: "17", o1: "7", c1: "电中性",
+          p2: "17", e2: "18", o2: "8（稳定）", c2: "-1 负电荷",
+          tip: "氯原子得到 1 个电子 → 氯离子 Cl⁻，达到 8 电子稳定结构。"
+        }
+      };
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var type = pill.dataset.ionType;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          var d = ionData[type];
+          if (!d) return;
+          var p1 = box.querySelector("[data-i-p1]");
+          var e1 = box.querySelector("[data-i-e1]");
+          var o1 = box.querySelector("[data-i-o1]");
+          var c1 = box.querySelector("[data-i-c1]");
+          var p2 = box.querySelector("[data-i-p2]");
+          var e2 = box.querySelector("[data-i-e2]");
+          var o2 = box.querySelector("[data-i-o2]");
+          var c2 = box.querySelector("[data-i-c2]");
+          var tip = box.querySelector("[data-ition]");
+          if (p1) p1.textContent = d.p1;
+          if (e1) e1.textContent = d.e1;
+          if (o1) o1.textContent = d.o1;
+          if (c1) c1.textContent = d.c1;
+          if (p2) p2.textContent = d.p2;
+          if (e2) e2.textContent = d.e2;
+          if (o2) o2.textContent = d.o2;
+          if (c2) c2.textContent = d.c2;
+          if (tip) tip.textContent = d.tip;
+        });
+      });
+      var d = ionData.na;
+      var p1 = box.querySelector("[data-i-p1]");
+      var e1 = box.querySelector("[data-i-e1]");
+      var o1 = box.querySelector("[data-i-o1]");
+      var c1 = box.querySelector("[data-i-c1]");
+      var p2 = box.querySelector("[data-i-p2]");
+      var e2 = box.querySelector("[data-i-e2]");
+      var o2 = box.querySelector("[data-i-o2]");
+      var c2 = box.querySelector("[data-i-c2]");
+      var tip = box.querySelector("[data-ition]");
+      if (p1) p1.textContent = d.p1;
+      if (e1) e1.textContent = d.e1;
+      if (o1) o1.textContent = d.o1;
+      if (c1) c1.textContent = d.c1;
+      if (p2) p2.textContent = d.p2;
+      if (e2) e2.textContent = d.e2;
+      if (o2) o2.textContent = d.o2;
+      if (c2) c2.textContent = d.c2;
+      if (tip) tip.textContent = d.tip;
     });
 
     document.querySelector("#quiz-form").addEventListener("submit", function (event) {

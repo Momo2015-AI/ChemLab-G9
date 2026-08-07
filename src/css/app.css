@@ -432,6 +432,54 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 .topic-chips .chip.is-active { background: var(--brand); border-color: var(--brand); color: #fff; }
 .due-toggle { display: inline-block; margin-top: 4px; text-decoration: underline; }
 
+/* ---------- 电解水实验 ---------- */
+.fig-ele { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.ele-hint { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+.ele-left-gas { transition: all .4s ease; }
+.ele-right-gas { transition: all .4s ease; }
+.ele-bubbles circle { animation: eleBub 1s ease-in-out infinite; }
+@keyframes eleBub { 0%, 100% { opacity: .5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-4px); } }
+
+/* ---------- 质量守恒实验 ---------- */
+.fig-mc { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.mc-hint { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+.mc-balloon { transition: all .5s ease; }
+.mc-smoke circle { animation: mcSmoke 2s ease-out infinite; }
+@keyframes mcSmoke { 0% { opacity: .6; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-10px); } }
+.mc-flame { animation: mcFlame .3s ease-in-out infinite alternate; }
+@keyframes mcFlame { from { opacity: .7; } to { opacity: 1; } }
+
+/* ---------- 水的净化（过滤） ---------- */
+.fig-wp { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.wp-hint { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+.wp-note { transition: all .3s ease; }
+[data-dirty-water] { transition: opacity .4s ease; }
+[data-clear-water] { transition: opacity .4s ease; }
+
+/* ---------- 二氧化碳制取装置 ---------- */
+.fig-co2 { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.co2-hint { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+.co2-bubbles circle { animation: co2Bub 1.2s ease-in-out infinite; }
+@keyframes co2Bub { 0%, 100% { opacity: .4; } 50% { opacity: .9; } }
+.co2-match { transition: opacity .3s ease; }
+.co2-result { transition: all .3s ease; }
+
+/* ---------- 离子形成 ---------- */
+.fig-ion { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.ion-info { width: 100%; max-width: 320px; }
+.ion-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.ion-table th, .ion-table td { padding: 6px 10px; border: 1px solid var(--line); text-align: center; }
+.ion-table th { background: var(--brand-soft); font-weight: 700; }
+.ion-tip { margin: 8px 0 0; font-size: .85rem; color: var(--muted); line-height: 1.5; }
+
+/* ---------- 知识网络图 ---------- */
+.fig-kn { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+.kn-card { width: 100%; max-width: 480px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.kn-header { padding: 10px 14px; color: #fff; font-weight: 700; font-size: .95rem; }
+.kn-body { padding: 8px 14px; background: var(--paper); font-size: .85rem; color: var(--muted); }
+.kn-days { font-weight: 600; color: var(--ink); }
+.kn-hint { font-size: .88rem; color: var(--muted); text-align: center; margin: 0; }
+
 /* ---------- 科学探究排序（触摸拖拽 + ↑↓） ---------- */
 .fig-inquiry { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
 .inq-instruct { font-size: .88rem; color: var(--muted); margin: 0; }

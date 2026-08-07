@@ -31,6 +31,7 @@ window.ChemLabContent["day-19"] = {
     {
       title: "实验验证：白磷燃烧",
       safety: "supervised",
+      figure: { type: "mass-conservation", caption: "点击按钮查看反应前、燃烧中、反应后三个阶段的质量关系。" },
       body: [
         "实验装置：锥形瓶底部铺一层细沙，放一小块白磷，瓶口塞紧橡皮塞，塞上玻璃管，玻璃管上端系一个小气球。",
         "先在天平上称量总质量，然后加热玻璃管引燃白磷，观察到白磷燃烧产生大量白烟，气球先膨胀后缩小。",

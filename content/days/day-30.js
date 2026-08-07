@@ -8,6 +8,7 @@ window.ChemLabContent["day-30"] = {
   sections: [
     {
       title: "今天的任务：画知识网",
+      figure: { type: "knowledge-network", caption: "30 天知识网络图：宏观物质、微观粒子、符号表达、定量计算的完整链条。" },
       body: [
         "今天不学新知识，而是把 30 天学到的内容串成一张知识网络图，并基于错题记录进行自我诊断。"
       ]

@@ -22,6 +22,7 @@ window.ChemLabContent["day-12"] = {
     },
     {
       title: "一个格子里有哪些信息？",
+      figure: { type: "element-card", caption: "点击切换元素，看看格子里原子序数、符号、名称与相对原子质量的读法。" },
       body: [
         "左上角：原子序数（=质子数）。",
         "右上角：元素符号。",
