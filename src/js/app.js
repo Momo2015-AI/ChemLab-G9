@@ -1438,25 +1438,28 @@ app.innerHTML =
 
     var totalQ = quiz.questions.length;
 
-    // 上一课 / 下一课（仅在 ready 天内流转，跳过未发布天）。
-    var dayIndexes = [];
-    manifest.forEach(function (d, i) { if (d.ready) dayIndexes.push(i); });
-    var cur = dayIndexes.indexOf(parseInt(dayKey, 10) - 1);
-    var prevReady = cur > 0 ? manifest[dayIndexes[cur - 1]] : null;
-    var nextReady = cur >= 0 && cur < dayIndexes.length - 1 ? manifest[dayIndexes[cur + 1]] : null;
-    var dayNav = '<nav class="day-nav" aria-label="课程流转">' +
-      (prevReady
-        ? '<a class="dn-prev" href="?day=' + prevReady.day + '">← 上一课：DAY ' + prevReady.day + " " + escapeHtml(prevReady.title) + "</a>"
-        : '<span class="dn-prev is-dim">← 第一课</span>') +
-      (nextReady
-        ? '<a class="dn-next" href="?day=' + nextReady.day + '">下一课：DAY ' + nextReady.day + " " + escapeHtml(nextReady.title) + " →</a>"
-        : '<span class="dn-next is-dim">已是最后一课</span>') +
-   "</nav>";
+    // 上一课 / 回到首页 / 下一课（仅在 ready 天内流转，跳过未发布天）。页面上下各放一套。
+    function dayNavHtml(mod) {
+      var dayIndexes = [];
+      manifest.forEach(function (d, i) { if (d.ready) dayIndexes.push(i); });
+      var cur = dayIndexes.indexOf(parseInt(dayKey, 10) - 1);
+      var prevReady = cur > 0 ? manifest[dayIndexes[cur - 1]] : null;
+      var nextReady = cur >= 0 && cur < dayIndexes.length - 1 ? manifest[dayIndexes[cur + 1]] : null;
+      return '<nav class="day-nav' + (mod ? " " + mod : "") + '" aria-label="课程流转">' +
+        (prevReady
+          ? '<a class="dn-prev" href="?day=' + prevReady.day + '" title="DAY ' + prevReady.day + " " + escapeHtml(prevReady.title) + '">← 上一课</a>'
+          : '<span class="dn-prev is-dim">← 第一课</span>') +
+        '<a class="dn-home" href="?">回到首页</a>' +
+        (nextReady
+          ? '<a class="dn-next" href="?day=' + nextReady.day + '" title="DAY ' + nextReady.day + " " + escapeHtml(nextReady.title) + '">下一课 →</a>'
+          : '<span class="dn-next is-dim">已是最后一课</span>') +
+        "</nav>";
+    }
 
     app.innerHTML =
       '<div class="page">' +
         '<p class="breadcrumb"><a href="?">← 返回首页</a></p>' +
-        dayNav +
+        dayNavHtml() +
         '<header class="hero">' +
           '<p class="eyebrow">DAY ' + escapeHtml(day.dayNumber) + "</p>" +
           "<h1>" + escapeHtml(day.title) + "</h1>" +
@@ -1493,7 +1496,7 @@ app.innerHTML =
           "</form>" +
           '<p id="result" class="result" tabindex="-1" aria-live="polite"></p>' +
         "</section>" +
-        '<p class="back-home"><a href="?">← 返回首页</a></p>' +
+        dayNavHtml("day-nav--bottom") +
       "</div>";
 
     bindOptionSelection();

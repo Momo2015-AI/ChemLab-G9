@@ -101,16 +101,9 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 .breadcrumb { margin: 0; }
 .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 700; }
 
-/* 底部返回首页按钮 */
+/* 复习页：底部返回首页链接 */
 .back-home { margin: 24px auto 8px; text-align: center; }
-.back-home a {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--brand); color: #fff; text-decoration: none;
-  font-weight: 700; font-size: 1rem; padding: 14px 32px;
-  border-radius: 14px; box-shadow: var(--shadow-sm);
-  transition: background .2s, transform .15s;
-}
-.back-home a:hover, .back-home a:active { background: var(--brand-strong); transform: translateY(-1px); }
+.back-home a { color: var(--brand); text-decoration: none; font-weight: 700; }
 
 /* 练习区：题号进度条 */
 .quiz-progress { display: flex; align-items: center; gap: 12px; margin: 10px 0 4px; }
@@ -399,12 +392,19 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
   .day-card.is-done { background: #1d3f42; }
 }
 
-/* ---------- 学习页：上一课 / 下一课流转 ---------- */
-.day-nav { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; margin: 14px 0; }
-.day-nav a { text-decoration: none; font-weight: 700; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; box-shadow: var(--shadow-sm); }
+/* ---------- 学习页：上一课 / 回到首页 / 下一课流转 ---------- */
+.day-nav { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: stretch; margin: 14px 0; }
+.day-nav a { text-decoration: none; font-weight: 700; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow-sm); display: block; }
 .day-nav a:hover, .day-nav a:active { border-color: var(--brand); background: var(--brand-soft); }
-.day-nav .is-dim { color: var(--muted); font-weight: 600; padding: 10px 14px; opacity: .6; }
-.dn-prev, .dn-next { min-height: 44px; }
+.day-nav .is-dim { color: var(--muted); font-weight: 600; padding: 12px 14px; opacity: .6; border: 1px dashed var(--line); border-radius: 12px; }
+.day-nav .dn-prev, .day-nav .dn-next { min-height: 44px; }
+.day-nav .dn-home { flex: 0 0 auto; border-color: var(--brand); background: var(--brand-soft); color: var(--brand-strong); }
+.day-nav .dn-prev { margin-right: auto; }
+.day-nav .dn-next { margin-left: auto; }
+.day-nav.day-nav--bottom { margin: 28px 0 12px; border-top: 1px solid var(--line); padding-top: 18px; }
+.day-nav .dn-home { order: 1; }
+.day-nav .dn-prev { order: 0; }
+.day-nav .dn-next { order: 2; }
 
 /* ---------- 学习页：本课记录（已读 + 笔记） ---------- */
 .reading .reading-state { font-weight: 700; color: var(--muted); margin: 8px 0; }
@@ -6818,25 +6818,28 @@ app.innerHTML =
 
     var totalQ = quiz.questions.length;
 
-    // 上一课 / 下一课（仅在 ready 天内流转，跳过未发布天）。
-    var dayIndexes = [];
-    manifest.forEach(function (d, i) { if (d.ready) dayIndexes.push(i); });
-    var cur = dayIndexes.indexOf(parseInt(dayKey, 10) - 1);
-    var prevReady = cur > 0 ? manifest[dayIndexes[cur - 1]] : null;
-    var nextReady = cur >= 0 && cur < dayIndexes.length - 1 ? manifest[dayIndexes[cur + 1]] : null;
-    var dayNav = '<nav class="day-nav" aria-label="课程流转">' +
-      (prevReady
-        ? '<a class="dn-prev" href="?day=' + prevReady.day + '">← 上一课：DAY ' + prevReady.day + " " + escapeHtml(prevReady.title) + "</a>"
-        : '<span class="dn-prev is-dim">← 第一课</span>') +
-      (nextReady
-        ? '<a class="dn-next" href="?day=' + nextReady.day + '">下一课：DAY ' + nextReady.day + " " + escapeHtml(nextReady.title) + " →</a>"
-        : '<span class="dn-next is-dim">已是最后一课</span>') +
-   "</nav>";
+    // 上一课 / 回到首页 / 下一课（仅在 ready 天内流转，跳过未发布天）。页面上下各放一套。
+    function dayNavHtml(mod) {
+      var dayIndexes = [];
+      manifest.forEach(function (d, i) { if (d.ready) dayIndexes.push(i); });
+      var cur = dayIndexes.indexOf(parseInt(dayKey, 10) - 1);
+      var prevReady = cur > 0 ? manifest[dayIndexes[cur - 1]] : null;
+      var nextReady = cur >= 0 && cur < dayIndexes.length - 1 ? manifest[dayIndexes[cur + 1]] : null;
+      return '<nav class="day-nav' + (mod ? " " + mod : "") + '" aria-label="课程流转">' +
+        (prevReady
+          ? '<a class="dn-prev" href="?day=' + prevReady.day + '" title="DAY ' + prevReady.day + " " + escapeHtml(prevReady.title) + '">← 上一课</a>'
+          : '<span class="dn-prev is-dim">← 第一课</span>') +
+        '<a class="dn-home" href="?">回到首页</a>' +
+        (nextReady
+          ? '<a class="dn-next" href="?day=' + nextReady.day + '" title="DAY ' + nextReady.day + " " + escapeHtml(nextReady.title) + '">下一课 →</a>'
+          : '<span class="dn-next is-dim">已是最后一课</span>') +
+        "</nav>";
+    }
 
     app.innerHTML =
       '<div class="page">' +
         '<p class="breadcrumb"><a href="?">← 返回首页</a></p>' +
-        dayNav +
+        dayNavHtml() +
         '<header class="hero">' +
           '<p class="eyebrow">DAY ' + escapeHtml(day.dayNumber) + "</p>" +
           "<h1>" + escapeHtml(day.title) + "</h1>" +
@@ -6873,7 +6876,7 @@ app.innerHTML =
           "</form>" +
           '<p id="result" class="result" tabindex="-1" aria-live="polite"></p>' +
         "</section>" +
-        '<p class="back-home"><a href="?">← 返回首页</a></p>' +
+        dayNavHtml("day-nav--bottom") +
       "</div>";
 
     bindOptionSelection();
