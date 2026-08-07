@@ -40,26 +40,45 @@
     }, 0);
   }
 
-  // 旧版记录（{score,total,...}）迁移为新版（{attempts:[...], best}）。
+  // 旧版记录（{score,total,...}）迁移为新版（{attempts, read, note, ...}）。
   function normalizeDayRecord(record) {
     if (!record) return null;
+    var out = {};
     if (Array.isArray(record.attempts)) {
-      return { attempts: record.attempts, best: record.best != null ? record.best : bestOf(record.attempts) };
-    }
-    if (typeof record.score === "number") {
+      out.attempts = record.attempts;
+      out.best = record.best != null ? record.best : bestOf(record.attempts);
+    } else if (typeof record.score === "number") {
       var attempt = {
         score: record.score,
         total: record.total,
         answers: record.answers || [],
         completedAt: record.completedAt || new Date().toISOString()
       };
-      return { attempts: [attempt], best: attempt.score };
+      out.attempts = [attempt];
+      out.best = attempt.score;
+    } else {
+      // 允许"仅读过 + 笔记"但没有作答记录的天也存在（read=true 或 note 非空）。
+      if (!record.read && !record.note) return null;
+      out.attempts = [];
+      out.best = 0;
+      out.read = !!record.read;
+      out.readAt = record.readAt || null;
+      out.note = typeof record.note === "string" ? record.note : "";
+      return out;
     }
-    return null;
+    // 附加字段：是否已读完、阅读时间、单课笔记。
+    out.read = !!record.read;
+    out.readAt = record.readAt || null;
+    out.note = typeof record.note === "string" ? record.note : "";
+    return out;
   }
 
   function dayRecord(dayKey) {
     return normalizeDayRecord(readJSON(LS_DAY + dayKey));
+  }
+
+  function saveDayRecord(dayKey, record) {
+    writeJSON(LS_DAY + dayKey, record);
   }
 
   function getProgress() {
@@ -121,6 +140,8 @@
     manifest.forEach(function (md) {
       var rec = dayRecord(md.day);
       if (!rec) return;
+      // 作答与"读完本课"都算当天的学习活动，利于连续天数激励。
+      if (rec.read && rec.readAt) active[localDateKey(new Date(rec.readAt))] = true;
       rec.attempts.forEach(function (a) {
         if (a.completedAt) active[localDateKey(new Date(a.completedAt))] = true;
       });
@@ -136,18 +157,21 @@
     return streak;
   }
 
-  // 薄弱知识点：从错题队列聚合题目 topic，按数量排序。
+  // 薄弱知识点：从错题队列按题目 topic 聚合，附带命中的学习日便于跳转。
   function getWeakTopics() {
     var queue = getReviewQueue();
-    var counts = {};
+    var topics = {};
     queue.forEach(function (item) {
       var quiz = getQuiz(item.day);
       var q = quiz && quiz.questions[item.questionIndex];
       var topic = (q && q.topic) || "未标注";
-      counts[topic] = (counts[topic] || 0) + 1;
+      topics[topic] = topics[topic] || { count: 0, days: {}, samples: 0 };
+      topics[topic].count += 1;
+      topics[topic].days[item.day] = true;
     });
-    return Object.keys(counts).map(function (t) {
-      return { topic: t, count: counts[t] };
+    return Object.keys(topics).map(function (t) {
+      var o = topics[t];
+      return { topic: t, count: o.count, days: Object.keys(o.days) };
     }).sort(function (a, b) { return b.count - a.count; }).slice(0, 5);
   }
 
@@ -376,10 +400,110 @@
     return svgParts.svg(w, h, inner);
   }
 
+  // ---------- 快速索引：跨天关键词搜索（单文件内所有内容均已内联时最全） ----------
+  // 惰性建立索引：只扫描已加载/内联的内容，分离模式下内容不足时退化到仅搜标题。
+  var _indexCache = null;
+  function buildIndex() {
+    if (_indexCache) return _indexCache;
+    var idx = [];
+    var keywords = function (s) { return String(s).toLowerCase(); };
+    manifest.forEach(function (d) {
+      if (!d.ready) return;
+      var day = getDay(d.day);
+      var quiz = getQuiz(d.day);
+      if (day) {
+        day.sections.forEach(function (sec) {
+          idx.push({ day: d.day, kind: "章节", text: sec.title });
+          (sec.body || []).forEach(function (p) {
+            idx.push({ day: d.day, kind: "内容", text: typeof p === "string" ? p : (p && p.text) });
+          });
+        });
+        idx.push({ day: d.day, kind: "目标", text: day.coreQuestion });
+        idx.push({ day: d.day, kind: "自测", text: (day.checkpoint && day.checkpoint.title) || "" });
+      }
+      if (quiz) {
+        quiz.questions.forEach(function (q) {
+          idx.push({ day: d.day, kind: "题干", text: q.prompt });
+          idx.push({ day: d.day, kind: "解析", text: q.explanation });
+        });
+      }
+    });
+    _indexCache = idx;
+    return idx;
+  }
+
+  function searchIndex(query) {
+    var q = String(query).trim().toLowerCase();
+    if (!q) return [];
+    var meta = {};
+    manifest.forEach(function (d) { meta[d.day] = d.title; });
+    var out = [];
+    var seen = {};
+    buildIndex().forEach(function (item) {
+      if (item.text && String(item.text).toLowerCase().indexOf(q) !== -1) {
+        var key = item.day + item.text;
+        if (seen[key]) return;
+        seen[key] = true;
+        out.push({ day: item.day, title: meta[item.day], kind: item.kind, text: item.text });
+      }
+    });
+    return out.slice(0, 20);
+  }
+
+  // ---------- 数据备份：导出 / 导入（缓解本地记录丢失风险） ----------
+  var BACKUP_KEY = "chemlab-g9:v3:backup-meta";
+  function collectAllData() {
+    var data = { system: "chemlab-g9", version: 3, exportedAt: new Date().toISOString(), days: {}, review: [], stats: null };
+    manifest.forEach(function (d) {
+      var rec = dayRecord(d.day);
+      if (rec) data.days[d.day] = rec;
+    });
+    data.review = getReviewQueue();
+    data.stats = readJSON(LS_STATS);
+    return data;
+  }
+
+  function exportBackup() {
+    var data = collectAllData();
+    var blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    var d = new Date();
+    a.download = "chemlab-g9-backup-" + d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0") + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function importBackup(file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var data = JSON.parse(reader.result);
+        if (data.system !== "chemlab-g9" || !data.days) throw new Error("备份文件格式不正确");
+        manifest.forEach(function (d) {
+          if (data.days[d.day]) saveDayRecord(d.day, data.days[d.day]);
+        });
+        if (Array.isArray(data.review)) writeJSON(LS_REVIEW, data.review);
+        if (data.stats) {
+          writeJSON(LS_STATS, { achievements: data.stats.achievements || [], bestCombo: data.stats.bestCombo || 0, reviewCleared: !!data.stats.reviewCleared });
+        }
+        writeJSON(BACKUP_KEY, { importedAt: new Date().toISOString() });
+        window.location.reload();
+      } catch (e) {
+        window.alert("导入失败：备份文件无法识别。");
+      }
+    };
+    reader.readAsText(file);
+  }
+
   // ---------- 首页：进度总览 + 激励区 + 学习日导航 ----------
   function renderHome() {
     var progress = getProgress();
-    var completedCount = Object.keys(progress).length;
+    var completedCount = Object.keys(progress).filter(function (k) { return progress[k].attempts.length > 0; }).length;
+    var readCount = Object.keys(progress).filter(function (k) { return progress[k].read; }).length;
     var total = manifest.length;
     var percent = total ? Math.round((completedCount / total) * 100) : 0;
     var reviewQueue = getReviewQueue();
@@ -397,11 +521,16 @@
         statusText = "开发中";
         stateClass += " is-locked";
       } else if (record) {
-        var latest = record.attempts[record.attempts.length - 1];
-        statusText = "最佳 " + record.best + "/" + latest.total +
-          (record.attempts.length > 1 ? " · 尝试 " + record.attempts.length + " 次" : "");
-        stateClass += " is-done";
-        checkMark = '<span class="day-check" aria-hidden="true">✔</span>';
+        if (record.attempts.length) {
+          var latest = record.attempts[record.attempts.length - 1];
+          statusText = "最佳 " + record.best + "/" + latest.total +
+            (record.attempts.length > 1 ? " · 尝试 " + record.attempts.length + " 次" : "");
+          stateClass += " is-done";
+          checkMark = '<span class="day-check" aria-hidden="true">✔</span>';
+        } else if (record.read) {
+          statusText = "已读完";
+          stateClass += " is-read";
+        }
       }
 
       var label =
@@ -421,7 +550,8 @@
     var weakBlock = weakTopics.length
       ? '<div class="weak-tags" role="list" aria-label="薄弱知识点">' +
           weakTopics.map(function (w) {
-            return '<span class="weak-tag" role="listitem">薄弱：' + escapeHtml(w.topic) + " <b>" + w.count + "</b></span>";
+            var href = "?view=review&topic=" + encodeURIComponent(w.topic);
+            return '<a class="weak-tag" role="listitem" href="' + href + '">薄弱：' + escapeHtml(w.topic) + " <b>" + w.count + "</b> →" + "</a>";
           }).join("") +
         "</div>"
       : "";
@@ -460,12 +590,12 @@
         '<span class="stat-chip">待复习 <b>' + reviewQueue.length + "</b> 题</span>" +
       "</div>" + weakBlock;
 
-    app.innerHTML =
+app.innerHTML =
       '<div class="page">' +
         '<header class="hero">' +
           '<p class="eyebrow">CHEMLAB-G9</p>' +
           "<h1>九年级化学 · 30 天自学计划</h1>" +
-          '<p class="meta">已完成 ' + completedCount + " / " + total + " 天 · 完成率 " + percent + "%</p>" +
+          '<p class="meta">已完成 ' + completedCount + " / " + total + " 天 · 完成率 " + percent + "% · 已读完 " + readCount + " 课</p>" +
           '<div class="progress-bar" role="progressbar" aria-label="学习进度" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + completedCount + '">' +
             '<div class="progress-bar-fill" style="width:' + percent + '%"></div>' +
           "</div>" +
@@ -475,10 +605,60 @@
         badgeWall +
         (moduleBars ? '<section class="section mod-section"><h2>模块进度</h2>' + moduleBars + "</section>" : "") +
         '<section class="section">' +
+          "<h2>快速查找</h2>" +
+          '<label class="search-field"><span>输入关键词（例如“氧气”“守恒”“灭火”）：</span>' +
+            '<input type="search" id="search-input" placeholder="搜索 30 天内容 / 题目…" autocomplete="off" />' +
+          "</label>" +
+          '<div class="search-results" id="search-results" role="list" aria-live="polite"></div>' +
+        "</section>" +
+        '<section class="section">' +
           "<h2>选择学习日</h2>" +
           '<ul class="day-grid">' + cards + "</ul>" +
         "</section>" +
+        '<section class="section backup-section">' +
+          "<h2>学习数据</h2>" +
+          '<p class="hint">学习记录只保存在本设备浏览器里。建议定期导出备份，换设备或清除数据时再导入恢复。</p>' +
+          '<div class="backup-actions">' +
+            '<button type="button" class="primary" id="btn-export">导出备份</button>' +
+            '<label class="primary ghost" for="btn-import">导入备份' +
+              '<input type="file" id="btn-import" accept="application/json,.json" hidden />' +
+            "</label>" +
+          "</div>" +
+        "</section>" +
       "</div>";
+
+    // 关键词搜索
+    var searchInput = document.querySelector("#search-input");
+    var searchResults = document.querySelector("#search-results");
+    if (searchInput && searchResults) {
+      searchInput.addEventListener("input", function () {
+        var hits = searchIndex(searchInput.value);
+        if (!searchInput.value.trim()) {
+          searchResults.innerHTML = "";
+        } else if (!hits.length) {
+          searchResults.innerHTML = '<p class="search-empty">未找到相关内容。</p>';
+        } else {
+          searchResults.innerHTML = hits.map(function (h) {
+            var snippet = h.kind === "章节" || h.kind === "目标" ? escapeHtml(h.text) : escapeHtml(h.text.slice(0, 46)) + (h.text.length > 46 ? "…" : "");
+            return (
+              '<a class="search-hit" role="listitem" href="?day=' + h.day + '">' +
+                '<span class="sh-tag">' + escapeHtml(h.kind) + "</span>" +
+                '<span class="sh-body"><b>DAY ' + h.day + " · " + escapeHtml(h.title) + "</b>" + snippet + "</span>" +
+              "</a>"
+            );
+          }).join("");
+        }
+      });
+    }
+
+    // 导出 / 导入。
+    var backupExport = document.querySelector("#btn-export");
+    if (backupExport) backupExport.addEventListener("click", exportBackup);
+    var backupImport = document.querySelector("#btn-import");
+    if (backupImport) backupImport.addEventListener("change", function () {
+      if (backupImport.files && backupImport.files[0]) importBackup(backupImport.files[0]);
+      backupImport.value = "";
+    });
   }
 
   // 按模块统计完成情况，渲染成可展开列表（环形图 + 名称 + 该模块每天明细）。
@@ -547,7 +727,8 @@
       "air-composition": figAirComposition,      // 空气成分环形图
       "candle-burn": figCandleBurn,          // 蜡烛燃烧动画 + 物化变化判断
       "change-judge": figChangeJudge,        // 物质变化类型判断器
-      "science-inquiry": figScienceInquiry,  // 科学探究步骤拖拽排序
+      "science-inquiry": figScienceInquiry,  // 科学探究步骤排序（拖拽/按钮/键盘）
+      "design-variable": figDesignVariable,  // 控制变量的实验设计练习
       "red-phosphorus": figRedPhosphorus,    // 红磷燃烧测氧气含量
       "oxygen-combustion": figOxygenCombustion, // 三种物质在氧气中燃烧
       "kmno4-setup": figKmno4Setup,          // 高锰酸钾制氧装置图
@@ -803,7 +984,61 @@
     '</div>';
   }
 
-  // ---------- 科学探究步骤拖拽排序 ----------
+  // ---------- 控制变量实验设计练习：点选正确做法，即时反馈 ----------
+  function figDesignVariable(fig) {
+    var scenarios = [
+      {
+        q: "探究「氧气浓度」是否影响铁丝燃烧的剧烈程度时，应怎么做？",
+        options: [
+          "同时改变氧气浓度、铁丝粗细和温度，观察铁丝燃烧",
+          "只改变氧气浓度，其他因素（粗细、温度等）都相同，比较铁丝燃烧情况",
+          "只改变铁丝粗细，氧气浓度等其他条件都不改"
+        ],
+        correct: 1,
+        fb: "氧气浓度是被探究的变量，只改变它，其余变量保持相同，才能判断是不是氧气浓度在影响结果。"
+      },
+      {
+        q: "探究「是否有催化剂」是否影响过氧化氢（双氧水）产生氧气快慢，正确做法是？",
+        options: [
+          "一组加、一组不加催化剂，其余条件（浓度、温度、液量）都一样，比较冒出气泡的快慢",
+          "一组加催化剂，另一组加热，比较哪组更快",
+          "只在加催化剂的一组里各放一点对付，不做对比"
+        ],
+        correct: 0,
+        fb: "两组只在“有没有催化剂”这一个变量上不同，其余都相同，才能说明气泡快慢是不是催化剂引起的。"
+      },
+      {
+        q: "想确认「水温」是否影响蔗糖溶解的快慢，探究时应该？",
+        options: [
+          "改变水温，同时保持糖量、水量、是否搅拌等其他条件相同，比较溶解快慢",
+          "水温调高，同时还用力搅拌，想跑到处更快",
+          "觉得水温越高一定越快，无需对比"
+        ],
+        correct: 0,
+        fb: "温度是变量，糖量、水量、搅拌这些控制变量都要保持不变，结论才成立。"
+      }
+    ];
+    var cards = scenarios.map(function (sc, si) {
+      var opts = sc.options.map(function (o, oi) {
+        return '<label class="option"><input type="radio" name="dv-' + si + '" value="' + oi + '"> ' + escapeHtml(o) + "</label>";
+      }).join("");
+      return (
+        '<div class="dv-scenario" data-dvsp="' + si + '" data-answer="' + sc.correct + '" data-fb="' + escapeHtml(sc.fb) + '">' +
+          "<h3 class='dv-q'>" + escapeHtml(sc.q) + "</h3>" +
+          opts +
+          '<p class="dv-fb" data-dvfb role="status" aria-live="polite"></p>' +
+        "</div>"
+      );
+    }).join("");
+    return (
+      '<div class="fig-dv" data-dv>' +
+        '<p class="inq-instruct">每题先自己判断，再点选；答题后即时看解析。</p>' +
+        cards +
+      "</div>"
+    );
+  }
+
+  // ---------- 科学探究步骤排序（Pointer Events 触摸拖拽 + ↑↓ 按钮，两套并存） ----------
   function figScienceInquiry(fig) {
     var steps = [
       { id: "ask", text: "提出问题", correct: 0 },
@@ -815,21 +1050,28 @@
     ];
     var initialOrder = [3, 0, 4, 1, 5, 2];
     var slots = steps.map(function (_, i) {
-      return '<div class="inq-slot" data-index="' + i + '"><span class="slot-num">' + (i + 1) + '</span><span class="slot-hint">拖放步骤到此处</span></div>';
+      var itemIndex = initialOrder[i];
+      return (
+        '<li class="inq-slot" data-index="' + i + '">' +
+          '<span class="slot-num">' + (i + 1) + "</span>" +
+          '<span class="inq-item" data-id="' + steps[itemIndex].id + '" tabindex="0" role="button" aria-describedby="inq-instruct">' + steps[itemIndex].text + "</span>" +
+          '<span class="inq-arrows">' +
+            '<button type="button" class="arrow-btn" data-shift="-1" aria-label="上移一步"' + (i === 0 ? " disabled" : "") + ">↑</button>" +
+            '<button type="button" class="arrow-btn" data-shift="1" aria-label="下移一步"' + (i === steps.length - 1 ? " disabled" : "") + ">↓</button>" +
+          "</span>" +
+        "</li>"
+      );
     }).join("");
-    var draggables = initialOrder.map(function (si) {
-      return '<div class="inq-drag" data-id="' + steps[si].id + '" draggable="true">' + steps[si].text + '</div>';
-    }).join("");
-    var resetBtn = '<button type="button" class="fig-pill" id="inq-reset">重置</button>';
-    var checkBtn = '<button type="button" class="fig-pill" id="inq-check">检查顺序</button>';
-    var resultDiv = '<div class="inq-result" data-inqresult></div>';
+    var resetBtn = '<button type="button" class="fig-pill" data-inq-reset>重置</button>';
+    var checkBtn = '<button type="button" class="fig-pill" data-inq-check>检查顺序</button>';
+    var resultDiv = '<div class="inq-result" data-inqresult role="status" aria-live="polite"></div>';
     return '<div class="fig-inquiry" data-inquiry>' +
-      '<p class="inq-instruct">将下列步骤拖放到正确位置（科学探究顺序）：</p>' +
-      '<div class="inq-slots">' + slots + '</div>' +
-      '<div class="inq-draggables" data-inqdrag>' + draggables + '</div>' +
-      '<div class="fig-ctrl inq-ctrl">' + checkBtn + resetBtn + '</div>' +
+      '<p class="inq-instruct" id="inq-in-hint">把下列六个步骤按正确顺序排好：可拖动卡片换位，或用每格右侧的 ↑↓ 按钮。顺序为 提出问题 → 猜想与假设 → 制定计划 → 进行实验 → 收集证据 → 得出结论。</p>' +
+      '<ol class="inq-slots">' + slots + "</ol>" +
+      '<p class="inq-keys hint">键盘操作：聚焦任一步骤后按 ↑/↓ 可换位。</p>' +
+      '<div class="fig-ctrl inq-ctrl">' + checkBtn + resetBtn + "</div>" +
       resultDiv +
-    '</div>';
+    "</div>";
   }
 
   // ---------- 红磷燃烧测定氧气含量 ----------
@@ -1196,9 +1438,25 @@
 
     var totalQ = quiz.questions.length;
 
+    // 上一课 / 下一课（仅在 ready 天内流转，跳过未发布天）。
+    var dayIndexes = [];
+    manifest.forEach(function (d, i) { if (d.ready) dayIndexes.push(i); });
+    var cur = dayIndexes.indexOf(parseInt(dayKey, 10) - 1);
+    var prevReady = cur > 0 ? manifest[dayIndexes[cur - 1]] : null;
+    var nextReady = cur >= 0 && cur < dayIndexes.length - 1 ? manifest[dayIndexes[cur + 1]] : null;
+    var dayNav = '<nav class="day-nav" aria-label="课程流转">' +
+      (prevReady
+        ? '<a class="dn-prev" href="?day=' + prevReady.day + '">← 上一课：DAY ' + prevReady.day + " " + escapeHtml(prevReady.title) + "</a>"
+        : '<span class="dn-prev is-dim">← 第一课</span>') +
+      (nextReady
+        ? '<a class="dn-next" href="?day=' + nextReady.day + '">下一课：DAY ' + nextReady.day + " " + escapeHtml(nextReady.title) + " →</a>"
+        : '<span class="dn-next is-dim">已是最后一课</span>') +
+   "</nav>";
+
     app.innerHTML =
       '<div class="page">' +
         '<p class="breadcrumb"><a href="?">← 返回首页</a></p>' +
+        dayNav +
         '<header class="hero">' +
           '<p class="eyebrow">DAY ' + escapeHtml(day.dayNumber) + "</p>" +
           "<h1>" + escapeHtml(day.title) + "</h1>" +
@@ -1212,6 +1470,15 @@
         "</header>" +
         sections +
         checkpoint +
+        '<section class="section reading">' +
+          "<h2>本课记录</h2>" +
+          '<p id="read-state" class="reading-state" role="status">' + (saved && saved.read ? "✔ 你已标记本课为已读。" : "还没标记为已读。") + "</p>" +
+          '<button type="button" class="primary ghost" id="btn-mark-read">' + (saved && saved.read ? "标记为未读完" : "标记为已读完") + "</button>" +
+          '<label class="note-label" for="day-note">我的笔记（保存在本机，便于回看）：</label>' +
+          '<textarea id="day-note" rows="4" placeholder="写下你的疑问、要点或错题总结…">' + escapeHtml(saved && saved.note ? saved.note : "") + "</textarea>" +
+          '<button type="button" class="primary" id="btn-save-note">保存笔记</button>' +
+          '<p id="note-state" class="reading-state" role="status"></p>' +
+        "</section>" +
         '<section class="quiz" id="quiz-section">' +
           "<h2>今日练习</h2>" +
           '<p class="hint">先独立作答，再查看解析。</p>' +
@@ -1230,6 +1497,32 @@
       "</div>";
 
     bindOptionSelection();
+
+    // 本课记录：标记已读 / 保存笔记（都写入当天记录）。
+    var markRead = document.querySelector("#btn-mark-read");
+    var readState = document.querySelector("#read-state");
+    if (markRead && readState) {
+      markRead.addEventListener("click", function () {
+        var rec = dayRecord(dayKey) || { attempts: [], best: 0 };
+        rec.read = !rec.read;
+        rec.readAt = rec.read ? new Date().toISOString() : null;
+        saveDayRecord(dayKey, rec);
+        readState.textContent = rec.read ? "✔ 你已标记本课为已读。" : "未标记为已读。";
+        markRead.textContent = rec.read ? "标记为未读完" : "标记为已读完";
+      });
+    }
+    var saveNote = document.querySelector("#btn-save-note");
+    var noteArea = document.querySelector("#day-note");
+    var noteState = document.querySelector("#note-state");
+    if (saveNote && noteArea && noteState) {
+      saveNote.addEventListener("click", function () {
+        var rec = dayRecord(dayKey) || { attempts: [], best: 0 };
+        rec.note = noteArea.value;
+        if (noteArea.value) rec.read = true; // 写笔记默认视为已读
+        saveDayRecord(dayKey, rec);
+        noteState.textContent = "笔记已保存。";
+      });
+    }
 
     // 配图交互：量筒读数视角切换。
     document.querySelectorAll(".fig-cyl").forEach(function (box) {
@@ -1357,111 +1650,153 @@
       });
     });
 
-    // 科学探究步骤拖拽排序
+    // 科学探究步骤排序：Pointer Events 触摸/鼠标拖拽 + ↑↓ 按钮 + 键盘，三种方式并存。
     document.querySelectorAll("[data-inquiry]").forEach(function (box) {
-      var steps = [
-        { id: "ask", text: "提出问题" },
-        { id: "hypo", text: "猜想与假设" },
-        { id: "plan", text: "制定计划" },
-        { id: "experiment", text: "进行实验" },
-        { id: "evidence", text: "收集证据" },
-        { id: "conclude", text: "得出结论" }
-      ];
-      var correctOrder = steps.map(function (s) { return s.id; });
-      var initialOrder = [3, 0, 4, 1, 5, 2];
-      var currentOrder = initialOrder.slice();
-      var slots = box.querySelectorAll(".inq-slot");
-      var draggables = box.querySelectorAll(".inq-drag");
+      var correctOrder = ["ask", "hypo", "plan", "experiment", "evidence", "conclude"];
+      var slots = Array.prototype.slice.call(box.querySelectorAll(".inq-slot"));
       var resultDiv = box.querySelector("[data-inqresult]");
-      var checkBtn = box.querySelector("#inq-check");
-      var resetBtn = box.querySelector("#inq-reset");
+      var checkBtn = box.querySelector("[data-inq-check]");
+      var resetBtn = box.querySelector("[data-inq-reset]");
 
-      // 将 draggable 元素放入初始位置
-      draggables.forEach(function (el, i) {
-        slots[i].appendChild(el);
-        el.addEventListener("dragstart", function (e) {
-          e.dataTransfer.setData("text/plain", el.dataset.id);
-          el.classList.add("is-dragging");
-        });
-        el.addEventListener("dragend", function () {
-          el.classList.remove("is-dragging");
-        });
-      });
-
-      slots.forEach(function (slot) {
-        slot.addEventListener("dragover", function (e) {
-          e.preventDefault();
-          slot.classList.add("is-drop-target");
-        });
-        slot.addEventListener("dragleave", function () {
-          slot.classList.remove("is-drop-target");
-        });
-        slot.addEventListener("drop", function (e) {
-          e.preventDefault();
-          slot.classList.remove("is-drop-target");
-          var id = e.dataTransfer.getData("text/plain");
-          var el = box.querySelector("[data-id='" + id + "']");
-          if (!el) return;
-          // 如果目标 slot 已有元素，交换
-          if (slot.querySelector(".inq-drag")) {
-            var existing = slot.querySelector(".inq-drag");
-            var placeholder = slot.querySelector(".slot-hint");
-            var parent = existing.parentNode;
-            if (parent === slot) {
-              parent.appendChild(existing);
-            }
-            slot.appendChild(existing);
-          }
-          slot.appendChild(el);
-          // 更新 currentOrder
-          var newOrder = [];
-          slots.forEach(function (s) {
-            var d = s.querySelector(".inq-drag");
-            newOrder.push(d ? d.dataset.id : null);
-          });
-          currentOrder = newOrder;
-        });
-      });
-
-      // 将 slot-hint 放入空 slot
-      function refreshSlots() {
-        slots.forEach(function (slot) {
-          if (!slot.querySelector(".inq-drag")) {
-            var hint = document.createElement("span");
-            hint.className = "slot-hint";
-            hint.textContent = "拖放步骤到此处";
-            slot.appendChild(hint);
-          }
+      function currentOrder() {
+        return slots.map(function (s) {
+          var it = s.querySelector(".inq-item");
+          return it ? it.dataset.id : null;
         });
       }
+      function syncArrows() {
+        slots.forEach(function (s, i) {
+          var ups = s.querySelectorAll("[data-shift='-1']");
+          var downs = s.querySelectorAll("[data-shift='1']");
+          ups.forEach(function (b) { b.disabled = i === 0; });
+          downs.forEach(function (b) { b.disabled = i === slots.length - 1; });
+        });
+      }
+      // 与相邻槽位交换卡片。
+      function swap(a, b) {
+        if (a < 0 || b < 0 || a >= slots.length || b >= slots.length || a === b) return;
+        var itA = slots[a].querySelector(".inq-item");
+        var itB = slots[b].querySelector(".inq-item");
+        if (itA) slots[b].appendChild(itA);
+        if (itB) slots[a].appendChild(itB);
+        syncArrows();
+      }
+      function feedback(html) {
+        if (resultDiv) resultDiv.innerHTML = html;
+      }
+
+      // ↑↓ 按钮（也覆盖键盘可达性）。
+      slots.forEach(function (slot, idx) {
+        slot.querySelectorAll(".arrow-btn").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            swap(idx, idx + parseInt(btn.dataset.shift, 10));
+            feedback("");
+          });
+        });
+      });
+
+      // 键盘：聚焦卡片后用 ↑/↓ 换位。
+      box.querySelectorAll(".inq-item").forEach(function (item) {
+        item.addEventListener("keydown", function (e) {
+          var slot = item.closest(".inq-slot");
+          var idx = parseInt(slot.dataset.index, 10);
+          if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); swap(idx, idx - 1); }
+          if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); swap(idx, idx + 1); }
+        });
+      });
+
+      // 拖拽：Pointer Events（iPad Safari / 安卓 / 鼠标通用，不依赖 HTML5 DragEvent）。
+      slots.forEach(function (slot) {
+        var item = slot.querySelector(".inq-item");
+        if (!item) return;
+        var dragging = false;
+        var moved = false;
+        var dragSlot = null;
+        var startX = 0, startY = 0;
+
+        item.addEventListener("pointerdown", function (e) {
+          if (e.button !== 0 && e.pointerType !== "touch") return;
+          if (e.target.closest(".arrow-btn")) return;
+          dragging = true;
+          moved = false;
+          dragSlot = slot;
+          startX = e.clientX;
+          startY = e.clientY;
+          item.setPointerCapture(e.pointerId);
+          item.classList.add("is-dragging");
+          box.classList.add("is-dragging");
+          e.preventDefault();
+        });
+        item.addEventListener("pointermove", function (e) {
+          if (!dragging) return;
+          if (!moved) {
+            var dx = e.clientX - startX, dy = e.clientY - startY;
+            if (dx * dx + dy * dy < 64) return; // 轻微位移视为点击，不启动拖拽
+            moved = true;
+          }
+          e.preventDefault();
+          clearTargets();
+          var el = document.elementFromPoint(e.clientX, e.clientY);
+          var target = null;
+          while (el && el !== box) {
+            if (el.classList && el.classList.contains("inq-slot")) { target = el; break; }
+            el = el.parentNode;
+          }
+          if (target && target !== dragSlot) {
+            target.classList.add("is-drop-target");
+            swap(slots.indexOf(dragSlot), slots.indexOf(target));
+            dragSlot = target;
+          }
+        });
+        function endDrag(e) {
+          if (!dragging) return;
+          dragging = false;
+          if (item) item.classList.remove("is-dragging");
+          box.classList.remove("is-dragging");
+          clearTargets();
+          if (moved && item && item.setPointerCapture) {
+            try { item.releasePointerCapture(e.pointerId); } catch (err) { /* 无关紧要 */ }
+          }
+        }
+        item.addEventListener("pointerup", endDrag);
+        item.addEventListener("pointercancel", endDrag);
+
+        // 悬停高亮由 pointermove 的 elementFromPoint 判定。
+        function clearTargets() {
+          slots.forEach(function (s) { s.classList.remove("is-drop-target"); });
+        }
+      });
 
       if (checkBtn) {
         checkBtn.addEventListener("click", function () {
-          var placed = currentOrder.filter(Boolean);
-          if (placed.length !== steps.length) {
-            if (resultDiv) resultDiv.innerHTML = '<span class="hint fb-ko">请把全部步骤拖放到槽位中。</span>';
+          var placed = currentOrder().filter(Boolean);
+          if (placed.length !== correctOrder.length) {
+            feedback('<span class="hint fb-ko">还有步骤没有排好，请先放齐六个步骤。</span>');
             return;
           }
-          var isCorrect = placed.every(function (id, i) { return id === correctOrder[i]; });
-          if (resultDiv) {
-            resultDiv.innerHTML = isCorrect
-              ? '<span class="hint fb-ok">✔ 正确！科学探究顺序：提出问题 → 猜想与假设 → 制定计划 → 进行实验 → 收集证据 → 得出结论。</span>'
-              : '<span class="hint fb-ko">✘ 顺序有误，再想想。提示：先有问题和猜想，才能设计实验。</span>';
-          }
+          var ok = placed.every(function (id, i) { return id === correctOrder[i]; });
+          feedback(ok
+            ? '<span class="hint fb-ok">✔ 正确！提出问题 → 猜想与假设 → 制定计划 → 进行实验 → 收集证据 → 得出结论。</span>'
+            : '<span class="hint fb-ko">✘ 顺序有误，再想想。提示：先有问题和猜想，才能设计实验。</span>');
         });
       }
       if (resetBtn) {
         resetBtn.addEventListener("click", function () {
-          currentOrder = initialOrder.slice();
-          slots.forEach(function (slot) { slot.innerHTML = ''; });
-          draggables.forEach(function (el, i) {
-            slots[i].appendChild(el);
+          var initial = ["experiment", "ask", "evidence", "hypo", "conclude", "plan"];
+          var byId = {};
+          slots.forEach(function (s) {
+            var it = s.querySelector(".inq-item");
+            if (it) byId[it.dataset.id] = it;
           });
-          refreshSlots();
-          if (resultDiv) resultDiv.innerHTML = "";
+          slots.forEach(function (s, i) {
+            var it = byId[initial[i]];
+            if (it) s.appendChild(it);
+          });
+          syncArrows();
+          feedback("");
         });
       }
-      refreshSlots();
+      syncArrows();
     });
 
     // 红磷燃烧阶段切换
@@ -1558,6 +1893,29 @@
           }
           var note = box.querySelector("[data-kmnote]");
           if (note) note.textContent = p ? p.note : "";
+        });
+      });
+    });
+
+    // 控制变量练习：点选后即时反馈。
+    document.querySelectorAll("[data-dvsp]").forEach(function (card) {
+      var answer = parseInt(card.dataset.answer, 10);
+      var fb = card.querySelector("[data-dvfb]");
+      card.querySelectorAll("input").forEach(function (input) {
+        input.addEventListener("change", function () {
+          card.querySelectorAll(".option").forEach(function (l, oi) {
+            l.classList.remove("is-correct", "is-wrong");
+            if (oi === answer) l.classList.add("is-correct");
+          });
+          var chosenVal = parseInt(input.value, 10);
+          if (chosenVal !== answer) {
+            var chosen = input.closest(".option");
+            if (chosen) chosen.classList.add("is-wrong");
+          }
+          if (fb) {
+            fb.innerHTML = (chosenVal === answer ? '<span class="hint fb-ok">✔ 回答正确。</span>' : '<span class="hint fb-ko">✘ 再想想。</span>') +
+              "<br>" + escapeHtml(card.dataset.fb);
+          }
         });
       });
     });
@@ -1785,7 +2143,9 @@
           day: dayKey,
           questionIndex: item.questionIndex,
           prompt: quiz.questions[item.questionIndex].prompt,
-          answeredAt: new Date().toISOString()
+          answeredAt: new Date().toISOString(),
+          dueAt: new Date().toISOString(),
+          wrongStreak: 1
         });
       });
       writeJSON(LS_REVIEW, review);
@@ -1798,14 +2158,52 @@
     });
   }
 
-  // ---------- 跨天错题复习页：重新作答答错的题 ----------
+  // ---------- 跨天错题复习页：重新作答答错的题（支持按知识点筛选 + 简单间隔复习） ----------
   function renderReview() {
     var queue = getReviewQueue();
-    if (!queue.length) {
+    var topic = params.get("topic");
+    var showAll = params.get("all") === "1";
+
+    // 汇总全部失效知识点（用于筛选芯片），不因筛选而丢失。
+    var topics = {};
+    queue.forEach(function (item) {
+      var q = getQuiz(item.day);
+      var qq = q && q.questions[item.questionIndex];
+      var t = (qq && qq.topic) || "未标注";
+      topics[t] = (topics[t] || 0) + 1;
+    });
+
+    // 到期判定：无 dueAt 的旧记录视为已到期。
+    function isDue(item) {
+      return !item.dueAt || new Date(item.dueAt).getTime() <= Date.now();
+    }
+
+    var list = queue.filter(function (item) {
+      if (topic) {
+        var q = getQuiz(item.day);
+        var qq = q && q.questions[item.questionIndex];
+        var t = (qq && qq.topic) || "未标注";
+        if (t !== topic) return false;
+      }
+      if (!showAll && !isDue(item)) return false;
+      return true;
+    });
+
+    if (!list.length) {
+      var emptyMsg;
+      if (topic) {
+        emptyMsg = "「" + escapeHtml(topic) + "」相关的错题目前没有待复习项。" +
+          (queue.length ? ' <a href="?view=review">查看全部错题</a>' : "");
+      } else if (queue.length) {
+        emptyMsg = "当前没有到期的错题，稍后再来复习即可。" +
+          ' <a href="?view=review&amp;all=1">（想提前复习，可立即复习全部）</a>';
+      } else {
+        emptyMsg = "当前没有待复习的错题。做新练习后答错的题会自动进入复习队列。";
+      }
       app.innerHTML =
         '<div class="page">' +
           '<section class="section">' +
-            '<p class="hint">当前没有待复习的错题。做新练习后答错的题会自动进入复习队列。</p>' +
+            "<p class='hint'>" + emptyMsg + "</p>" +
             '<p><a href="?">← 返回首页</a></p>' +
           "</section>" +
         "</div>";
@@ -1813,7 +2211,7 @@
     }
 
     var byDay = {};
-    queue.forEach(function (item) {
+    list.forEach(function (item) {
       (byDay[item.day] = byDay[item.day] || []).push(item);
     });
     var days = Object.keys(byDay).sort();
@@ -1833,7 +2231,7 @@
     }));
 
     loadAll.then(function () {
-      renderReviewForm(days, byDay);
+      renderReviewForm(days, byDay, topics, topic, showAll);
     }).catch(function () {
       app.innerHTML =
         '<div class="page">' +
@@ -1843,7 +2241,7 @@
     });
   }
 
-  function renderReviewForm(days, byDay) {
+  function renderReviewForm(days, byDay, topics, topic, showAll) {
     var sectionsHtml = days.map(function (d) {
       var quiz = getQuiz(d);
       var meta = metaFor(d);
@@ -1851,6 +2249,7 @@
       var qHtml = items.map(function (item) {
         var q = quiz && quiz.questions[item.questionIndex];
         if (!q) return "";
+        var dueMark = (!showAll) ? "" : "";
         var options = q.options.map(function (opt, i) {
           return (
             '<label class="option"><input type="radio" name="rq' + d + "-" + item.questionIndex + '" value="' + i + '"> ' +
@@ -1872,14 +2271,27 @@
       );
     }).join("");
 
+    var chips = '<div class="topic-chips" role="group" aria-label="按知识点筛选">' +
+      '<a class="chip' + (topic ? "" : " is-active") + '" href="?view=review' + (showAll ? "&amp;all=1" : "") + '">全部</a>' +
+      Object.keys(topics).sort().map(function (t) {
+        return '<a class="chip' + (t === topic ? " is-active" : "") + '" href="?view=review&amp;topic=' +
+          encodeURIComponent(t) + (showAll ? "&amp;all=1" : "") + '">' + escapeHtml(t) + " (" + topics[t] + ")</a>";
+      }).join("") +
+    "</div>";
+
+    var dueToggle = '<a class="hint due-toggle" href="?view=review' + (showAll ? "" : "&amp;all=1") + '">' +
+      (showAll ? "只看待复习的题" : "复习全部错题（含间隔中的）") + "</a>";
+
     app.innerHTML =
       '<div class="page">' +
         '<p class="breadcrumb"><a href="?">← 返回首页</a></p>' +
         '<header class="hero">' +
           '<p class="eyebrow">错题复习</p>' +
           "<h1>把答错的题再做一遍</h1>" +
-          '<p class="hint">答对的题会移出复习队列；答错的会继续留在队列里，供下次再测。</p>' +
+          '<p class="hint">答对的题会移出复习队列；答错的会延期再复习，避免过度刷题。</p>' +
         "</header>" +
+        chips +
+        dueToggle +
         '<form id="review-form" novalidate>' +
           sectionsHtml +
           '<p id="review-warning" class="hint warning" hidden>还有题目未作答，请全部完成后再提交。</p>' +
@@ -1917,16 +2329,23 @@
         var correct = q && selected && selected.value === q.answer;
         if (correct) correctCount += 1;
 
-        // 无论对错都先移除旧错题；答错的重新入队。
+        // 无论对错都先移除旧错题；答错的按间隔延期重新入队。
+        var old = null;
         queue = queue.filter(function (item) {
-          return !(item.day === d && item.questionIndex === qidx);
+          if (item.day === d && item.questionIndex === qidx) { old = item; return false; }
+          return true;
         });
         if (!correct && q) {
+          var streak = (old && typeof old.wrongStreak === "number" ? old.wrongStreak : 1) + 1;
+          var gap = Math.min(streak, 3); // 越反复错，间隔拉到 1/2/3 天后到期
+          var due = new Date(Date.now() + gap * 24 * 60 * 60 * 1000);
           queue.push({
             day: d,
             questionIndex: qidx,
             prompt: q.prompt,
-            answeredAt: new Date().toISOString()
+            answeredAt: new Date().toISOString(),
+            dueAt: due.toISOString(),
+            wrongStreak: streak
           });
         }
 
@@ -1945,7 +2364,7 @@
         var note = document.createElement("p");
         note.className = "hint feedback " + (correct ? "fb-ok" : "fb-ko");
         note.setAttribute("role", "status");
-        note.textContent = (correct ? "回答正确。" : "再想一想。") + (q ? q.explanation : "");
+        note.textContent = (correct ? "回答正确。" : "再想一想。答错的题 " + (Math.min(((old && typeof old.wrongStreak === "number" ? old.wrongStreak : 1)) + 1, 3)) + " 天后会再出现。") + (q ? q.explanation : "");
         field.append(note);
       });
 

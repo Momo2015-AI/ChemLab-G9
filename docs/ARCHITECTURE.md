@@ -19,6 +19,7 @@
 | `content/days/day-XX.js` | 某天的教学内容对象 |
 | `quiz/day-XX.js` | 某天的题目对象 |
 | `scripts/validate-content.mjs` | 内容数据一致性校验（生产前必跑） |
+| `scripts/check-science.mjs` | 科学正确性巡检：高频考点与易错表述 + 安全边界抽查（`--fatal` 可阻断） |
 | `scripts/build-single.mjs` | 单文件构建：内联 manifest / 天 / 题目 / 样式 / 逻辑 |
 | `tests/smoke.mjs` | 构建产物冒烟测试 |
 | `assets/` | 经审核可用的本地媒体资源 |
@@ -40,8 +41,8 @@
 
 | 键 | 内容 |
 | --- | --- |
-| `chemlab-g9:v3:day-XX` | 该天的尝试历史 `{ attempts: [{score, total, answers, completedAt}], best }`，重做追加而非覆盖；旧版单快照记录读取时自动迁移 |
-| `chemlab-g9:v3:review` | 跨天错题复习队列：`{day, questionIndex, prompt, answeredAt}`，可据此重新作答指定题并维护"答对移除、答错保留" |
+| `chemlab-g9:v3:day-XX` | 该天的学习记录 `{ attempts, best, read, readAt, note }`：`read/readAt` 标记是否已读完、`note` 为单课笔记；重做追加而非覆盖；旧版单快照自动迁移 |
+| `chemlab-g9:v3:review` | 跨天错题复习队列：`{day, questionIndex, prompt, answeredAt, dueAt, wrongStreak}`，`dueAt` 决定简单间隔复习到期日、`wrongStreak` 决定下次间隔天数 |
 | `chemlab-g9:v3:stats` | 激励层附加统计：`{ bestCombo, unlocked }` 等，与连击、成就解锁等本地判定相关 |
 
 不保存姓名、账号等个人身份信息。
@@ -51,7 +52,7 @@
 全部基于 `localStorage` 本地可判定，不依赖账号或网络：
 
 - **连续学习天数** `getStreak()`：按作答日期逐日回溯，最多连续几天作答即连续几天。
-- **薄弱知识点** `getWeakTopics()`：从错题复习队列按题目 `topic` 聚合，取出现次数最多的前 5 个。
+- **薄弱知识点** `getWeakTopics()`：从错题复习队列按题目 `topic` 聚合，取出现次数最多的前 5 个；首页标签可点击跳转到对应知识点的复习筛选页。
 - **成就徽章** `ACHIEVEMENTS` 与 `evaluateAchievements()`：8 枚徽章（首次完成、累计 5 天、满分、含挑战满分、连对 5、连续 3 天、连续 7 天、错题清零），解锁状态存于 `stats.unlocked`。
 - **迷你折线** `miniChart()`：学习日卡片上的成长趋势图，由该天尝试历史绘制。
 
@@ -65,6 +66,8 @@
 - `airtight-test`：检查装置气密性（气泡动画，不漏气/漏气可切换）
 - `graduated-cylinder`：量筒静态示意
 - `air-composition`：空气成分环形图 + 图例（Day04 使用）
+- `science-inquiry`：科学探究步骤排序——Pointer Events 触摸/鼠标拖拽 + 各格 ↑↓ 按钮 + 键盘 ↑↓（多方式并存，兼容 iPad Safari）
+- `design-variable`：控制变量的实验设计练习（Day06 使用，点选即时反馈）
 
 可复用的 SVG 图元（渐变、玻璃器皿描边、烧杯、气泡等）收在 `svgParts`，新配图按需组装，避免每个图重写整段 SVG。量筒读数的几何与文案是单一事实源 `CYLINDER_STATES`，渲染与交互共用同一份数据。
 

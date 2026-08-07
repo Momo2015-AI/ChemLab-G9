@@ -198,7 +198,8 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 
 /* ---------- 薄弱知识点 ---------- */
 .weak-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.weak-tag { display: inline-flex; align-items: center; gap: 6px; background: #fdeeed; color: #b0400f; border: 1px solid #f3c3bd; border-radius: 999px; padding: 3px 12px; font-size: .85rem; font-weight: 600; }
+.weak-tag { display: inline-flex; align-items: center; gap: 6px; background: #fdeeed; color: #b0400f; border: 1px solid #f3c3bd; border-radius: 999px; padding: 3px 12px; font-size: .85rem; font-weight: 600; text-decoration: none; }
+.weak-tag:hover, .weak-tag:active { background: #fbd9d4; border-color: #e07a6f; }
 .weak-tag b { font-size: .9rem; }
 
 /* ---------- 实验安全徽章 ---------- */
@@ -388,4 +389,77 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
   .air-tube line { stroke: #d9e9e7; }
   .cyl-scale { stroke: #8faaa7; }
   .day-card.is-done { background: #1d3f42; }
+}
+
+/* ---------- 学习页：上一课 / 下一课流转 ---------- */
+.day-nav { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; margin: 14px 0; }
+.day-nav a { text-decoration: none; font-weight: 700; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; box-shadow: var(--shadow-sm); }
+.day-nav a:hover, .day-nav a:active { border-color: var(--brand); background: var(--brand-soft); }
+.day-nav .is-dim { color: var(--muted); font-weight: 600; padding: 10px 14px; opacity: .6; }
+.dn-prev, .dn-next { min-height: 44px; }
+
+/* ---------- 学习页：本课记录（已读 + 笔记） ---------- */
+.reading .reading-state { font-weight: 700; color: var(--muted); margin: 8px 0; }
+.reading .note-label { display: block; margin: 16px 0 6px; font-weight: 700; }
+.reading textarea#day-note { width: 100%; min-height: 96px; font: inherit; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); resize: vertical; }
+.reading textarea#day-note:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
+.primary.ghost { background: transparent; color: var(--brand); border: 1.5px solid var(--brand); }
+.primary.ghost:hover { background: var(--brand-soft); }
+
+/* ---------- 首页：快速查找 ---------- */
+.search-field { display: block; }
+.search-field span { display: block; margin-bottom: 6px; color: var(--muted); }
+.search-field input { width: 100%; font: inherit; padding: 13px 16px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); }
+.search-field input:focus { outline: 2px solid var(--brand); border-color: var(--brand); }
+.search-results { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.search-empty { color: var(--muted); margin: 4px 0; }
+.search-hit { display: flex; gap: 10px; align-items: flex-start; text-decoration: none; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.search-hit:hover, .search-hit:active { border-color: var(--brand); }
+.sh-tag { flex: none; font-size: .72rem; font-weight: 700; background: var(--brand-soft); color: var(--brand); border-radius: 999px; padding: 2px 9px; margin-top: 2px; }
+.sh-body { display: block; font-size: .9rem; color: var(--ink); line-height: 1.5; }
+.sh-body b { display: block; color: var(--brand); font-weight: 700; margin-bottom: 2px; }
+
+/* ---------- 首页：数据备份 ---------- */
+.backup-section { overflow: visible; }
+.backup-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.backup-actions .primary { margin-top: 0; display: inline-flex; align-items: center; }
+.backup-actions input[type="file"] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.backup-actions label.primary { cursor: pointer; }
+
+/* ---------- 复习页：知识点筛选 ---------- */
+.topic-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+.topic-chips .chip { text-decoration: none; font-size: .85rem; font-weight: 700; padding: 6px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); min-height: 44px; display: inline-flex; align-items: center; }
+.topic-chips .chip.is-active { background: var(--brand); border-color: var(--brand); color: #fff; }
+.due-toggle { display: inline-block; margin-top: 4px; text-decoration: underline; }
+
+/* ---------- 科学探究排序（触摸拖拽 + ↑↓） ---------- */
+.fig-inquiry { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+.inq-instruct { font-size: .88rem; color: var(--muted); margin: 0; }
+.inq-keys { font-size: .8rem; }
+.inq-slots { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 340px; }
+.inq-slot { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 8px 6px 12px; border: 2px solid var(--line); border-radius: 10px; background: var(--paper); transition: border-color .2s, background .2s; }
+.inq-slot.is-drop-target { border-color: var(--brand); background: var(--brand-soft); }
+.slot-num { font-weight: 700; color: var(--brand); font-size: .9rem; min-width: 18px; }
+.inq-item { flex: 1; display: inline-flex; align-items: center; padding: 4px 10px; background: var(--surface); border: 1px solid var(--brand); border-radius: 6px; font-size: .85rem; font-weight: 600; color: var(--brand); touch-action: none; cursor: grab; user-select: none; }
+.inq-item.is-dragging { opacity: .55; border-style: dashed; }
+.fig-inquiry.is-dragging .inq-item { cursor: grabbing; }
+.inq-arrows { display: inline-flex; flex-direction: column; gap: 4px; }
+.arrow-btn { width: 40px; height: 32px; min-height: 32px; font-size: 1rem; line-height: 1; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.arrow-btn:hover:not(:disabled) { border-color: var(--brand); background: var(--brand-soft); }
+.arrow-btn:disabled { opacity: .35; cursor: not-allowed; }
+.inq-ctrl { display: flex; gap: 8px; }
+.inq-result { font-size: .88rem; width: 100%; text-align: center; }
+
+/* ---------- 控制变量实验设计练习 ---------- */
+.fig-dv { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 560px; margin: 0 auto; text-align: left; }
+.dv-scenario { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--paper); }
+.dv-q { margin: 0 0 10px; font-size: .95rem; line-height: 1.5; }
+.dv-fb { margin: 8px 0 0; font-size: .88rem; color: var(--muted); line-height: 1.6; }
+.fig-dv .option { font-size: .9rem; }
+
+@media (prefers-color-scheme: dark) {
+  .topic-chips .chip.is-active { background: var(--brand); color: #08191b; }
+  .search-hit { background: #163033; }
+  .dv-scenario { background: #12282b; }
+  .inq-slot { background: #12282b; }
 }
