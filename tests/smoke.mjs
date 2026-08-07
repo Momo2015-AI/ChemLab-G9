@@ -171,7 +171,7 @@ Object.keys(expected11to18).forEach((key) => {
 });
 
 console.log("\n[Day19-30 学习页]");
-const expected19to30 = { "19": 8, "20": 8, "21": 8, "22": 8, "23": 8, "24": 8, "25": 8, "26": 8, "27": 8, "28": 8, "29": 8, "30": 8 };
+const expected19to30 = { "19": 8, "20": 10, "21": 10, "22": 10, "23": 8, "24": 8, "25": 8, "26": 8, "27": 8, "28": 8, "29": 8, "30": 8 };
 Object.keys(expected19to30).forEach((key) => {
   setSearch("?day=" + key);
   runApp();

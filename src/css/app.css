@@ -650,3 +650,71 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 .vl-result { margin: 0 0 6px; font-size: .95rem; font-weight: 700; color: var(--brand-strong); }
 .vl-steps { margin: 0; font-size: .85rem; color: var(--muted); line-height: 1.5; }
 .vl-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+
+/* ---------- 方程式计算分步脚手架（Day22） ---------- */
+.fig-ecs { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 440px; }
+.ecs-titlebar { font-size: .95rem; font-weight: 700; color: var(--brand); text-align: center; }
+.ecs-progress { display: flex; gap: 4px; justify-content: center; }
+.ecs-prog-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line); transition: all .2s; }
+.ecs-prog-dot.done { background: var(--ok); }
+.ecs-prog-dot.current { background: var(--brand); transform: scale(1.2); }
+.ecs-step-panel { display: none; border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: var(--surface); }
+.ecs-step-panel.is-active { display: block; }
+.ecs-step-label { font-size: .82rem; color: var(--muted); margin: 0 0 6px; }
+.ecs-step-label strong { color: var(--brand); }
+.ecs-row { display: flex; align-items: center; gap: 6px; font-size: 1rem; font-family: "Courier New", monospace; margin-bottom: 6px; flex-wrap: wrap; }
+.ecs-input { width: 44px; height: 32px; text-align: center; border: 2px solid var(--line); border-radius: 6px; font-size: 1rem; font-weight: 700; color: var(--brand-strong); background: var(--paper); }
+.ecs-input:focus { border-color: var(--brand); outline: none; }
+.ecs-input.is-ok { border-color: var(--ok); background: #e8f8ef; }
+.ecs-input.is-no { border-color: var(--ko); background: #fde8e8; }
+.ecs-opt-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.ecs-opt-btn { padding: 6px 14px; border: 2px solid var(--line); border-radius: 8px; background: var(--surface); font-size: .88rem; cursor: pointer; transition: all .15s; touch-action: manipulation; }
+.ecs-opt-btn:hover { border-color: var(--brand); }
+.ecs-opt-btn.is-active { border-color: var(--brand); background: var(--brand-soft); }
+.ecs-opt-btn.is-correct { border-color: var(--ok); background: #e8f8ef; color: var(--ok); }
+.ecs-opt-btn.is-wrong { border-color: var(--ko); background: #fde8e8; color: var(--ko); }
+.ecs-next-btn { padding: 8px 20px; border: none; border-radius: 8px; background: var(--brand); color: #fff; font-size: .9rem; font-weight: 600; cursor: pointer; margin-top: 8px; touch-action: manipulation; }
+.ecs-next-btn:disabled { opacity: .4; cursor: not-allowed; }
+.ecs-feedback { margin-top: 8px; font-size: .88rem; font-weight: 600; }
+.ecs-fb-ok { color: var(--ok); }
+.ecs-fb-no { color: var(--ko); }
+.ecs-complete { text-align: center; padding: 16px; background: var(--brand-soft); border-radius: 10px; }
+.ecs-complete p { margin: 0 0 4px; font-size: .95rem; font-weight: 700; color: var(--ok); }
+.ecs-complete span { font-size: .85rem; color: var(--muted); }
+.ecs-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+
+/* ---------- 方程式拼写练习（Day20） ---------- */
+.fig-eb { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 460px; }
+.eb-titlebar { font-size: .95rem; font-weight: 700; color: var(--brand); text-align: center; }
+.eb-problem { font-size: .9rem; font-weight: 600; text-align: center; color: var(--ink); margin: 4px 0; }
+.eb-target { display: flex; align-items: center; gap: 6px; font-size: 1.1rem; font-family: "Courier New", monospace; justify-content: center; margin: 10px 0; flex-wrap: wrap; }
+.eb-slot { display: inline-flex; align-items: center; justify-content: center; min-width: 48px; height: 36px; border: 2px dashed var(--line); border-radius: 6px; background: var(--paper); font-size: 1rem; font-family: "Courier New", monospace; cursor: pointer; transition: all .15s; padding: 0 6px; }
+.eb-slot:hover { border-color: var(--brand); background: var(--brand-soft); }
+.eb-slot.is-filled { border-style: solid; border-color: var(--brand); background: var(--surface); }
+.eb-slot.is-correct { border-color: var(--ok); background: #e8f8ef; }
+.eb-slot.is-wrong { border-color: var(--ko); background: #fde8e8; }
+.eb-options { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.eb-pick { padding: 6px 12px; border: 2px solid var(--line); border-radius: 8px; background: var(--surface); font-size: .9rem; font-family: "Courier New", monospace; cursor: pointer; transition: all .15s; touch-action: manipulation; }
+.eb-pick:hover { border-color: var(--brand); background: var(--brand-soft); }
+.eb-pick.is-used { opacity: .35; pointer-events: none; }
+.eb-ctrl { display: flex; gap: 8px; margin-top: 8px; }
+.eb-btn { padding: 6px 16px; border: 1px solid var(--brand); border-radius: 8px; background: var(--brand-soft); color: var(--brand); font-size: .85rem; font-weight: 600; cursor: pointer; touch-action: manipulation; }
+.eb-btn:hover { background: var(--brand); color: #fff; }
+.eb-result { margin-top: 8px; font-size: .9rem; font-weight: 700; text-align: center; }
+.eb-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+.eb-nav { display: flex; gap: 6px; justify-content: center; margin-bottom: 4px; }
+.eb-nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); cursor: pointer; transition: all .2s; }
+.eb-nav-dot.is-active { background: var(--brand); transform: scale(1.3); }
+
+/* ---------- 知识网络点击导航（Day30） ---------- */
+.kn-card.is-clickable { cursor: pointer; transition: box-shadow .2s, transform .15s; }
+.kn-card.is-clickable:hover { box-shadow: 0 2px 12px rgba(20,108,110,.15); transform: translateY(-1px); }
+.kn-card.is-clickable:active { transform: translateY(0); }
+.kn-jump-badge { display: inline-block; margin-left: 6px; font-size: .75rem; background: rgba(255,255,255,.25); border-radius: 4px; padding: 1px 5px; }
+
+@media (prefers-color-scheme: dark) {
+  .ecs-input { background: #12282b; }
+  .ecs-opt-btn { background: #12282b; }
+  .eb-slot { background: #12282b; }
+  .eb-pick { background: #12282b; }
+}

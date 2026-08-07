@@ -59,7 +59,7 @@ window.ChemLabContent["day-20"] = {
       ]
     }
   ],
-  figure: { type: "eqn-write", caption: "化学方程式书写四步法：先写后配，条件不忘，气体沉淀要标注。" },
+  figure: { type: "eqn-build", caption: "方程式拼写练习：点击词块拼出正确的化学方程式，训练书写规范。" },
   checkpoint: {
     title: "情境自测：这些说法哪些对？",
     items: [

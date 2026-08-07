@@ -65,7 +65,7 @@ window.ChemLabContent["day-22"] = {
       ]
     }
   ],
-  figure: { type: "eqn-calc", caption: "方程式计算五步法：设、写、找、列、答。" },
+  figure: { type: "eqn-calc-steps", caption: "分步练习：按五步法逐步完成计算，每步即时反馈。" },
   checkpoint: {
     title: "情境自测：这些说法哪些对？",
     items: [

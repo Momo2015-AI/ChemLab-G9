@@ -752,7 +752,9 @@ app.innerHTML =
       "knowledge-chain": figKnowledgeChain,       // 知识链条互动图（Day15）
       "carbon-compare": figCarbonCompare,         // 碳单质性质对比（Day24）
       "review-map": figReviewMap,                 // 单元复习知识地图（Day07）
-      "valence-calc": figValenceCalc              // 化合价推化学式（Day13）
+      "valence-calc": figValenceCalc,                  // 化合价推化学式（Day13）
+      "eqn-calc-steps": figEqnCalcSteps,               // 方程式计算分步脚手架（Day22）
+      "eqn-build": figEqnBuild                         // 方程式拼写练习（Day20）
     };
     var fn = renderers[fig.type];
     if (!fn) return "";
@@ -1608,8 +1610,8 @@ app.innerHTML =
       { name: "燃料与能源", color: "#c2534f", days: "Day28-29" }
     ];
     var cards = modules.map(function (m, i) {
-      return '<div class="kn-card" data-kn-module="' + i + '">' +
-        '<div class="kn-header" style="background:' + m.color + '">' + m.name + '</div>' +
+      return '<div class="kn-card is-clickable" data-kn-module="' + i + '">' +
+        '<div class="kn-header" style="background:' + m.color + '">' + m.name + '<span class="kn-jump-badge">→ 跳转</span></div>' +
         '<div class="kn-body"><span class="kn-days">' + m.days + '</span></div>' +
       '</div>';
     }).join("");
@@ -1895,6 +1897,115 @@ app.innerHTML =
       stepsHtml +
       example +
       '<p class="ec-hint">关键是：先正确写出并配平化学方程式。</p>' +
+    '</div>';
+  }
+
+  // ---------- 方程式计算分步脚手架（Day22） ----------
+  function figEqnCalcSteps(fig) {
+    var problem = {
+      text: "电解 36g 水，可得到氢气的质量为多少？",
+      equation: "2H₂O 通电 2H₂↑ + O₂↑",
+      relMass: [36, 4],
+      known: ["36g", "x"],
+      ans: "4g"
+    };
+    var totalSteps = 4;
+    var state = { step: 0, coeffOk: false, massesOk: false, ratioOk: false, answerOk: false };
+    var html = '<div class="fig-ecs" data-ecsfig>' +
+      '<div class="ecs-titlebar">分步练习：计算 36g 水生成氢气的质量</div>' +
+      '<div class="ecs-progress">' +
+        Array.from({length: totalSteps}, function(_, i) {
+          return '<div class="ecs-prog-dot" data-ecs-dot="' + i + '"></div>';
+        }).join("") +
+      '</div>' +
+      // 步骤1：配平确认
+      '<div class="ecs-step-panel" data-ecs-panel="0">' +
+        '<p class="ecs-step-label"><strong>第一步：确认方程式已配平</strong></p>' +
+        '<div class="ecs-row">2H₂O &nbsp;→&nbsp; <input type="number" class="ecs-input" data-ecs-coeff min="1" max="10" value=""><span> H₂↑ + O₂↑</span></div>' +
+        '<p class="ecs-hint">系数填在 H₂ 前，使两边氢原子数相等。</p>' +
+        '<div class="ecs-ctrl"><button class="ecs-next-btn" data-ecs-check="0">确认</button></div>' +
+        '<div class="ecs-feedback" data-ecs-fb="0"></div>' +
+      '</div>' +
+      // 步骤2：写相对分子质量
+      '<div class="ecs-step-panel" data-ecs-panel="1">' +
+        '<p class="ecs-step-label"><strong>第二步：写出相关物质的相对分子质量之和</strong></p>' +
+        '<div class="ecs-row">36 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="number" class="ecs-input" data-ecs-relmass min="1" max="999" value=""><br>36g &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</div>' +
+        '<p class="ecs-hint">H₂ 前系数为 2，所以相对分子质量之和是 2×2 = 4。</p>' +
+        '<div class="ecs-ctrl"><button class="ecs-next-btn" data-ecs-check="1">确认</button></div>' +
+        '<div class="ecs-feedback" data-ecs-fb="1"></div>' +
+      '</div>' +
+      // 步骤3：列比例式
+      '<div class="ecs-step-panel" data-ecs-panel="2">' +
+        '<p class="ecs-step-label"><strong>第三步：列出比例式</strong></p>' +
+        '<div class="ecs-opt-group" data-ecs-ratio-group>' +
+          '<button class="ecs-opt-btn" data-ecs-ratio="0">36 / 36g = 4 / x</button>' +
+          '<button class="ecs-opt-btn" data-ecs-ratio="1">36 / x = 4 / 36g</button>' +
+          '<button class="ecs-opt-btn" data-ecs-ratio="2">36 × 4 = 36g × x</button>' +
+          '<button class="ecs-opt-btn" data-ecs-ratio="3">x / 36g = 4 / 36</button>' +
+        '</div>' +
+        '<p class="ecs-hint">上下对应：相对分子质量对应已知/未知质量。</p>' +
+        '<div class="ecs-ctrl"><button class="ecs-next-btn" data-ecs-check="2" disabled>确认</button></div>' +
+        '<div class="ecs-feedback" data-ecs-fb="2"></div>' +
+      '</div>' +
+      // 步骤4：算答案
+      '<div class="ecs-step-panel" data-ecs-panel="3">' +
+        '<p class="ecs-step-label"><strong>第四步：计算未知量</strong></p>' +
+        '<div class="ecs-row">解：x = <input type="number" class="ecs-input" data-ecs-answer min="0" max="999" step="0.1" value=""> g</div>' +
+        '<p class="ecs-hint">由 36/36g = 4/x 解得 x = ?</p>' +
+        '<div class="ecs-ctrl"><button class="ecs-next-btn" data-ecs-check="3">确认</button></div>' +
+        '<div class="ecs-feedback" data-ecs-fb="3"></div>' +
+      '</div>' +
+      // 完成页
+      '<div class="ecs-complete" data-ecs-done hidden>' +
+        '<p>练习完成！</p>' +
+        '<span>电解 36g 水可得到氢气 4g。</span>' +
+      '</div>' +
+    '</div>';
+    return html;
+  }
+
+  // ---------- 方程式拼写练习（Day20） ----------
+  function figEqnBuild(fig) {
+    var problems = [
+      {
+        desc: "氢气在氧气中燃烧生成水",
+        correct: ["2", "H₂", "+", "O₂", "点燃", "2", "H₂O"],
+        pool: ["H₂", "O₂", "H₂O", "2", "3", "点燃", "加热", "↑", "↓"]
+      },
+      {
+        desc: "红磷在氧气中燃烧生成五氧化二磷",
+        correct: ["4", "P", "+", "O₂", "点燃", "2", "P₂O₅"],
+        pool: ["P", "O₂", "P₂O₅", "2", "3", "4", "点燃", "加热"]
+      },
+      {
+        desc: "加热高锰酸钾制取氧气",
+        correct: ["2", "KMnO₄", "加热", "K₂MnO₄", "+", "MnO₂", "+", "O₂↑"],
+        pool: ["KMnO₄", "K₂MnO₄", "MnO₂", "O₂", "O₂↑", "2", "加热", "点燃"]
+      }
+    ];
+    var pills = problems.map(function(p, i) {
+      return '<div class="eb-nav-dot' + (i === 0 ? ' is-active' : '') + '" data-eb-nav="' + i + '"></div>';
+    }).join("");
+    var panels = problems.map(function(p, i) {
+      var slots = p.correct.map(function(part, j) {
+        return '<span class="eb-slot" data-eb-slot="' + i + '-' + j + '" data-eb-answer="' + escapeHtml(part) + '"></span>';
+      }).join('');
+      var options = p.pool.map(function(opt, j) {
+        return '<button class="eb-pick" data-eb-pick="' + i + '-' + j + '">' + escapeHtml(opt) + '</button>';
+      }).join('');
+      return '<div class="eb-panel" data-eb-panel="' + i + '">' +
+        '<p class="eb-problem">请拼出：' + p.desc + '</p>' +
+        '<div class="eb-target">' + slots + '</div>' +
+        '<div class="eb-options">' + options + '</div>' +
+        '<div class="eb-ctrl"><button class="eb-btn" data-eb-check="' + i + '">检查</button><button class="eb-btn" data-eb-reset="' + i + '">重置</button></div>' +
+        '<div class="eb-result" data-eb-result="' + i + '"></div>' +
+      '</div>';
+    }).join("");
+    return '<div class="fig-eb" data-ebfig>' +
+      '<div class="eb-titlebar">方程式拼写练习</div>' +
+      '<div class="eb-nav">' + pills + '</div>' +
+      panels +
+      '<p class="eb-hint">点击下方词块填入空格，再点"检查"验证。</p>' +
     '</div>';
   }
 
@@ -2920,6 +3031,188 @@ app.innerHTML =
         });
       });
       if (details.length > 0) details[0].style.display = "";
+    });
+
+    // 知识网络点击跳转（Day30）
+    var moduleDayMap = { "0": "01", "1": "09", "2": "16", "3": "19", "4": "24", "5": "28" };
+    document.querySelectorAll("[data-knfig]").forEach(function (box) {
+      box.querySelectorAll("[data-kn-module]").forEach(function (card) {
+        card.addEventListener("click", function () {
+          var idx = card.dataset.knModule;
+          var day = moduleDayMap[idx] || "01";
+          window.location.href = "?day=" + day;
+        });
+      });
+    });
+
+    // 方程式计算分步脚手架（Day22）
+    document.querySelectorAll("[data-ecsfig]").forEach(function (box) {
+      var panels = box.querySelectorAll("[data-ecs-panel]");
+      var dots = box.querySelectorAll("[data-ecs-dot]");
+      var currentStep = 0;
+      var answers = { coeff: null, relMass: null, ratio: null, answer: null };
+
+      function showStep(n) {
+        panels.forEach(function (p, i) {
+          p.classList.toggle("is-active", i === n);
+        });
+        dots.forEach(function (d, i) {
+          d.classList.remove("done", "current");
+          if (i < n) d.classList.add("done");
+          else if (i === n) d.classList.add("current");
+        });
+        currentStep = n;
+      }
+
+      box.querySelectorAll("[data-ecs-check]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var idx = parseInt(btn.dataset.ecsCheck, 10);
+          var fb = box.querySelector("[data-ecs-fb=\"" + idx + "\"]");
+          var panel = box.querySelector("[data-ecs-panel=\"" + idx + "\"]");
+
+          if (idx === 0) {
+            var coeff = parseInt(panel.querySelector("[data-ecs-coeff]").value, 10);
+            if (coeff === 2) {
+              answers.coeff = true;
+              fb.innerHTML = '<span class="ecs-fb-ok">正确！2H₂ 配平了氢原子。</span>';
+              btn.disabled = true;
+            } else {
+              fb.innerHTML = '<span class="ecs-fb-no">不对，H₂ 前应该填 2。</span>';
+            }
+          } else if (idx === 1) {
+            var rm = parseInt(panel.querySelector("[data-ecs-relmass]").value, 10);
+            if (rm === 4) {
+              answers.relMass = true;
+              fb.innerHTML = '<span class="ecs-fb-ok">正确！2×(1×2) = 4。</span>';
+              btn.disabled = true;
+            } else {
+              fb.innerHTML = '<span class="ecs-fb-no">不对，H₂ 的相对分子质量之和是 2×2 = 4。</span>';
+            }
+          } else if (idx === 2) {
+            var correctBtn = box.querySelector("[data-ecs-ratio=\"0\"]");
+            var activeBtn = box.querySelector("[data-ecs-ratio-group] .is-active");
+            if (activeBtn === correctBtn) {
+              answers.ratio = true;
+              fb.innerHTML = '<span class="ecs-fb-ok">正确！36/36g = 4/x 上下对应。</span>';
+              btn.disabled = true;
+              box.querySelectorAll("[data-ecs-ratio]").forEach(function (b) {
+                b.classList.remove("is-active");
+                b.disabled = true;
+              });
+            } else {
+              fb.innerHTML = '<span class="ecs-fb-no">比例式不对，相对分子质量与对应质量上下对齐。</span>';
+            }
+          } else if (idx === 3) {
+            var ans = parseFloat(panel.querySelector("[data-ecs-answer]").value);
+            if (ans === 4) {
+              answers.answer = true;
+              fb.innerHTML = '<span class="ecs-fb-ok">正确！x = 4g。</span>';
+              btn.disabled = true;
+            } else {
+              fb.innerHTML = '<span class="ecs-fb-no">计算有误，36/36g = 4/x，x = 4g。</span>';
+            }
+          }
+
+          if (answers.coeff && answers.relMass && answers.ratio && answers.answer) {
+            var doneEl = box.querySelector("[data-ecs-done]");
+            if (doneEl) doneEl.hidden = false;
+          }
+        });
+      });
+
+      box.querySelectorAll("[data-ecs-ratio]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          box.querySelectorAll("[data-ecs-ratio]").forEach(function (b) {
+            b.classList.toggle("is-active", b === btn);
+          });
+          var nextBtn = box.querySelector("[data-ecs-check=\"2\"]");
+          if (nextBtn) nextBtn.disabled = false;
+        });
+      });
+
+      showStep(0);
+    });
+
+    // 方程式拼写练习（Day20）
+    document.querySelectorAll("[data-ebfig]").forEach(function (box) {
+      var panels = box.querySelectorAll("[data-eb-panel]");
+      box.querySelectorAll("[data-eb-nav]").forEach(function (dot) {
+        dot.addEventListener("click", function () {
+          var idx = parseInt(dot.dataset.ebNav, 10);
+          dot.parentElement.querySelectorAll("[data-eb-nav]").forEach(function (d) {
+            d.classList.toggle("is-active", d === dot);
+          });
+          panels.forEach(function (p, i) {
+            p.style.display = i === idx ? "" : "none";
+          });
+        });
+      });
+
+      box.querySelectorAll("[data-eb-pick]").forEach(function (pick) {
+        pick.addEventListener("click", function () {
+          var slot = box.querySelector("[data-eb-slot]:not(.is-filled)");
+          if (!slot) return;
+          slot.textContent = pick.textContent;
+          slot.classList.add("is-filled");
+          pick.classList.add("is-used");
+          pick.dataset.targetSlot = slot.dataset.ebSlot;
+        });
+      });
+
+      box.querySelectorAll("[data-eb-slot].is-filled").forEach(function (slot) {
+        slot.addEventListener("click", function () {
+          var usedPick = box.querySelector('[data-eb-pick][data-target-slot="' + slot.dataset.ebSlot + '"].is-used');
+          if (usedPick) {
+            usedPick.classList.remove("is-used");
+            delete usedPick.dataset.targetSlot;
+          }
+          slot.textContent = "";
+          slot.classList.remove("is-filled", "is-correct", "is-wrong");
+        });
+      });
+
+      box.querySelectorAll("[data-eb-check]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var idx = parseInt(btn.dataset.ebCheck, 10);
+          var panel = box.querySelector("[data-eb-panel=\"" + idx + "\"]");
+          var slots = panel.querySelectorAll("[data-eb-slot]");
+          var resultEl = panel.querySelector("[data-eb-result]");
+          var allFilled = Array.prototype.every.call(slots, function (s) { return s.textContent !== ""; });
+          if (!allFilled) {
+            resultEl.innerHTML = '<span style="color:var(--ko)">请先填满所有空格。</span>';
+            return;
+          }
+          var correct = Array.prototype.every.call(slots, function (s) {
+            return s.textContent === s.dataset.ebAnswer;
+          });
+          slots.forEach(function (s) {
+            s.classList.toggle("is-correct", s.textContent === s.dataset.ebAnswer);
+            s.classList.toggle("is-wrong", s.textContent !== s.dataset.ebAnswer);
+          });
+          resultEl.innerHTML = correct
+            ? '<span style="color:var(--ok)">正确！方程式书写正确。</span>'
+            : '<span style="color:var(--ko)">有错误，再看看。</span>';
+        });
+      });
+
+      box.querySelectorAll("[data-eb-reset]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var idx = parseInt(btn.dataset.ebReset, 10);
+          var panel = box.querySelector("[data-eb-panel=\"" + idx + "\"]");
+          panel.querySelectorAll("[data-eb-slot]").forEach(function (s) {
+            s.textContent = "";
+            s.classList.remove("is-filled", "is-correct", "is-wrong");
+          });
+          panel.querySelectorAll("[data-eb-pick]").forEach(function (p) {
+            p.classList.remove("is-used");
+            delete p.dataset.targetSlot;
+          });
+          var resultEl = panel.querySelector("[data-eb-result]");
+          if (resultEl) resultEl.innerHTML = "";
+        });
+      });
+
+      if (panels.length > 0) panels[0].style.display = "";
     });
 
     document.querySelector("#quiz-form").addEventListener("submit", function (event) {
