@@ -3431,7 +3431,6 @@ app.innerHTML =
 
     app.innerHTML =
       '<div class="page">' +
-        '<p class="breadcrumb"><a href="?">← 返回首页</a></p>' +
         '<header class="hero">' +
           '<p class="eyebrow">错题复习</p>' +
           "<h1>把答错的题再做一遍</h1>" +
