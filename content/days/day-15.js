@@ -44,6 +44,7 @@ window.ChemLabContent["day-15"] = {
       ]
     }
   ],
+  figure: { type: "knowledge-chain", caption: "知识链条互动图：点击每个节点，查看微观粒子与宏观物质之间的关系。" },
   checkpoint: {
     title: "情境自测：快速判断，检验知识地图",
     items: [

@@ -47,6 +47,7 @@ window.ChemLabContent["day-07"] = {
       ]
     }
   ],
+  figure: { type: "review-map", caption: "单元复习知识地图：点击每条主线，查看核心要点。四根主线汇成一个目标。" },
   checkpoint: {
     title: "情境自测：快速判断，检验知识地图",
     items: [

@@ -53,6 +53,7 @@ window.ChemLabContent["day-13"] = {
       ]
     }
   ],
+  figure: { type: "valence-calc", caption: "化合价推化学式：点击不同组合，查看交叉法推导过程。" },
   checkpoint: {
     title: "情境自测：这些说法哪些对？",
     items: [

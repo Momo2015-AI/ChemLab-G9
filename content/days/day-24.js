@@ -58,6 +58,7 @@ window.ChemLabContent["day-24"] = {
       ]
     }
   ],
+  figure: { type: "carbon-compare", caption: "碳单质性质对比表：点击查看金刚石、石墨、C₆₀的性质差异。" },
   checkpoint: {
     title: "情境自测：这些说法哪些对？",
     items: [

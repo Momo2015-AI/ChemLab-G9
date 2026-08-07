@@ -615,6 +615,50 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
   .ew-example { background: #12282b; }
 }
 
+/* ---------- 知识链条互动图（Day15） ---------- */
+.fig-kc { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 440px; }
+.kc-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.kc-pill { padding: 6px 12px; border: 2px solid var(--line); border-radius: 8px; background: var(--surface); font-size: .85rem; font-weight: 600; color: var(--ink); cursor: pointer; transition: all .2s; }
+.kc-pill.is-active { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-strong); }
+.kc-arrow { display: inline-flex; align-items: center; color: var(--muted); font-size: 1rem; padding: 0 2px; }
+.kc-detail { display: none; width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.kc-title { margin: 0 0 4px; font-size: .95rem; font-weight: 700; color: var(--brand); }
+.kc-desc { margin: 0; font-size: .85rem; color: var(--muted); line-height: 1.5; }
+.kc-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+
+/* ---------- 碳单质性质对比（Day24） ---------- */
+.fig-cc { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 420px; }
+.cc-row { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.cc-hdr { background: var(--brand-soft); }
+.cc-cell { flex: 1; padding: 8px 6px; font-size: .82rem; text-align: center; border-right: 1px solid var(--line); }
+.cc-cell:last-child { border-right: none; }
+.cc-hdr .cc-cell { font-weight: 700; color: var(--brand-strong); }
+.cc-name { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+.cc-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.fig-cc [data-cc-i] { cursor: pointer; transition: background .15s; }
+.fig-cc [data-cc-i]:hover { background: var(--brand-soft); }
+.fig-cc [data-cc-i].is-active { background: var(--brand-soft); border-color: var(--brand); }
+.cc-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 4px 0 0; }
+
+/* ---------- 单元复习知识地图（Day07） ---------- */
+.fig-rm { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 420px; }
+.rm-header { font-size: .95rem; font-weight: 700; color: var(--brand); text-align: center; }
+.rm-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.rm-pill { padding: 8px 14px; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); font-size: .88rem; font-weight: 600; color: var(--ink); cursor: pointer; transition: all .2s; }
+.rm-pill.is-active { border-color: var(--brand); background: var(--brand-soft); }
+.rm-detail { display: none; width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.rm-title { margin: 0 0 4px; font-size: .95rem; font-weight: 700; }
+.rm-desc { margin: 0; font-size: .85rem; color: var(--muted); line-height: 1.5; }
+.rm-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+
+/* ---------- 化合价推化学式（Day13） ---------- */
+.fig-vl { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 400px; }
+.fig-vl .fig-pill.is-active { background: var(--brand); color: #fff; }
+.vl-detail { display: none; width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.vl-result { margin: 0 0 6px; font-size: .95rem; font-weight: 700; color: var(--brand-strong); }
+.vl-steps { margin: 0; font-size: .85rem; color: var(--muted); line-height: 1.5; }
+.vl-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+
 </style>
   </head>
   <body>
@@ -1853,6 +1897,7 @@ window.ChemLabContent["day-07"] = {
       ]
     }
   ],
+  figure: { type: "review-map", caption: "单元复习知识地图：点击每条主线，查看核心要点。四根主线汇成一个目标。" },
   checkpoint: {
     title: "情境自测：快速判断，检验知识地图",
     items: [
@@ -2812,6 +2857,7 @@ window.ChemLabContent["day-13"] = {
       ]
     }
   ],
+  figure: { type: "valence-calc", caption: "化合价推化学式：点击不同组合，查看交叉法推导过程。" },
   checkpoint: {
     title: "情境自测：这些说法哪些对？",
     items: [
@@ -3097,6 +3143,7 @@ window.ChemLabContent["day-15"] = {
       ]
     }
   ],
+  figure: { type: "knowledge-chain", caption: "知识链条互动图：点击每个节点，查看微观粒子与宏观物质之间的关系。" },
   checkpoint: {
     title: "情境自测：快速判断，检验知识地图",
     items: [
@@ -4495,6 +4542,7 @@ window.ChemLabContent["day-24"] = {
       ]
     }
   ],
+  figure: { type: "carbon-compare", caption: "碳单质性质对比表：点击查看金刚石、石墨、C₆₀的性质差异。" },
   checkpoint: {
     title: "情境自测：这些说法哪些对？",
     items: [
@@ -6288,7 +6336,11 @@ app.innerHTML =
       "mol-mass-calc": figMolMassCalc,            // 相对分子质量计算（Day14）
       "eqn-write": figEqnWrite,                   // 化学方程式书写步骤（Day20）
       "balancing": figBalancing,                  // 配平练习（Day21）
-      "eqn-calc": figEqnCalc                      // 方程式计算步骤（Day22）
+      "eqn-calc": figEqnCalc,                     // 方程式计算步骤（Day22）
+      "knowledge-chain": figKnowledgeChain,       // 知识链条互动图（Day15）
+      "carbon-compare": figCarbonCompare,         // 碳单质性质对比（Day24）
+      "review-map": figReviewMap,                 // 单元复习知识地图（Day07）
+      "valence-calc": figValenceCalc              // 化合价推化学式（Day13）
     };
     var fn = renderers[fig.type];
     if (!fn) return "";
@@ -7434,6 +7486,107 @@ app.innerHTML =
     '</div>';
   }
 
+  // ---------- 知识链条互动图（Day15 单元复习） ----------
+  function figKnowledgeChain(fig) {
+    var chain = [
+      { label: "分子", color: "#2f9aa8", detail: "保持物质化学性质的最小粒子，由原子构成" },
+      { label: "原子", color: "#2a7ab5", detail: "化学变化中的最小粒子，可结合成分子或得失电子" },
+      { label: "离子", color: "#e67b32", detail: "带电的原子或原子团，分阳离子和阴离子" },
+      { label: "元素", color: "#6b5ba8", detail: "质子数相同的一类原子的总称，宏观概念" },
+      { label: "周期表", color: "#c2534f", detail: "按原子序数排列，反映元素周期律" },
+      { label: "化学式", color: "#146c6e", detail: "用元素符号表示物质组成的式子" },
+      { label: "计算", color: "#52b6a4", detail: "相对分子质量、质量比、质量分数" }
+    ];
+    var pills = chain.map(function(c, i) {
+      return '<div class="kc-pill" data-kc-i="' + i + '">' + c.label + '</div>';
+    }).join("");
+    var details = chain.map(function(c, i) {
+      return '<div class="kc-detail" data-kc-detail="' + i + '">' +
+        '<p class="kc-title">' + c.label + '</p>' +
+        '<p class="kc-desc">' + c.detail + '</p>' +
+      '</div>';
+    }).join("");
+    var arrows = chain.slice(0, -1).map(function() {
+      return '<span class="kc-arrow">→</span>';
+    }).join("");
+    return '<div class="fig-kc" data-kcfig>' +
+      '<div class="kc-pills">' + pills + arrows + '</div>' +
+      details +
+      '<p class="kc-hint">点击每个节点，查看它在知识链中的位置和关系。</p>' +
+    '</div>';
+  }
+
+  // ---------- 碳单质性质对比（Day24） ----------
+  function figCarbonCompare(fig) {
+    var items = [
+      { name: "金刚石", color: "#4aa7a0", hardness: "最硬", conductor: "不导电", use: "裁玻璃、钻头" },
+      { name: "石墨", color: "#8a9ba8", hardness: "质软滑腻", conductor: "导电", use: "铅笔芯、电极" },
+      { name: "C₆₀", color: "#6b5ba8", hardness: "较软", conductor: "不导电", use: "超导、材料科学" }
+    ];
+    var headers = '<div class="cc-row cc-hdr"><span class="cc-cell"></span><span class="cc-cell">性质</span><span class="cc-cell">导电性</span><span class="cc-cell">用途</span></div>';
+    var rows = items.map(function(it, i) {
+      return '<div class="cc-row" data-cc-i="' + i + '">' +
+        '<div class="cc-cell cc-name"><span class="cc-dot" style="background:' + it.color + '"></span>' + it.name + '</div>' +
+        '<div class="cc-cell">' + it.hardness + '</div>' +
+        '<div class="cc-cell">' + it.conductor + '</div>' +
+        '<div class="cc-cell">' + it.use + '</div>' +
+      '</div>';
+    }).join("");
+    return '<div class="fig-cc" data-ccfig>' +
+      headers + rows +
+      '<p class="cc-hint">结构决定性质，性质决定用途。三种碳单质物理性质差异大，是因为碳原子排列方式不同。</p>' +
+    '</div>';
+  }
+
+  // ---------- 单元复习知识地图（Day07） ----------
+  function figReviewMap(fig) {
+    var threads = [
+      { label: "化学变化", color: "#2f9aa8", desc: "判断依据：是否生成新物质" },
+      { label: "实验室操作", color: "#e67b32", desc: "仪器使用、加热、气密性检查" },
+      { label: "科学探究", color: "#6b5ba8", desc: "提出问题、控制变量、证据结论" },
+      { label: "空气与氧气", color: "#146c6e", desc: "成分、性质、制取方法" }
+    ];
+    var pills = threads.map(function(t, i) {
+      return '<div class="rm-pill" data-rm-i="' + i + '">' + t.label + '</div>';
+    }).join("");
+    var details = threads.map(function(t, i) {
+      return '<div class="rm-detail" data-rm-detail="' + i + '">' +
+        '<p class="rm-title" style="color:' + t.color + '">' + t.label + '</p>' +
+        '<p class="rm-desc">' + t.desc + '</p>' +
+      '</div>';
+    }).join("");
+    return '<div class="fig-rm" data-rmfig>' +
+      '<div class="rm-header">四根主线汇成一个目标</div>' +
+      '<div class="rm-pills">' + pills + '</div>' +
+      details +
+      '<p class="rm-hint">点击每条主线，查看核心要点。能解释现象、会设计实验、敢下结论、说得清原因。</p>' +
+    '</div>';
+  }
+
+  // ---------- 化合价推化学式（Day13） ----------
+  function figValenceCalc(fig) {
+    var examples = [
+      { el: "Al³⁺  O²⁻", result: "Al₂O₃", steps: "铝+3、氧-2 → 交叉约简 → Al₂O₃" },
+      { el: "Na⁺  Cl⁻", result: "NaCl", steps: "钠+1、氯-1 → 交叉 → NaCl" },
+      { el: "Ca²⁺  OH⁻", result: "Ca(OH)₂", steps: "钙+2、氢氧根-1 → 交叉 → Ca(OH)₂（原子团加括号）" },
+      { el: "Mg²⁺  Cl⁻", result: "MgCl₂", steps: "镁+2、氯-1 → 交叉 → MgCl₂" }
+    ];
+    var pills = examples.map(function(e, i) {
+      return '<div class="fig-pill" data-vl-ex="' + i + '">' + e.el + '</div>';
+    }).join("");
+    var details = examples.map(function(e, i) {
+      return '<div class="vl-detail" data-vl-detail="' + i + '">' +
+        '<p class="vl-result">化学式：' + e.result + '</p>' +
+        '<p class="vl-steps">推导过程：' + e.steps + '</p>' +
+      '</div>';
+    }).join("");
+    return '<div class="fig-vl" data-vlfig>' +
+      pills +
+      details +
+      '<p class="vl-hint">交叉法：正价左负价右，绝对值交叉约简作下标，原子团个数不为1加括号。</p>' +
+    '</div>';
+  }
+
   // ---------- 加载并渲染某一天 ----------
   function renderDay(dayKey) {
     var meta = metaFor(dayKey);
@@ -8296,6 +8449,65 @@ app.innerHTML =
         });
       });
       if (panels.length > 0) panels[0].style.display = "";
+    });
+
+    // 知识链条互动图（Day15）
+    document.querySelectorAll("[data-kcfig]").forEach(function (box) {
+      var details = box.querySelectorAll("[data-kc-detail]");
+      box.querySelectorAll("[data-kc-i]").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          box.querySelectorAll("[data-kc-i]").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          details.forEach(function (d, i) {
+            d.style.display = pill.dataset.kcI === String(i) ? "" : "none";
+          });
+        });
+      });
+      if (details.length > 0) details[0].style.display = "";
+    });
+
+    // 碳单质性质对比（Day24）- 点击行高亮
+    document.querySelectorAll("[data-ccfig]").forEach(function (box) {
+      box.querySelectorAll("[data-cc-i]").forEach(function (row) {
+        row.addEventListener("click", function () {
+          box.querySelectorAll("[data-cc-i]").forEach(function (r) {
+            r.classList.toggle("is-active", r === row);
+          });
+        });
+      });
+    });
+
+    // 单元复习知识地图（Day07）
+    document.querySelectorAll("[data-rmfig]").forEach(function (box) {
+      var details = box.querySelectorAll("[data-rm-detail]");
+      box.querySelectorAll("[data-rm-i]").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          box.querySelectorAll("[data-rm-i]").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          details.forEach(function (d, i) {
+            d.style.display = pill.dataset.rmI === String(i) ? "" : "none";
+          });
+        });
+      });
+      if (details.length > 0) details[0].style.display = "";
+    });
+
+    // 化合价推化学式（Day13）
+    document.querySelectorAll("[data-vlfig]").forEach(function (box) {
+      var details = box.querySelectorAll("[data-vl-detail]");
+      box.querySelectorAll("[data-vl-ex]").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          box.querySelectorAll("[data-vl-ex]").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          details.forEach(function (d, i) {
+            d.style.display = pill.dataset.vlEx === String(i) ? "" : "none";
+          });
+        });
+      });
+      if (details.length > 0) details[0].style.display = "";
     });
 
     document.querySelector("#quiz-form").addEventListener("submit", function (event) {

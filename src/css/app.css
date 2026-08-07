@@ -606,3 +606,47 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
   .bl-input { background: #12282b; }
   .ew-example { background: #12282b; }
 }
+
+/* ---------- 知识链条互动图（Day15） ---------- */
+.fig-kc { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 440px; }
+.kc-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.kc-pill { padding: 6px 12px; border: 2px solid var(--line); border-radius: 8px; background: var(--surface); font-size: .85rem; font-weight: 600; color: var(--ink); cursor: pointer; transition: all .2s; }
+.kc-pill.is-active { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-strong); }
+.kc-arrow { display: inline-flex; align-items: center; color: var(--muted); font-size: 1rem; padding: 0 2px; }
+.kc-detail { display: none; width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.kc-title { margin: 0 0 4px; font-size: .95rem; font-weight: 700; color: var(--brand); }
+.kc-desc { margin: 0; font-size: .85rem; color: var(--muted); line-height: 1.5; }
+.kc-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+
+/* ---------- 碳单质性质对比（Day24） ---------- */
+.fig-cc { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 420px; }
+.cc-row { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.cc-hdr { background: var(--brand-soft); }
+.cc-cell { flex: 1; padding: 8px 6px; font-size: .82rem; text-align: center; border-right: 1px solid var(--line); }
+.cc-cell:last-child { border-right: none; }
+.cc-hdr .cc-cell { font-weight: 700; color: var(--brand-strong); }
+.cc-name { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+.cc-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.fig-cc [data-cc-i] { cursor: pointer; transition: background .15s; }
+.fig-cc [data-cc-i]:hover { background: var(--brand-soft); }
+.fig-cc [data-cc-i].is-active { background: var(--brand-soft); border-color: var(--brand); }
+.cc-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 4px 0 0; }
+
+/* ---------- 单元复习知识地图（Day07） ---------- */
+.fig-rm { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 420px; }
+.rm-header { font-size: .95rem; font-weight: 700; color: var(--brand); text-align: center; }
+.rm-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.rm-pill { padding: 8px 14px; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); font-size: .88rem; font-weight: 600; color: var(--ink); cursor: pointer; transition: all .2s; }
+.rm-pill.is-active { border-color: var(--brand); background: var(--brand-soft); }
+.rm-detail { display: none; width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.rm-title { margin: 0 0 4px; font-size: .95rem; font-weight: 700; }
+.rm-desc { margin: 0; font-size: .85rem; color: var(--muted); line-height: 1.5; }
+.rm-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+
+/* ---------- 化合价推化学式（Day13） ---------- */
+.fig-vl { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 400px; }
+.fig-vl .fig-pill.is-active { background: var(--brand); color: #fff; }
+.vl-detail { display: none; width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.vl-result { margin: 0 0 6px; font-size: .95rem; font-weight: 700; color: var(--brand-strong); }
+.vl-steps { margin: 0; font-size: .85rem; color: var(--muted); line-height: 1.5; }
+.vl-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
