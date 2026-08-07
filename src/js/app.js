@@ -1205,8 +1205,8 @@ app.innerHTML =
       // 试管（略向下倾斜）
       '<g class="km-tube" data-part="tube">' +
         '<rect x="20" y="30" width="80" height="18" rx="3" fill="rgba(255,255,255,.6)" stroke="#587073" stroke-width="2" transform="rotate(-5 60 39)"/>' +
-        '<rect x="22" y="32" width="12" height="14" rx="1" fill="#6b5ba8" opacity="0.7" transform="rotate(-5 60 39)"/>' +
-        '<text x="28" y="43" fill="#fff" font-size="6" transform="rotate(-5 60 39)">KMnO₄</text>' +
+        '<rect x="22" y="32" width="30" height="14" rx="1" fill="#6b5ba8" opacity="0.7" transform="rotate(-5 60 39)"/>' +
+        '<text x="37" y="43" fill="#fff" font-size="6.5" text-anchor="middle" transform="rotate(-5 60 39)">KMnO₄</text>' +
       '</g>' +
       // 棉花
       '<g class="km-cotton" data-part="cotton">' +
@@ -2664,7 +2664,7 @@ app.innerHTML =
             result.innerHTML = '<strong>' + escapeHtml(pill.textContent) + '</strong><br><span class="hint">' + escapeHtml(p.note) + '</span>';
           }
           var note = box.querySelector("[data-kmnote]");
-          if (note) note.textContent = p ? p.note : "";
+          if (note) note.textContent = p ? pill.textContent : "";
         });
       });
     });
