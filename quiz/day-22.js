@@ -64,6 +64,22 @@ window.ChemLabQuiz["day-22"] = {
       difficulty: "基础",
       topic: "化学方程式计算",
       explanation: "写出配平的化学方程式是计算的第一步，后续步骤都依赖它。"
+    },
+    {
+      prompt: "以下计算过程有错误，请找出错误行：\n\n解：设可得到氢气的质量为 x。\n2H₂O 通电 2H₂↑ + O₂↑\n18 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2\n36g &nbsp;&nbsp;&nbsp;&nbsp; x\n18/36g = 2/x，x = 4g\n答：可得到氢气 4g。",
+      options: ["第2行方程式未配平", "第3行相对分子质量写错（H₂O=18，但方程式系数为2，应为36）", "第5行比例式列错", "计算结果正确，无错误"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "化学方程式计算",
+      explanation: "错误在第3行：2H₂O 的相对分子质量之和应为 2×18=36，不是 18。虽然本题答案碰巧正确，但过程有错误。"
+    },
+    {
+      prompt: "以下计算过程有错误，请找出错误行：\n\n解：设可得到氧气的质量为 x。\n2KClO₃ 催化加热 2KCl + 3O₂↑\n245 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32\n24.5g &nbsp;&nbsp;&nbsp; x\n245/24.5g = 32/x，x = 3.2g\n答：可得到氧气 3.2g。",
+      options: ["第2行方程式未配平", "第3行 O₂ 的相对分子质量应乘以系数3（应为 3×32=96）", "第5行比例式列错", "计算结果正确，无错误"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "化学方程式计算",
+      explanation: "错误在第3行：3O₂ 的相对分子质量之和应为 3×32=96，不是 32。正确计算应为 245/24.5g = 96/x，x = 9.6g。"
     }
   ]
 };

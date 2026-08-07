@@ -70,7 +70,7 @@ window.ChemLabContent["day-24"] = {
       {
         statement: "石墨能做电极，是因为石墨具有良好的导电性。",
         verdict: "对",
-        explanation: "石墨具有层状结构，层间有自由电子，能导电。"
+        explanation: "石墨具有层状结构，层内碳原子的价电子可在平面内自由移动，因此能导电。"
       },
       {
         statement: "常温下碳的化学性质不活泼，所以古代字画能保存至今。",

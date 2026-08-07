@@ -64,6 +64,22 @@ window.ChemLabQuiz["day-21"] = {
       difficulty: "基础",
       topic: "化学方程式配平",
       explanation: "H₂ + Cl₂ 点燃 2HCl，计量数之和 = 1+1+2 = 4。"
+    },
+    {
+      prompt: "以下配平结果有误，请找出错误：\n\n2H₂ + O₂ 点燃 2H₂O（计量数：2,1,2）",
+      options: ["配平正确", "H₂O 前应配 1", "O₂ 前应配 2", "H₂ 前应配 1"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式配平",
+      explanation: "该配平结果正确：2H₂ + O₂ 点燃 2H₂O，氢原子左右各4个，氧原子左右各2个。"
+    },
+    {
+      prompt: "以下配平结果有误，请找出错误：\n\nAl + O₂ 点燃 AlO₂（计量数：1,1,1）",
+      options: ["配平正确", "产物化学式应为 Al₂O₃，且计量数应为 4,3,2", "Al 前应配 2", "O₂ 前应配 3"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "化学方程式配平",
+      explanation: "错误有两处：①氧化铝化学式应为 Al₂O₃（Al+3价，O-2价）；②配平后应为 4Al + 3O₂ 点燃 2Al₂O₃。"
     }
   ]
 };

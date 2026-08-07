@@ -4032,6 +4032,22 @@ window.ChemLabQuiz["day-20"] = {
       difficulty: "提升",
       topic: "化学方程式",
       explanation: "质量比 = (2×24) : 32 : (2×40) = 48:32:80 = 3:2:5。"
+    },
+    {
+      prompt: "以下方程式配平有误，请找出错误：\n\n4Fe + 3O₂ 点燃 2Fe₂O₃",
+      options: ["配平正确", "产物应为 Fe₃O₄ 而非 Fe₂O₃", "Fe 的计量数应为 2", "O₂ 的计量数应为 2"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "化学方程式",
+      explanation: "铁在氧气中燃烧的产物是 Fe₃O₄（四氧化三铁），不是 Fe₂O₃（氧化铁）。正确方程式：3Fe + 2O₂ 点燃 Fe₃O₄。"
+    },
+    {
+      prompt: "以下方程式配平有误，请找出错误：\n\nH₂ + Cl₂ 点燃 HCl",
+      options: ["配平正确", "HCl 前应配 2", "Cl₂ 前应配 1/2", "应在 HCl 后加 ↑"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学方程式",
+      explanation: "氢原子左边2个右边1个，氯原子左边2个右边1个，应在 HCl 前配 2：H₂ + Cl₂ 点燃 2HCl。"
     }
   ]
 };
@@ -4190,6 +4206,22 @@ window.ChemLabQuiz["day-21"] = {
       difficulty: "基础",
       topic: "化学方程式配平",
       explanation: "H₂ + Cl₂ 点燃 2HCl，计量数之和 = 1+1+2 = 4。"
+    },
+    {
+      prompt: "以下配平结果有误，请找出错误：\n\n2H₂ + O₂ 点燃 2H₂O（计量数：2,1,2）",
+      options: ["配平正确", "H₂O 前应配 1", "O₂ 前应配 2", "H₂ 前应配 1"],
+      answer: "0",
+      difficulty: "基础",
+      topic: "化学方程式配平",
+      explanation: "该配平结果正确：2H₂ + O₂ 点燃 2H₂O，氢原子左右各4个，氧原子左右各2个。"
+    },
+    {
+      prompt: "以下配平结果有误，请找出错误：\n\nAl + O₂ 点燃 AlO₂（计量数：1,1,1）",
+      options: ["配平正确", "产物化学式应为 Al₂O₃，且计量数应为 4,3,2", "Al 前应配 2", "O₂ 前应配 3"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "化学方程式配平",
+      explanation: "错误有两处：①氧化铝化学式应为 Al₂O₃（Al+3价，O-2价）；②配平后应为 4Al + 3O₂ 点燃 2Al₂O₃。"
     }
   ]
 };
@@ -4232,10 +4264,11 @@ window.ChemLabContent["day-22"] = {
         "例：电解 36g 水，最多可得到多少克氢气？",
         "解：设可得到氢气的质量为 x。",
         "2H₂O 通电 2H₂↑ + O₂↑",
-        "36         4",
-        "36g        x",
-        "36/36g = 4/x，解得 x = 4g。",
-        "答：可得到氢气 4g。"
+        "相对分子质量：36 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4",
+        "已知/未知质量：36g &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x",
+        "比例式：36 / 36g = 4 / x，解得 x = 4g。",
+        "答：可得到氢气 4g。",
+        { text: "注意：相对分子质量与已知/未知质量上下对齐，单位只写在已知/未知质量行。", kind: "note" }
       ]
     },
     {
@@ -4354,6 +4387,22 @@ window.ChemLabQuiz["day-22"] = {
       difficulty: "基础",
       topic: "化学方程式计算",
       explanation: "写出配平的化学方程式是计算的第一步，后续步骤都依赖它。"
+    },
+    {
+      prompt: "以下计算过程有错误，请找出错误行：\n\n解：设可得到氢气的质量为 x。\n2H₂O 通电 2H₂↑ + O₂↑\n18 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2\n36g &nbsp;&nbsp;&nbsp;&nbsp; x\n18/36g = 2/x，x = 4g\n答：可得到氢气 4g。",
+      options: ["第2行方程式未配平", "第3行相对分子质量写错（H₂O=18，但方程式系数为2，应为36）", "第5行比例式列错", "计算结果正确，无错误"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "化学方程式计算",
+      explanation: "错误在第3行：2H₂O 的相对分子质量之和应为 2×18=36，不是 18。虽然本题答案碰巧正确，但过程有错误。"
+    },
+    {
+      prompt: "以下计算过程有错误，请找出错误行：\n\n解：设可得到氧气的质量为 x。\n2KClO₃ 催化加热 2KCl + 3O₂↑\n245 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32\n24.5g &nbsp;&nbsp;&nbsp; x\n245/24.5g = 32/x，x = 3.2g\n答：可得到氧气 3.2g。",
+      options: ["第2行方程式未配平", "第3行 O₂ 的相对分子质量应乘以系数3（应为 3×32=96）", "第5行比例式列错", "计算结果正确，无错误"],
+      answer: "1",
+      difficulty: "挑战",
+      topic: "化学方程式计算",
+      explanation: "错误在第3行：3O₂ 的相对分子质量之和应为 3×32=96，不是 32。正确计算应为 245/24.5g = 96/x，x = 9.6g。"
     }
   ]
 };
@@ -4574,7 +4623,7 @@ window.ChemLabContent["day-24"] = {
       {
         statement: "石墨能做电极，是因为石墨具有良好的导电性。",
         verdict: "对",
-        explanation: "石墨具有层状结构，层间有自由电子，能导电。"
+        explanation: "石墨具有层状结构，层内碳原子的价电子可在平面内自由移动，因此能导电。"
       },
       {
         statement: "常温下碳的化学性质不活泼，所以古代字画能保存至今。",
@@ -5531,6 +5580,11 @@ window.ChemLabContent["day-30"] = {
         statement: "燃烧必须同时满足三个条件，灭火只要破坏其中一个条件即可。",
         verdict: "对",
         explanation: "燃烧三条件缺一不可，灭火只需破坏其中任一条件。"
+      },
+      {
+        statement: "化学变化前后，元素的种类和原子的数目都不变。",
+        verdict: "对",
+        explanation: "这是质量守恒定律的微观本质：化学反应前后原子种类、数目、质量都不变，因此元素种类也不变。"
       }
     ]
   }

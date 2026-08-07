@@ -84,6 +84,11 @@ window.ChemLabContent["day-30"] = {
         statement: "燃烧必须同时满足三个条件，灭火只要破坏其中一个条件即可。",
         verdict: "对",
         explanation: "燃烧三条件缺一不可，灭火只需破坏其中任一条件。"
+      },
+      {
+        statement: "化学变化前后，元素的种类和原子的数目都不变。",
+        verdict: "对",
+        explanation: "这是质量守恒定律的微观本质：化学反应前后原子种类、数目、质量都不变，因此元素种类也不变。"
       }
     ]
   }

@@ -64,6 +64,22 @@ window.ChemLabQuiz["day-20"] = {
       difficulty: "提升",
       topic: "化学方程式",
       explanation: "质量比 = (2×24) : 32 : (2×40) = 48:32:80 = 3:2:5。"
+    },
+    {
+      prompt: "以下方程式配平有误，请找出错误：\n\n4Fe + 3O₂ 点燃 2Fe₂O₃",
+      options: ["配平正确", "产物应为 Fe₃O₄ 而非 Fe₂O₃", "Fe 的计量数应为 2", "O₂ 的计量数应为 2"],
+      answer: "1",
+      difficulty: "提升",
+      topic: "化学方程式",
+      explanation: "铁在氧气中燃烧的产物是 Fe₃O₄（四氧化三铁），不是 Fe₂O₃（氧化铁）。正确方程式：3Fe + 2O₂ 点燃 Fe₃O₄。"
+    },
+    {
+      prompt: "以下方程式配平有误，请找出错误：\n\nH₂ + Cl₂ 点燃 HCl",
+      options: ["配平正确", "HCl 前应配 2", "Cl₂ 前应配 1/2", "应在 HCl 后加 ↑"],
+      answer: "1",
+      difficulty: "基础",
+      topic: "化学方程式",
+      explanation: "氢原子左边2个右边1个，氯原子左边2个右边1个，应在 HCl 前配 2：H₂ + Cl₂ 点燃 2HCl。"
     }
   ]
 };
