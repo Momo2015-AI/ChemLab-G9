@@ -480,6 +480,43 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 .kn-days { font-weight: 600; color: var(--ink); }
 .kn-hint { font-size: .88rem; color: var(--muted); text-align: center; margin: 0; }
 
+/* ---------- 水资源分布 ---------- */
+.fig-wr { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.wr-hint { font-size: .85rem; color: var(--muted); text-align: center; margin: 0; }
+.wr-legend-box { display: flex; flex-direction: column; gap: 6px; text-align: left; font-size: .9rem; }
+.wr-legend { display: flex; align-items: center; gap: 8px; }
+
+/* ---------- CO/CO2 对比表 ---------- */
+.fig-co2comp { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 480px; }
+.co2comp-hint { font-size: .85rem; color: var(--muted); text-align: center; margin: 0; }
+.co2-comp-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.co2-comp-table th, .co2-comp-table td { padding: 6px 10px; border: 1px solid var(--line); text-align: center; }
+.co2-comp-table th { background: var(--brand-soft); font-weight: 700; }
+.co2-comp-table td:first-child { font-weight: 600; color: var(--ink); background: var(--paper); }
+
+/* ---------- 碳同素异形体 ---------- */
+.fig-carbon { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.carbon-info { width: 100%; max-width: 360px; }
+.carbon-desc { font-size: .88rem; color: var(--muted); line-height: 1.6; margin: 0; padding: 8px 12px; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); }
+
+/* ---------- 燃烧三角 ---------- */
+.fig-comb { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.comb-hint { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+.comb-flame-ell { transition: opacity .4s ease; }
+.comb-check, .comb-x { transition: opacity .3s ease; }
+.comb-result { transition: all .3s ease; }
+
+/* ---------- 化石燃料/新能源 ---------- */
+.fig-fuel { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 400px; }
+.fuel-hint { font-size: .85rem; color: var(--muted); text-align: center; margin: 0; }
+.fuel-card { width: 100%; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.fuel-row { display: flex; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--line); font-size: .9rem; }
+.fuel-row:last-child { border-bottom: 0; }
+.fuel-icon { font-weight: 700; min-width: 40px; color: var(--brand); }
+.fuel-note { margin: 0; padding: 8px 14px; font-size: .85rem; color: var(--muted); background: var(--paper); border-radius: 0; }
+.fossil-card .fuel-note { color: #b0400f; }
+.new-card .fuel-note { color: var(--ok); }
+
 /* ---------- 科学探究排序（触摸拖拽 + ↑↓） ---------- */
 .fig-inquiry { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
 .inq-instruct { font-size: .88rem; color: var(--muted); margin: 0; }

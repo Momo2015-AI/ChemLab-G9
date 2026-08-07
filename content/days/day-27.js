@@ -8,6 +8,7 @@ window.ChemLabContent["day-27"] = {
   sections: [
     {
       title: "今天的任务：串知识",
+      figure: { type: "carbon-allotropes", caption: "点击切换金刚石/石墨/C60，观察碳原子排列方式不同导致性质差异。" },
       body: [
         "把 Day24--26 的知识连成一张网：碳单质 → 二氧化碳 → 一氧化碳。每一块都是下一块的基础。"
       ]

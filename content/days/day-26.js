@@ -32,6 +32,7 @@ window.ChemLabContent["day-26"] = {
     },
     {
       title: "CO 和 CO₂ 的性质对比",
+      figure: { type: "co-vs-co2", caption: "分子构成不同（多一个氧原子），化学性质截然不同。" },
       body: [
         "组成：都由碳、氧元素组成，但分子构成不同（CO₂ 比 CO 多一个氧原子）。",
         "性质差异：CO₂ 不燃烧、不支持燃烧；CO 可燃、有毒。",

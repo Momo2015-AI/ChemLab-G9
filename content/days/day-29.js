@@ -14,6 +14,7 @@ window.ChemLabContent["day-29"] = {
     },
     {
       title: "三大化石燃料",
+      figure: { type: "fossil-fuels", caption: "切换查看化石燃料与新能源的对比：不可再生 vs 清洁可再生。" },
       body: [
         "煤：主要含碳元素，燃烧产生 CO₂、SO₂、粉尘等污染物。",
         "石油：主要含碳、氢元素，炼制得到汽油、柴油等产品。",

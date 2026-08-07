@@ -14,6 +14,7 @@ window.ChemLabContent["day-28"] = {
     },
     {
       title: "燃烧的条件",
+      figure: { type: "combustion-triangle", caption: "点击按钮模拟破坏燃烧条件，观察火焰是否熄灭。三个条件缺一不可。" },
       body: [
         "条件一：可燃物。不是所有物质都能燃烧。",
         "条件二：氧气（或空气）。没有氧气燃烧无法进行。",

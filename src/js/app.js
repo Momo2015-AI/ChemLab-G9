@@ -739,7 +739,12 @@ app.innerHTML =
       "mass-conservation": figMassConservation,   // 质量守恒白磷燃烧实验
       "water-purification": figWaterPurification, // 水的净化/过滤
       "co2-setup": figCo2Setup,                  // 二氧化碳制取装置
-      "ion-form": figIonForm                     // 离子形成过程
+      "ion-form": figIonForm,                     // 离子形成过程
+      "water-resources": figWaterResources,       // 水资源分布饼图
+      "co-vs-co2": figCoVsCo2Compare,            // CO与CO2性质对比
+      "carbon-allotropes": figCarbonAllotropes,   // 碳同素异形体
+      "combustion-triangle": figCombustionTriangle, // 燃烧三角
+      "fossil-fuels": figFossilFuels             // 化石燃料与新能源
     };
     var fn = renderers[fig.type];
     if (!fn) return "";
@@ -1607,6 +1612,157 @@ app.innerHTML =
     return html;
   }
 
+  // ---------- 水资源分布饼图 ----------
+  function figWaterResources(fig) {
+    var cx = 80, cy = 80, r = 55;
+    var C = 2 * Math.PI * r;
+    var segs = [
+      { label: "海洋咸水", pct: "97.5%", v: 0.975, color: "#2a7ab5" },
+      { label: "冰川/地下水", pct: "2.4%", v: 0.024, color: "#8a9ba8" },
+      { label: "可直接利用淡水", pct: "0.1%", v: 0.001, color: "#e67b32" }
+    ];
+    var offset = 0;
+    var rings = segs.map(function (s) {
+      var len = Math.max(s.v * C, 0.5);
+      var dash = len + " " + C;
+      var seg = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + s.color +
+        '" stroke-width="28" stroke-dasharray="' + dash + '" stroke-dashoffset="' + (-offset) +
+        '" transform="rotate(-90 ' + cx + " " + cy + ')" opacity="0.9"/>';
+      offset += len;
+      return seg;
+    }).join("");
+    var legend = segs.map(function (s) {
+      return '<div class="wr-legend"><span class="swatch" style="background:' + s.color + '"></span><span>' + s.label + ' · ' + s.pct + '</span></div>';
+    }).join("");
+    var center = '<text x="' + cx + '" y="' + (cy - 4) + '" fill="#173033" font-size="11" text-anchor="middle" font-weight="700">地球</text>' +
+      '<text x="' + cx + '" y="' + (cy + 10) + '" fill="#587073" font-size="9" text-anchor="middle">71% 被水覆盖</text>';
+    return '<div class="fig-wr">' +
+      figSvg(160, 160, rings + center) +
+      '<div class="wr-legend-box" role="list" aria-label="水资源分布">' + legend + '</div>' +
+      '<p class="wr-hint">可直接利用的淡水资源不足全球总水量的 1%。</p>' +
+    '</div>';
+  }
+
+  // ---------- CO 与 CO2 性质对比 ----------
+  function figCoVsCo2Compare(fig) {
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-co-type="both">对比视图</button>' +
+      '</div>';
+    var table =
+      '<table class="co2-comp-table">' +
+        '<thead><tr><th></th><th>CO（一氧化碳）</th><th>CO₂（二氧化碳）</th></tr></thead>' +
+        '<tbody>' +
+          '<tr><td>颜色气味</td><td>无色无味</td><td>无色无味</td></tr>' +
+          '<tr><td>毒性</td><td data-co-toxic>有毒</td><td data-co2-toxic>无毒</td></tr>' +
+          '<tr><td>可燃性</td><td data-co-flame>可燃</td><td data-co2-flame>不可燃</td></tr>' +
+          '<tr><td>还原性</td><td data-co-red>有</td><td data-co2-red>无</td></tr>' +
+          '<tr><td>石灰水</td><td data-co-lime>不变浑</td><td data-co2-lime>变浑浊</td></tr>' +
+          '<tr><td>密度</td><td>略小于空气</td><td>比空气大</td></tr>' +
+          '<tr><td>水溶性</td><td>难溶</td><td>能溶</td></tr>' +
+        '</tbody>' +
+      '</table>';
+    return '<div class="fig-co2comp" data-co2comp>' +
+      pills +
+      table +
+      '<p class="co2comp-hint">分子构成不同（CO₂ 多一个氧原子），化学性质截然不同。</p>' +
+    '</div>';
+  }
+
+  // ---------- 碳同素异形体 ----------
+  function figCarbonAllotropes(fig) {
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-carbon="diamond">金刚石</button>' +
+      '<button type="button" class="fig-pill" data-carbon="graphite">石墨</button>' +
+      '<button type="button" class="fig-pill" data-carbon="c60">C₆₀</button>' +
+      '</div>';
+    var structures = {
+      diamond: {
+        color: "#4aa7a0",
+        desc: "正四面体空间网状结构，硬度最大，不导电。",
+        svg: '<g class="car-structure"><circle cx="60" cy="50" r="8" fill="#4aa7a0" stroke="#2f7d76" stroke-width="1.5"/><circle cx="40" cy="80" r="6" fill="#7cc7bf" stroke="#2f7d76" stroke-width="1.5"/><circle cx="80" cy="80" r="6" fill="#7cc7bf" stroke="#2f7d76" stroke-width="1.5"/><circle cx="60" cy="100" r="6" fill="#7cc7bf" stroke="#2f7d76" stroke-width="1.5"/><line x1="60" y1="50" x2="40" y2="80" stroke="#587073" stroke-width="1.5"/><line x1="60" y1="50" x2="80" y2="80" stroke="#587073" stroke-width="1.5"/><line x1="60" y1="50" x2="60" y2="100" stroke="#587073" stroke-width="1.5"/><line x1="40" y1="80" x2="60" y2="100" stroke="#587073" stroke-width="1.5"/><line x1="80" y1="80" x2="60" y2="100" stroke="#587073" stroke-width="1.5"/></g>'
+      },
+      graphite: {
+        color: "#8a9ba8",
+        desc: "层状结构，层间作用力弱，质软滑腻，导电。",
+        svg: '<g class="car-structure"><rect x="30" y="40" width="60" height="8" rx="2" fill="#b0c4c1" stroke="#587073" stroke-width="1.5"/><rect x="30" y="56" width="60" height="8" rx="2" fill="#b0c4c1" stroke="#587073" stroke-width="1.5"/><rect x="30" y="72" width="60" height="8" rx="2" fill="#b0c4c1" stroke="#587073" stroke-width="1.5"/><circle cx="50" cy="44" r="3" fill="#8a9ba8"/><circle cx="70" cy="44" r="3" fill="#8a9ba8"/><circle cx="90" cy="44" r="3" fill="#8a9ba8"/><circle cx="50" cy="60" r="3" fill="#8a9ba8"/><circle cx="70" cy="60" r="3" fill="#8a9ba8"/><circle cx="90" cy="60" r="3" fill="#8a9ba8"/></g>'
+      },
+      c60: {
+        color: "#6b5ba8",
+        desc: "足球状分子，60 个碳原子构成，不导电。",
+        svg: '<g class="car-structure"><circle cx="60" cy="55" r="28" fill="none" stroke="#6b5ba8" stroke-width="2"/><circle cx="60" cy="55" r="18" fill="none" stroke="#8a9ba8" stroke-width="1.5"/><circle cx="60" cy="27" r="5" fill="#6b5ba8"/><circle cx="88" cy="55" r="5" fill="#6b5ba8"/><circle cx="60" cy="83" r="5" fill="#6b5ba8"/><circle cx="32" cy="55" r="5" fill="#6b5ba8"/><circle cx="75" cy="35" r="4" fill="#8a9ba8"/><circle cx="75" cy="75" r="4" fill="#8a9ba8"/><circle cx="45" cy="75" r="4" fill="#8a9ba8"/><circle cx="45" cy="35" r="4" fill="#8a9ba8"/></g>'
+      }
+    };
+    var infoBox =
+      '<div class="carbon-info">' +
+        '<p class="carbon-desc" data-carbon-desc></p>' +
+      '</div>';
+    return '<div class="fig-carbon" data-carbonfig>' +
+      pills +
+      figSvg(120, 110, '<defs></defs><g data-carbon-svg></g>') +
+      infoBox +
+    '</div>';
+  }
+
+  // ---------- 燃烧三角互动图 ----------
+  function figCombustionTriangle(fig) {
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-comb-stage="all">三条件</button>' +
+      '<button type="button" class="fig-pill" data-comb-stage="fuel">缺可燃物</button>' +
+      '<button type="button" class="fig-pill" data-comb-stage="o2">缺氧气</button>' +
+      '<button type="button" class="fig-pill" data-comb-stage="temp">缺温度</button>' +
+      '</div>';
+    var defs =
+      '<defs>' +
+        '<linearGradient id="comb-flame" x1="0" y1="1" x2="0" y2="0">' +
+          '<stop offset="0" stop-color="#e67b32"/><stop offset="100%" stop-color="#f7c948"/>' +
+        '</linearGradient>' +
+      '</defs>';
+    var triangle =
+      '<polygon points="60,20 100,90 20,90" fill="none" stroke="#587073" stroke-width="2.5" stroke-linejoin="round"/>';
+    var fuelLabel = '<text x="35" y="115" fill="#2a7ab5" font-size="9" text-anchor="middle" font-weight="600" data-cb-fuel">可燃物</text>';
+    var o2Label = '<text x="85" y="115" fill="#e67b32" font-size="9" text-anchor="middle" font-weight="600" data-cb-o2">氧气</text>';
+    var tempLabel = '<text x="60" y="10" fill="#c2534f" font-size="9" text-anchor="middle" font-weight="600" data-cb-temp">温度达着火点</text>';
+    var flame = '<ellipse class="comb-flame-ell" data-comb-flame cx="60" cy="70" rx="12" ry="18" fill="url(#comb-flame)" opacity="0.8"/>';
+    var checkMark = '<g class="comb-check" data-comb-check opacity="0"><circle cx="60" cy="60" r="20" fill="none" stroke="#2e9e63" stroke-width="3"/><path d="M50 60 L56 66 L72 52" fill="none" stroke="#2e9e63" stroke-width="2.5" stroke-linecap="round"/></g>';
+    var xMark = '<g class="comb-x" data-comb-x opacity="0"><circle cx="60" cy="60" r="20" fill="none" stroke="#d0544e" stroke-width="3"/><line x1="50" y1="50" x2="70" y2="70" stroke="#d0544e" stroke-width="2.5" stroke-linecap="round"/><line x1="70" y1="50" x2="50" y2="70" stroke="#d0544e" stroke-width="2.5" stroke-linecap="round"/></g>';
+    var resultText = '<text class="comb-result" data-comb-r x="60" y="140" fill="#146c6e" font-size="9" text-anchor="middle" font-weight="600"></text>';
+    var html =
+      '<div class="fig-comb" data-comb>' +
+        pills +
+        figSvg(120, 155, defs + triangle + fuelLabel + o2Label + tempLabel + flame + checkMark + xMark + resultText) +
+        '<p class="comb-hint">点击按钮模拟破坏燃烧条件，观察是否还能燃烧。</p>' +
+      '</div>';
+    return html;
+  }
+
+  // ---------- 化石燃料与新能源 ----------
+  function figFossilFuels(fig) {
+    var pills = '<div class="fig-ctrl">' +
+      '<button type="button" class="fig-pill" data-fuel-type="fossil">化石燃料</button>' +
+      '<button type="button" class="fig-pill" data-fuel-type="new">新能源</button>' +
+      '</div>';
+    var fossil =
+      '<div class="fuel-card fossil-card">' +
+        '<div class="fuel-row"><span class="fuel-icon">煤</span><span>主要含碳，燃烧产生 SO₂、粉尘</span></div>' +
+        '<div class="fuel-row"><span class="fuel-icon">石油</span><span>含碳氢，炼制汽油/柴油</span></div>' +
+        '<div class="fuel-row"><span class="fuel-icon">天然气</span><span>主要 CH₄，相对清洁</span></div>' +
+        '<p class="fuel-note">不可再生，储量有限，燃烧产生温室气体和污染物。</p>' +
+      '</div>';
+    var newEnergy =
+      '<div class="fuel-card new-card">' +
+        '<div class="fuel-row"><span class="fuel-icon">氢能</span><span>燃烧产物是水，热值最高</span></div>' +
+        '<div class="fuel-row"><span class="fuel-icon">太阳能</span><span>取之不尽，无污染</span></div>' +
+        '<div class="fuel-row"><span class="fuel-icon">风能</span><span>清洁可再生</span></div>' +
+        '<div class="fuel-row"><span class="fuel-icon">核能</span><span>能量密度高，有辐射风险</span></div>' +
+        '<p class="fuel-note">清洁可再生，是未来能源发展方向。</p>' +
+      '</div>';
+    return '<div class="fig-fuel" data-fuel>' +
+      pills +
+      '<div class="fuel-display" data-fuel-display>' + fossil + '</div>' +
+      '<p class="fuel-hint">化石燃料不可再生，新能源是未来方向。</p>' +
+    '</div>';
+  }
+
   // ---------- 加载并渲染某一天 ----------
   function renderDay(dayKey) {
     var meta = metaFor(dayKey);
@@ -2337,164 +2493,86 @@ app.innerHTML =
       applyElement(0);
     });
 
-    // 电解水实验
-    document.querySelectorAll("[data-ele]").forEach(function (box) {
+    // 水资源分布饼图 - 自动渲染，无需交互
+
+    // CO/CO2 性质对比
+    document.querySelectorAll("[data-co2comp]").forEach(function (box) {
       box.querySelectorAll(".fig-pill").forEach(function (pill) {
         pill.addEventListener("click", function () {
-          var stage = pill.dataset.stage;
           box.querySelectorAll(".fig-pill").forEach(function (p) {
             p.classList.toggle("is-active", p === pill);
           });
-          var gasRects = box.querySelectorAll("[data-stage-gas]");
-          var bubblesG = box.querySelector("[data-bubbles]");
-          if (gasRects[0]) {
-            gasRects[0].setAttribute("height", stage === "on" ? "42" : "28");
-            gasRects[0].setAttribute("y", stage === "on" ? "46" : "60");
-          }
-          if (gasRects[1]) {
-            gasRects[1].setAttribute("height", stage === "on" ? "20" : "14");
-            gasRects[1].setAttribute("y", stage === "on" ? "46" : "60");
-          }
-          if (bubblesG) bubblesG.setAttribute("opacity", stage === "on" ? "1" : "0");
         });
       });
     });
 
-    // 质量守恒实验
-    document.querySelectorAll("[data-mc]").forEach(function (box) {
-      box.querySelectorAll(".fig-pill").forEach(function (pill) {
-        pill.addEventListener("click", function () {
-          var stage = pill.dataset.mcStage;
-          box.querySelectorAll(".fig-pill").forEach(function (p) {
-            p.classList.toggle("is-active", p === pill);
-          });
-          var balloon = box.querySelector("[data-balloon]");
-          var smoke = box.querySelector("[data-smoke]");
-          var flame = box.querySelector("[data-flame]");
-          var resultText = box.querySelector("[data-mcresult]");
-          if (balloon) balloon.setAttribute("rx", stage === "during" ? "16" : "12");
-          if (smoke) smoke.setAttribute("opacity", stage === "during" ? "1" : "0");
-          if (flame) flame.setAttribute("opacity", stage === "during" ? "1" : "0");
-          if (resultText) {
-            if (stage === "before") resultText.textContent = "反应前总质量 = m(锥形瓶) + m(白磷) + m(空气)";
-            else if (stage === "during") resultText.textContent = "白磷燃烧，产生大量白烟，气球膨胀";
-            else resultText.textContent = "反应后总质量 = 反应前总质量（质量守恒）";
-          }
-        });
-      });
-    });
-
-    // 水的净化（过滤）
-    document.querySelectorAll("[data-wp]").forEach(function (box) {
-      box.querySelectorAll(".fig-pill").forEach(function (pill) {
-        pill.addEventListener("click", function () {
-          var stage = pill.dataset.purifyStage;
-          box.querySelectorAll(".fig-pill").forEach(function (p) {
-            p.classList.toggle("is-active", p === pill);
-          });
-          var dirtyWater = box.querySelector("[data-dirty-water]");
-          var clearWater = box.querySelector("[data-clear-water]");
-          var note = box.querySelector("[data-wpn]");
-          if (dirtyWater) dirtyWater.setAttribute("opacity", stage === "filter" || stage === "clear" ? "0.3" : "0.8");
-          if (clearWater) clearWater.setAttribute("opacity", stage === "filter" || stage === "clear" ? "0.9" : "0");
-          if (note) {
-            if (stage === "mix") note.textContent = "浑浊水含不溶性杂质，颜色发黄";
-            else if (stage === "filter") note.textContent = "过滤后：一贴二低三靠，除去不溶性杂质";
-            else note.textContent = "滤液澄清透明，但仍含可溶性杂质";
-          }
-        });
-      });
-    });
-
-    // 二氧化碳制取装置
-    document.querySelectorAll("[data-co2]").forEach(function (box) {
-      box.querySelectorAll(".fig-pill").forEach(function (pill) {
-        pill.addEventListener("click", function () {
-          var part = pill.dataset.co2Part;
-          box.querySelectorAll(".fig-pill").forEach(function (p) {
-            p.classList.toggle("is-active", p === pill);
-          });
-          var match = box.querySelector("[data-match]");
-          var bubbles = box.querySelector("[data-bubbles]");
-          var result = box.querySelector("[data-co2r]");
-          if (part === "setup") {
-            if (match) match.setAttribute("opacity", "0");
-            if (bubbles) bubbles.style.opacity = "1";
-            if (result) result.textContent = "固液常温型：大理石 + 稀盐酸 → CO₂";
-          } else if (part === "collection") {
-            if (match) match.setAttribute("opacity", "0");
-            if (bubbles) bubbles.style.opacity = "1";
-            if (result) result.textContent = "向上排空气法：CO₂ 密度比空气大";
-          } else {
-            if (match) match.setAttribute("opacity", "1");
-            if (bubbles) bubbles.style.opacity = "0.3";
-            if (result) result.textContent = "燃着木条放在瓶口 → 熄灭说明已满";
-          }
-        });
-      });
-    });
-
-    // 离子形成
-    document.querySelectorAll("[data-ionfig]").forEach(function (box) {
-      var ionData = {
-        na: {
-          p1: "11", e1: "11", o1: "1", c1: "电中性",
-          p2: "11", e2: "10", o2: "8（稳定）", c2: "+1 正电荷",
-          tip: "钠原子失去最外层 1 个电子 → 钠离子 Na⁺，达到 8 电子稳定结构。"
-        },
-        cl: {
-          p1: "17", e1: "17", o1: "7", c1: "电中性",
-          p2: "17", e2: "18", o2: "8（稳定）", c2: "-1 负电荷",
-          tip: "氯原子得到 1 个电子 → 氯离子 Cl⁻，达到 8 电子稳定结构。"
-        }
+    // 碳同素异形体
+    document.querySelectorAll("[data-carbonfig]").forEach(function (box) {
+      var data = {
+        diamond: { desc: "正四面体空间网状结构，硬度最大，不导电。用于切割玻璃、钻头。" },
+        graphite: { desc: "层状结构，质软滑腻，导电。用于铅笔芯、电极、润滑剂。" },
+        c60: { desc: "足球状分子，60 个碳原子构成，不导电。用于材料科学、医药。" }
       };
       box.querySelectorAll(".fig-pill").forEach(function (pill) {
         pill.addEventListener("click", function () {
-          var type = pill.dataset.ionType;
+          var type = pill.dataset.carbon;
           box.querySelectorAll(".fig-pill").forEach(function (p) {
             p.classList.toggle("is-active", p === pill);
           });
-          var d = ionData[type];
-          if (!d) return;
-          var p1 = box.querySelector("[data-i-p1]");
-          var e1 = box.querySelector("[data-i-e1]");
-          var o1 = box.querySelector("[data-i-o1]");
-          var c1 = box.querySelector("[data-i-c1]");
-          var p2 = box.querySelector("[data-i-p2]");
-          var e2 = box.querySelector("[data-i-e2]");
-          var o2 = box.querySelector("[data-i-o2]");
-          var c2 = box.querySelector("[data-i-c2]");
-          var tip = box.querySelector("[data-ition]");
-          if (p1) p1.textContent = d.p1;
-          if (e1) e1.textContent = d.e1;
-          if (o1) o1.textContent = d.o1;
-          if (c1) c1.textContent = d.c1;
-          if (p2) p2.textContent = d.p2;
-          if (e2) e2.textContent = d.e2;
-          if (o2) o2.textContent = d.o2;
-          if (c2) c2.textContent = d.c2;
-          if (tip) tip.textContent = d.tip;
+          var svgG = box.querySelector("[data-carbon-svg]");
+          var descEl = box.querySelector("[data-carbon-desc]");
+          if (svgG && data[type]) svgG.innerHTML = data[type].svg;
+          if (descEl && data[type]) descEl.textContent = data[type].desc;
         });
       });
-      var d = ionData.na;
-      var p1 = box.querySelector("[data-i-p1]");
-      var e1 = box.querySelector("[data-i-e1]");
-      var o1 = box.querySelector("[data-i-o1]");
-      var c1 = box.querySelector("[data-i-c1]");
-      var p2 = box.querySelector("[data-i-p2]");
-      var e2 = box.querySelector("[data-i-e2]");
-      var o2 = box.querySelector("[data-i-o2]");
-      var c2 = box.querySelector("[data-i-c2]");
-      var tip = box.querySelector("[data-ition]");
-      if (p1) p1.textContent = d.p1;
-      if (e1) e1.textContent = d.e1;
-      if (o1) o1.textContent = d.o1;
-      if (c1) c1.textContent = d.c1;
-      if (p2) p2.textContent = d.p2;
-      if (e2) e2.textContent = d.e2;
-      if (o2) o2.textContent = d.o2;
-      if (c2) c2.textContent = d.c2;
-      if (tip) tip.textContent = d.tip;
+      var first = box.querySelector("[data-carbon]");
+      if (first) first.click();
+    });
+
+    // 燃烧三角
+    document.querySelectorAll("[data-comb]").forEach(function (box) {
+      var stages = {
+        all: { flame: 0.8, check: 0, x: 0, result: "三个条件同时满足 → 燃烧" },
+        fuel: { flame: 0, check: 0, x: 1, result: "缺少可燃物 → 不能燃烧" },
+        o2: { flame: 0, check: 0, x: 1, result: "缺少氧气 → 不能燃烧" },
+        temp: { flame: 0, check: 0, x: 1, result: "温度未达着火点 → 不能燃烧" }
+      };
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var stage = pill.dataset.combStage;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          var s = stages[stage];
+          var flame = box.querySelector("[data-comb-flame]");
+          var check = box.querySelector("[data-comb-check]");
+          var xMark = box.querySelector("[data-comb-x]");
+          var result = box.querySelector("[data-comb-r]");
+          if (flame) flame.setAttribute("opacity", s.flame);
+          if (check) check.setAttribute("opacity", s.check);
+          if (xMark) xMark.setAttribute("opacity", s.x);
+          if (result) result.textContent = s.result;
+        });
+      });
+    });
+
+    // 化石燃料/新能源
+    document.querySelectorAll("[data-fuel]").forEach(function (box) {
+      var fossilContent = box.querySelector(".fossil-card").outerHTML;
+      var newContent = box.querySelector(".new-card").outerHTML;
+      var display = box.querySelector("[data-fuel-display]");
+      box.querySelectorAll(".fig-pill").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          var type = pill.dataset.fuelType;
+          box.querySelectorAll(".fig-pill").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          if (display) {
+            if (type === "fossil") display.innerHTML = fossilContent;
+            else display.innerHTML = newContent;
+          }
+        });
+      });
     });
 
     document.querySelector("#quiz-form").addEventListener("submit", function (event) {
