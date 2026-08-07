@@ -542,9 +542,67 @@ h2 .day-badge { font-size: .78rem; font-weight: 700; margin-right: 6px; padding:
 .dv-fb { margin: 8px 0 0; font-size: .88rem; color: var(--muted); line-height: 1.6; }
 .fig-dv .option { font-size: .9rem; }
 
+/* ---------- 相对分子质量计算器（Day14） ---------- */
+.fig-mc { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 400px; }
+.fig-mc .fig-pill.is-active { background: var(--brand); color: #fff; }
+.mc-detail { display: none; width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.mc-title { margin: 0 0 8px; font-size: .95rem; font-weight: 700; color: var(--brand); }
+.mc-row { display: flex; align-items: center; gap: 4px; font-size: .9rem; padding: 3px 0; }
+.mc-el { font-weight: 700; color: var(--ink); }
+.mc-n { color: var(--muted); }
+.mc-op { color: var(--muted); margin: 0 2px; }
+.mc-res { font-weight: 700; color: var(--brand); }
+.mc-total { margin: 8px 0 0; padding-top: 8px; border-top: 1px solid var(--line); font-size: .9rem; font-weight: 700; color: var(--brand-strong); }
+
+/* ---------- 化学方程式书写步骤（Day20） ---------- */
+.fig-ew { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 420px; }
+.ew-titlebar { font-size: .95rem; font-weight: 700; color: var(--brand); text-align: center; margin-bottom: 4px; }
+.ew-step { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.ew-num { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--brand); color: #fff; font-size: .85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.ew-body { flex: 1; }
+.ew-title { font-size: .9rem; font-weight: 700; color: var(--ink); }
+.ew-badge { font-size: .75rem; margin-left: 6px; }
+.ew-desc { font-size: .82rem; color: var(--muted); margin: 2px 0; }
+.ew-example { font-size: .85rem; font-family: "Courier New", monospace; color: var(--brand-strong); background: var(--paper); padding: 4px 8px; border-radius: 6px; margin-top: 4px; word-break: break-all; }
+.ew-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+
+/* ---------- 配平练习（Day21） ---------- */
+.fig-bl { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 440px; }
+.fig-bl .fig-pill.is-active { background: var(--brand); color: #fff; }
+.bl-panel { display: none; width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--surface); }
+.bl-equation { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 1rem; font-family: "Courier New", monospace; margin-bottom: 10px; }
+.bl-input-row { display: inline-flex; align-items: center; gap: 2px; }
+.bl-input { width: 32px; height: 30px; text-align: center; border: 2px solid var(--line); border-radius: 6px; font-size: 1rem; font-weight: 700; color: var(--brand-strong); background: var(--paper); }
+.bl-input:focus { border-color: var(--brand); outline: none; }
+.bl-arrow { font-size: 1.2rem; color: var(--muted); margin: 0 4px; }
+.bl-btn { padding: 6px 16px; border: 1px solid var(--brand); border-radius: 8px; background: var(--brand-soft); color: var(--brand); font-size: .88rem; font-weight: 600; cursor: pointer; touch-action: manipulation; }
+.bl-btn:hover { background: var(--brand); color: #fff; }
+.bl-result { margin-top: 8px; font-size: .9rem; font-weight: 700; }
+.bl-ok { color: var(--ok); }
+.bl-no { color: var(--ko); }
+.bl-hint { font-size: .8rem; color: var(--muted); margin-top: 6px; }
+.bl-hint2 { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+
+/* ---------- 方程式计算步骤（Day22） ---------- */
+.fig-ec { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 420px; }
+.ec-titlebar { font-size: .95rem; font-weight: 700; color: var(--brand); text-align: center; margin-bottom: 4px; }
+.ec-step { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.ec-step-n { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), #2f9aa8); color: #fff; font-size: .9rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.ec-step-body { flex: 1; }
+.ec-step-title { font-size: .9rem; font-weight: 700; color: var(--ink); }
+.ec-step-desc { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+.ec-example { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--paper); }
+.ec-q { margin: 0 0 8px; font-size: .9rem; font-weight: 600; color: var(--ink); }
+.ec-solve { font-size: .85rem; line-height: 1.8; font-family: "Courier New", monospace; color: var(--ink); }
+.ec-step-tag { display: inline-block; width: 20px; font-weight: 700; color: var(--brand); }
+.ec-hint { font-size: .82rem; color: var(--muted); text-align: center; margin: 0; }
+
 @media (prefers-color-scheme: dark) {
   .topic-chips .chip.is-active { background: var(--brand); color: #08191b; }
   .search-hit { background: #163033; }
   .dv-scenario { background: #12282b; }
   .inq-slot { background: #12282b; }
+  .mc-detail, .ec-example { background: #12282b; }
+  .bl-input { background: #12282b; }
+  .ew-example { background: #12282b; }
 }

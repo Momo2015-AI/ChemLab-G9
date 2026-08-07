@@ -44,6 +44,7 @@ window.ChemLabContent["day-23"] = {
       ]
     }
   ],
+  figure: { type: "knowledge-network", caption: "化学方程式单元知识地图：守恒定律 → 方程式书写 → 配平 → 计算应用。" },
   checkpoint: {
     title: "情境自测：快速判断，检验知识地图",
     items: [

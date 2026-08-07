@@ -53,6 +53,7 @@ window.ChemLabContent["day-14"] = {
       ]
     }
   ],
+  figure: { type: "mol-mass-calc", caption: "相对分子质量计算器：点击不同物质，查看计算过程。" },
   checkpoint: {
     title: "情境自测：这些说法哪些对？",
     items: [

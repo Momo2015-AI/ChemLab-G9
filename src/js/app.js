@@ -744,7 +744,11 @@ app.innerHTML =
       "co-vs-co2": figCoVsCo2Compare,            // CO与CO2性质对比
       "carbon-allotropes": figCarbonAllotropes,   // 碳同素异形体
       "combustion-triangle": figCombustionTriangle, // 燃烧三角
-      "fossil-fuels": figFossilFuels             // 化石燃料与新能源
+      "fossil-fuels": figFossilFuels,             // 化石燃料与新能源
+      "mol-mass-calc": figMolMassCalc,            // 相对分子质量计算（Day14）
+      "eqn-write": figEqnWrite,                   // 化学方程式书写步骤（Day20）
+      "balancing": figBalancing,                  // 配平练习（Day21）
+      "eqn-calc": figEqnCalc                      // 方程式计算步骤（Day22）
     };
     var fn = renderers[fig.type];
     if (!fn) return "";
@@ -1763,6 +1767,133 @@ app.innerHTML =
     '</div>';
   }
 
+  // ---------- 相对分子质量计算器（Day14） ----------
+  function figMolMassCalc(fig) {
+    var examples = [
+      { name: "H₂O", text: "水", calc: "1×2 + 16 = 18", parts: [{el:"H",n:2,m:1},{el:"O",n:1,m:16}] },
+      { name: "CO₂", text: "二氧化碳", calc: "12 + 16×2 = 44", parts: [{el:"C",n:1,m:12},{el:"O",n:2,m:16}] },
+      { name: "KMnO₄", text: "高锰酸钾", calc: "39 + 55 + 16×4 = 158", parts: [{el:"K",n:1,m:39},{el:"Mn",n:1,m:55},{el:"O",n:4,m:16}] },
+      { name: "CaCO₃", text: "碳酸钙", calc: "40 + 12 + 16×3 = 100", parts: [{el:"Ca",n:1,m:40},{el:"C",n:1,m:12},{el:"O",n:3,m:16}] }
+    ];
+    var pills = examples.map(function(ex, i) {
+      return '<div class="fig-pill" data-mc-ex="' + i + '">' + ex.name + '</div>';
+    }).join("");
+    var infoBox = examples.map(function(ex, i) {
+      var rows = ex.parts.map(function(p) {
+        return '<div class="mc-row"><span class="mc-el">' + p.el + '</span>' +
+          '<span class="mc-n">×</span><span>' + p.n + '</span>' +
+          '<span class="mc-op">=</span><span class="mc-res">' + (p.m * p.n) + '</span></div>';
+      }).join("");
+      return '<div class="mc-detail" data-mc-detail="' + i + '">' +
+        '<p class="mc-title">' + ex.name + '（' + ex.text + '）</p>' +
+        rows +
+        '<div class="mc-total">相对分子质量 = ' + ex.calc + '</div>' +
+      '</div>';
+    }).join("");
+    return '<div class="fig-mc" data-mcfig>' +
+      pills +
+      infoBox +
+    '</div>';
+  }
+
+  // ---------- 化学方程式书写步骤（Day20） ----------
+  function figEqnWrite(fig) {
+    var steps = [
+      { n: "1", title: "写出化学式", desc: "左边写反应物，右边写生成物，中间画箭头", example: "H₂ + O₂ → H₂O", ok: false },
+      { n: "2", title: "配平", desc: "在化学式前配化学计量数，使两边原子数相等", example: "2H₂ + O₂ → 2H₂O", ok: true },
+      { n: "3", title: "标注条件", desc: "在箭头上方写反应条件（点燃、加热△、催化剂等）", example: "2H₂ + O₂ --点燃--> 2H₂O", ok: true },
+      { n: "4", title: "标注状态", desc: "反应物无气体时，生成气体标↑；溶液反应生成沉淀标↓", example: "2H₂ + O₂ 点燃 2H₂O（无状态符号，因反应物有气体）", ok: true }
+    ];
+    var stepsHtml = steps.map(function(s, i) {
+      var icon = s.ok ? "✅" : "⚠️";
+      return '<div class="ew-step" data-ew-step="' + i + '">' +
+        '<div class="ew-num">' + s.n + '</div>' +
+        '<div class="ew-body">' +
+          '<div class="ew-title">' + s.title + ' <span class="ew-badge">' + icon + '</span></div>' +
+          '<div class="ew-desc">' + s.desc + '</div>' +
+          '<div class="ew-example">' + s.example + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+    return '<div class="fig-ew" data-ewfig>' +
+      '<div class="ew-titlebar">化学方程式书写四步法</div>' +
+      stepsHtml +
+      '<p class="ew-hint">先写后配，条件不忘，气体沉淀要标注。</p>' +
+    '</div>';
+  }
+
+  // ---------- 配平练习（Day21） ----------
+  function figBalancing(fig) {
+    var problems = [
+      { react: "H₂ + O₂", prod: "H₂O", ans: [2, 1, 2], hint: "氧原子左边2个右边1个，最小公倍数2" },
+      { react: "P + O₂", prod: "P₂O₅", ans: [4, 5, 2], hint: "氧原子左边2个右边5个，最小公倍数10" },
+      { react: "Fe + O₂", prod: "Fe₃O₄", ans: [3, 2, 1], hint: "氧原子左边2个右边4个，最小公倍数4" }
+    ];
+    var pills = problems.map(function(p, i) {
+      return '<div class="fig-pill" data-bl-problem="' + i + '">' + (i + 1) + '</div>';
+    }).join("");
+    var panels = problems.map(function(p, i) {
+      var reactParts = p.react.split("+").map(function(s) { return s.trim(); });
+      var prodParts = p.prod.split("+").map(function(s) { return s.trim(); });
+      var inputs = "";
+      reactParts.forEach(function(r, j) {
+        inputs += '<div class="bl-input-row"><input type="number" class="bl-input" data-bl-r="' + j + '" min="1" max="10"><span>' + r + '</span></div>';
+      });
+      inputs += '<div class="bl-input-row"><input type="number" class="bl-input" data-bl-p="0" min="1" max="10"><span>' + prodParts[0] + '</span></div>';
+      return '<div class="bl-panel" data-bl-panel="' + i + '">' +
+        '<div class="bl-equation">' +
+          inputs +
+          '<span class="bl-arrow">→</span>' +
+        '</div>' +
+        '<div class="bl-check"><button class="bl-btn" data-bl-check="' + i + '">检查配平</button></div>' +
+        '<div class="bl-result" data-bl-result="' + i + '"></div>' +
+        '<div class="bl-hint" data-bl-hint="' + i + '">' + p.hint + '</div>' +
+      '</div>';
+    }).join("");
+    return '<div class="fig-bl" data-blfig>' +
+      pills +
+      panels +
+      '<p class="bl-hint2">输入化学计量数，点击检查配平结果。</p>' +
+    '</div>';
+  }
+
+  // ---------- 方程式计算步骤可视化（Day22） ----------
+  function figEqnCalc(fig) {
+    var steps = [
+      { n: "设", title: "设未知量", desc: "设要计算物质的质量为 x" },
+      { n: "写", title: "写出方程式", desc: "写出正确的化学方程式（注意配平）" },
+      { n: "找", title: "找相关量", desc: "写出相关物质的相对分子质量与已知量、未知量" },
+      { n: "列", title: "列比例式", desc: "根据质量比列出比例式" },
+      { n: "答", title: "写出答案", desc: "简明写出答案并带上单位" }
+    ];
+    var example = '<div class="ec-example">' +
+      '<p class="ec-q">例：电解 36g 水，最多可得到多少克氢气？</p>' +
+      '<div class="ec-solve">' +
+        '<span class="ec-step-tag">设</span>可得到氢气的质量为 x<br>' +
+        '<span class="ec-step-tag">写</span>2H₂O 通电 2H₂↑ + O₂↑<br>' +
+        '<span class="ec-step-tag">找</span>36 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4<br>' +
+        '<span class="ec-step-tag"></span>36g &nbsp;&nbsp;&nbsp;&nbsp; x<br>' +
+        '<span class="ec-step-tag">列</span>36/36g = 4/x，解得 x = 4g<br>' +
+        '<span class="ec-step-tag">答</span>可得到氢气 4g。' +
+      '</div>' +
+    '</div>';
+    var stepsHtml = steps.map(function(s, i) {
+      return '<div class="ec-step">' +
+        '<div class="ec-step-n">' + s.n + '</div>' +
+        '<div class="ec-step-body">' +
+          '<div class="ec-step-title">' + s.title + '</div>' +
+          '<div class="ec-step-desc">' + s.desc + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+    return '<div class="fig-ec" data-ecfig>' +
+      '<div class="ec-titlebar">化学方程式计算五步法</div>' +
+      stepsHtml +
+      example +
+      '<p class="ec-hint">关键是：先正确写出并配平化学方程式。</p>' +
+    '</div>';
+  }
+
   // ---------- 加载并渲染某一天 ----------
   function renderDay(dayKey) {
     var meta = metaFor(dayKey);
@@ -2573,6 +2704,58 @@ app.innerHTML =
           }
         });
       });
+    });
+
+    // 相对分子质量计算器
+    document.querySelectorAll("[data-mcfig]").forEach(function (box) {
+      var details = box.querySelectorAll("[data-mc-detail]");
+      box.querySelectorAll("[data-mc-ex]").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          box.querySelectorAll("[data-mc-ex]").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          details.forEach(function (d, i) {
+            d.style.display = pill.dataset.mcEx === String(i) ? "" : "none";
+          });
+        });
+      });
+      if (details.length > 0) details[0].style.display = "";
+    });
+
+    // 配平练习
+    document.querySelectorAll("[data-blfig]").forEach(function (box) {
+      var panels = box.querySelectorAll("[data-bl-panel]");
+      var problems = [
+        { ans: [2, 1, 2] },
+        { ans: [4, 5, 2] },
+        { ans: [3, 2, 1] }
+      ];
+      box.querySelectorAll("[data-bl-problem]").forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          box.querySelectorAll("[data-bl-problem]").forEach(function (p) {
+            p.classList.toggle("is-active", p === pill);
+          });
+          panels.forEach(function (p, i) {
+            p.style.display = pill.dataset.blProblem === String(i) ? "" : "none";
+          });
+        });
+      });
+      box.querySelectorAll("[data-bl-check]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var idx = parseInt(btn.dataset.blCheck, 10);
+          var panel = box.querySelector("[data-bl-panel=\"" + idx + "\"]");
+          var resultEl = panel.querySelector("[data-bl-result]");
+          var inputs = panel.querySelectorAll(".bl-input");
+          var vals = Array.prototype.map.call(inputs, function (inp) { return parseInt(inp.value, 10) || 0; });
+          var correct = problems[idx].ans.every(function (a, i) { return vals[i] === a; });
+          if (resultEl) {
+            resultEl.innerHTML = correct
+              ? '<span class="bl-ok">配平正确！</span>'
+              : '<span class="bl-no">不完全正确，再看看？</span>';
+          }
+        });
+      });
+      if (panels.length > 0) panels[0].style.display = "";
     });
 
     document.querySelector("#quiz-form").addEventListener("submit", function (event) {

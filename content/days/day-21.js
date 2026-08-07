@@ -58,6 +58,7 @@ window.ChemLabContent["day-21"] = {
       ]
     }
   ],
+  figure: { type: "balancing", caption: "配平练习：输入化学计量数，点击检查配平结果。" },
   checkpoint: {
     title: "情境自测：这些说法哪些对？",
     items: [
